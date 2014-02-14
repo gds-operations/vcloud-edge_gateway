@@ -13,7 +13,6 @@ SimpleCov.start 'gem'
 
 require 'bundler/setup'
 require 'vcloud/edge_gateway'
-require 'support/stub_fog_interface.rb'
 
 
 SimpleCov.at_exit do
