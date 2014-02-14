@@ -27,22 +27,22 @@ describe Vcloud::ConfigLoader do
     valid_config['vapps'].should eq(actual_config['vapps'])
   end
 
-  it "should validate correctly against a schema" do
-    input_file = 'spec/vcloud/data/working_with_defaults.yaml'
-    loader = Vcloud::ConfigLoader.new
-    schema = Vcloud::Launch.new.config_schema
-    actual_config = loader.load_config(input_file, schema)
-    valid_config['vapps'].should eq(actual_config['vapps'])
-  end
+#  it "should validate correctly against a schema" do
+#    input_file = 'spec/vcloud/data/working_with_defaults.yaml'
+#    loader = Vcloud::ConfigLoader.new
+#    schema = Vcloud::Launch.new.config_schema
+#    actual_config = loader.load_config(input_file, schema)
+#    valid_config['vapps'].should eq(actual_config['vapps'])
+#  end
 
-  it "should raise an error if checked against an invalid schema" do
-    input_file = 'spec/vcloud/data/working_with_defaults.yaml'
-    loader = Vcloud::ConfigLoader.new
-    Vcloud.logger.should_receive(:fatal).with("vapps: is not a hash")
-    expect { loader.load_config(input_file, invalid_schema) }.
-      to raise_error('Supplied configuration does not match supplied schema')
-  end
-
+#  it "should raise an error if checked against an invalid schema" do
+#    input_file = 'spec/vcloud/data/working_with_defaults.yaml'
+#    loader = Vcloud::ConfigLoader.new
+#    Vcloud.logger.should_receive(:fatal).with("vapps: is not a hash")
+#    expect { loader.load_config(input_file, invalid_schema) }.
+#      to raise_error('Supplied configuration does not match supplied schema')
+#  end
+#
   context "loading example vcloud_launch configurations" do
     examples_dir = File.join(
       File.dirname(__FILE__),
