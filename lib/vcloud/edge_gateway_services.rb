@@ -1,4 +1,3 @@
-require 'vcloud'
 require 'hashdiff'
 
 module Vcloud

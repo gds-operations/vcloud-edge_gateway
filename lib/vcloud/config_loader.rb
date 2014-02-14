@@ -1,4 +1,5 @@
-require 'vcloud'
+require 'yaml'
+require 'json'
 
 module Vcloud
   class ConfigLoader
