@@ -8,5 +8,5 @@ end
 
 require 'vcloud/edge_gateway'
 
-print "Test message just to string this together"
-print "No CLI for vCloud Edge Gateway yet"
+puts "Test message just to string this together"
+puts "No CLI for vCloud Edge Gateway yet"

@@ -2,6 +2,31 @@
 
 vCloud Edge Gateway is a tool that supports automated provisiong of a VMware vCloud Edge Gateway. It depends on [vCloud Core](https://github.com/alphagov/vcloud-core) and uses Fog under the hood.
 
+## Installation
+
+Add this line to your application's Gemfile:
+
+    gem 'vcloud-edge_gateway'
+
+And then execute:
+
+    $ bundle
+
+Or install it yourself as:
+
+    $ gem install vcloud-edge_gateway
+
+## Usage
+
+TODO
+
+## Contributing
+
+1. Fork it
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Add some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create new Pull Request
 
 #Configure edge gateway services
 
