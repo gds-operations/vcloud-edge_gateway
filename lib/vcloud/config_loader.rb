@@ -15,7 +15,7 @@ module Vcloud
         validation = ConfigValidator.validate(:base, config, schema)
         unless validation.valid?
           validation.errors.each do |error|
-            Vcloud.logger.fatal(error)
+            Vcloud::EdgeGateway.logger.fatal(error)
           end
           raise("Supplied configuration does not match supplied schema")
         end

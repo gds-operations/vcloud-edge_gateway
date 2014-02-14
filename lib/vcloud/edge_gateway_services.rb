@@ -18,7 +18,7 @@ module Vcloud
       if proposed_config.update_required?(remote_config)
         edge_gateway.update_configuration proposed_config.config
       else
-        Vcloud.logger.info("EdgeGatewayServices.update: Configuration is already up to date. Skipping.")
+        Vcloud::EdgeGateway.logger.info("EdgeGatewayServices.update: Configuration is already up to date. Skipping.")
       end
     end
 

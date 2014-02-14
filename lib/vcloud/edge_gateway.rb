@@ -19,3 +19,14 @@ require 'vcloud/edge_gateway/configuration_generator/nat_service'
 require 'vcloud/edge_gateway/configuration_generator/load_balancer_service'
 require 'vcloud/edge_gateway/configuration_differ'
 require 'vcloud/edge_gateway/edge_gateway_configuration'
+
+
+module Vcloud
+  module EdgeGateway
+
+    def self.logger
+      @logger ||=Logger.new(STDOUT)
+    end
+
+  end
+end

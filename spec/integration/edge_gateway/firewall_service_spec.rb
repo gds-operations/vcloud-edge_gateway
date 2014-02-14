@@ -45,7 +45,7 @@ module Vcloud
 
         it "should raise exception if input yaml does not match with schema" do
           config_yaml = File.expand_path('data/incorrect_firewall_config.yaml', File.dirname(__FILE__))
-          expect(Vcloud.logger).to receive(:fatal)
+          expect(Vcloud::EdgeGateway.logger).to receive(:fatal)
           expect { EdgeGatewayServices.new.update(config_yaml) }.to raise_error('Supplied configuration does not match supplied schema')
         end
 
@@ -80,7 +80,7 @@ module Vcloud
         end
 
         it "and then should not configure the firewall service if updated again with the same configuration (idempotency)" do
-          expect(Vcloud.logger).to receive(:info).with('EdgeGatewayServices.update: Configuration is already up to date. Skipping.')
+          expect(Vcloud::EdgeGateway.logger).to receive(:info).with('EdgeGatewayServices.update: Configuration is already up to date. Skipping.')
           EdgeGatewayServices.new.update(@initial_firewall_config_file)
         end
 
