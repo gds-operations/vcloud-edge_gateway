@@ -15,3 +15,9 @@ task :default => [:spec]
 RSpec::Core::RakeTask.new('integration') do |t|
   t.pattern = FileList['spec/integration/**/*_spec.rb']
 end
+
+require "gem_publisher"
+task :publish_gem do |t|
+  gem = GemPublisher.publish_if_updated("vcloud-edge_gateway.gemspec", :rubygems)
+  puts "Published #{gem}" if gem
+end
