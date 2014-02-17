@@ -136,14 +136,6 @@ module Vcloud
           expect(proposed_config.config.empty?).to be_true
         end
 
-        it "does not require change if local configuration is in unexpected format" do
-
-        end
-
-        it "does not require change if remote configuration is in unexpected format" do
-
-        end
-
       end
 
       def test_firewall_config
