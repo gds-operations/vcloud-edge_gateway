@@ -129,22 +129,20 @@ module Vcloud
         expect(validator.valid?).to be_true
       end
 
-      it "should fail to validate if no pools are specified" do
+      it "should be ok if no pools are specified" do
         input = {
           virtual_servers: []
         }
         validator = ConfigValidator.validate(:base, input, Vcloud::Schema::LOAD_BALANCER_SERVICE)
-        expect(validator.errors).to eq(["base: missing 'pools' parameter"])
-        expect(validator.valid?).to be_false
+        expect(validator.valid?).to be_true
       end
 
-      it "should fail to validate if virtual_servers section is missing" do
+      it "should be ok if no virtual_servers are specified" do
         input = {
           pools: []
         }
         validator = ConfigValidator.validate(:base, input, Vcloud::Schema::LOAD_BALANCER_SERVICE)
-        expect(validator.errors).to eq(["base: missing 'virtual_servers' parameter"])
-        expect(validator.valid?).to be_false
+        expect(validator.valid?).to be_true
       end
 
     end
