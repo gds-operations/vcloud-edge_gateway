@@ -4,7 +4,7 @@ module Vcloud
   module EdgeGateway
     describe EdgeGatewayConfiguration do
 
-      context "object works as expected" do
+      context "config object doesn't require methods called in a particular order" do
 
         before(:each) do
           @edge_gateway_id = "1111111-7b54-43dd-9eb1-631dd337e5a7"
