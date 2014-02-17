@@ -6,17 +6,18 @@ module Vcloud
         @local_config = local_config
         @remote_config = remote_config
         @config = { }
+        @update_required = nil
       end
 
       def update_required?
-        update_required = false
+        @update_required = false
 
         firewall_service_config = EdgeGateway::ConfigurationGenerator::FirewallService.new.generate_fog_config(@local_config[:firewall_service])
         unless firewall_service_config.nil?
           differ = EdgeGateway::ConfigurationDiffer.new(firewall_service_config, @remote_config[:FirewallService])
           unless differ.diff.empty?
             @config[:FirewallService] = firewall_service_config
-            update_required = true
+            @update_required = true
           end
         end
 
@@ -26,7 +27,7 @@ module Vcloud
           differ = EdgeGateway::ConfigurationDiffer.new(nat_service_config, @remote_config[:NatService])
           unless differ.diff.empty?
             @config[:NatService] = nat_service_config
-            update_required = true
+            @update_required = true
           end
         end
 
@@ -42,11 +43,11 @@ module Vcloud
                    )
           unless differ.diff.empty?
             @config[:LoadBalancerService] = load_balancer_service_config
-            update_required = true
+            @update_required = true
           end
         end
 
-        update_required
+        @update_required
       end
 
       def config
