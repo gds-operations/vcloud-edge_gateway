@@ -125,6 +125,19 @@ module Vcloud
           ]},
           dest:   { Pool: [
             { foo: 'bar', Operational: 'wibble', deeper: [ 1, 2, 3, 4, 5 ] },
+            { baz: 'bop', Operational: 'wobble', deeper: [ 5, 6, 4, 3, 2 ] },
+          ]},
+          output: []
+        },
+
+        {
+          title: 'should ignore remote config having additional :Operational keys in :Pool entries, yet still report other differences ',
+          src:    { Pool: [
+            { foo: 'bar', deeper: [ 1, 2, 3, 4, 5 ] },
+            { baz: 'bop', deeper: [ 5, 6, 4, 3, 2 ] },
+          ]},
+          dest:   { Pool: [
+            { foo: 'bar', Operational: 'wibble', deeper: [ 1, 2, 3, 4, 5 ] },
             { baz: 'bop', Operational: 'wobble', deeper: [ 6, 5, 4, 3, 2 ] },
           ]},
           output: [
