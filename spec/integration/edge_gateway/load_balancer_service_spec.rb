@@ -98,6 +98,51 @@ module Vcloud
 
       end
 
+      context "Check specific LoadBalancerService update cases" do
+
+        it "should be able to configure with no pools and virtual_servers" do
+          config_file = generate_input_config_file(
+            'load_balancer_empty.yaml.erb',
+            edge_gateway_erb_input
+          )
+          EdgeGatewayServices.new.update(config_file)
+          edge_config = @edge_gateway.vcloud_attributes[:Configuration]
+          remote_vcloud_config = edge_config[:EdgeGatewayServiceConfiguration][:LoadBalancerService]
+          expect(remote_vcloud_config[:Pool].size).to be == 0
+          expect(remote_vcloud_config[:VirtualServer].size).to be == 0
+        end
+
+        it "should be able to configure with a single Pool and no VirtualServers" do
+          config_file = generate_input_config_file(
+            'load_balancer_single_pool.yaml.erb',
+            edge_gateway_erb_input
+          )
+          EdgeGatewayServices.new.update(config_file)
+          edge_config = @edge_gateway.vcloud_attributes[:Configuration]
+          remote_vcloud_config = edge_config[:EdgeGatewayServiceConfiguration][:LoadBalancerService]
+          expect(remote_vcloud_config[:Pool].size).to be == 1
+        end
+
+        it "should raise an error when trying configure with a single VirtualServer, and no pool mentioned" do
+          config_file = generate_input_config_file(
+            'load_balancer_single_virtual_server_missing_pool.yaml.erb',
+            edge_gateway_erb_input
+          )
+          expect { EdgeGatewayServices.new.update(config_file) }.
+            to raise_error('Supplied configuration does not match supplied schema')
+        end
+
+        it "should raise an error when trying configure with a single VirtualServer, with an unconfigured pool" do
+          config_file = generate_input_config_file(
+            'load_balancer_single_virtual_server_invalid_pool.yaml.erb',
+            edge_gateway_erb_input
+          )
+          expect { EdgeGatewayServices.new.update(config_file) }.
+            to raise_error('Load balancer virtual server integration-test-vs-1 does not have a valid backing pool.')
+        end
+
+      end
+
       after(:all) do
         reset_edge_gateway unless ENV['VCLOUD_NO_RESET_VSE_AFTER']
         FileUtils.rm(@files_to_delete)
