@@ -123,6 +123,15 @@ module Vcloud
           expect(remote_vcloud_config[:Pool].size).to be == 1
         end
 
+        it "should raise an error when trying configure with a single VirtualServer, and no pool mentioned" do
+          config_file = generate_input_config_file(
+            'load_balancer_single_virtual_server_missing_pool.yaml.erb',
+            edge_gateway_erb_input
+          )
+          expect { EdgeGatewayServices.new.update(config_file) }.
+            to raise_error('Supplied configuration does not match supplied schema')
+        end
+
         it "should raise an error when trying configure with a single VirtualServer, with an unconfigured pool" do
           config_file = generate_input_config_file(
             'load_balancer_single_virtual_server_invalid_pool.yaml.erb',
