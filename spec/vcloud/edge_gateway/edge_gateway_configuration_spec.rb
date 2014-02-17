@@ -31,7 +31,7 @@ module Vcloud
         end
 
         it "requires update" do
-          expect(@proposed_config.update_required?).to be_true
+          expect(@proposed_config.update_required?).to be(true)
         end
 
         it "proposed config contains firewall config in the form expected" do
@@ -80,19 +80,19 @@ module Vcloud
 
 
         it "requires update" do
-          expect(@proposed_config.update_required?).to be_true
+          expect(@proposed_config.update_required?).to be(true)
         end
 
         it "proposed config contains firewall config in the form expected" do
-          expect(@proposed_config.update_required?).to be_true
+          expect(@proposed_config.update_required?).to be(true)
 
           proposed_firewall_config = @proposed_config.config[:FirewallService]
           expect(proposed_firewall_config).to eq(expected_firewall_config)
         end
 
         it "proposed config does not contain nat config" do
-          expect(@proposed_config.update_required?).to be_true
-          expect(@proposed_config.config.key?(:NatService)).to be_false
+          expect(@proposed_config.update_required?).to be(true)
+          expect(@proposed_config.config.key?(:NatService)).to be(false)
         end
 
       end
@@ -124,20 +124,20 @@ module Vcloud
         end
 
         it "requires update" do
-          expect(@proposed_config.update_required?).to be_true
+          expect(@proposed_config.update_required?).to be(true)
         end
 
         it "proposed config contains firewall config in the form expected" do
-          expect(@proposed_config.update_required?).to be_true
+          expect(@proposed_config.update_required?).to be(true)
 
           proposed_firewall_config = @proposed_config.config[:FirewallService]
           expect(proposed_firewall_config).to eq(expected_firewall_config)
         end
 
         it "proposed config does not contain nat config" do
-          expect(@proposed_config.update_required?).to be_true
+          expect(@proposed_config.update_required?).to be(true)
 
-          expect(@proposed_config.config.key?(:NatService)).to be_false
+          expect(@proposed_config.config.key?(:NatService)).to be(false)
         end
 
       end
@@ -170,13 +170,13 @@ module Vcloud
         end
 
         it "does not require update" do
-          expect(@proposed_config.update_required?).to be_false
+          expect(@proposed_config.update_required?).to be(false)
         end
 
         it "there is no proposed config" do
-          expect(@proposed_config.update_required?).to be_false
+          expect(@proposed_config.update_required?).to be(false)
 
-          expect(@proposed_config.config.empty?).to be_true
+          expect(@proposed_config.config.empty?).to be(true)
         end
 
     end
@@ -207,13 +207,13 @@ module Vcloud
         end
 
         it "does not require update" do
-          expect(@proposed_config.update_required?).to be_false
+          expect(@proposed_config.update_required?).to be(false)
         end
 
         it "there is no proposed config" do
-          expect(@proposed_config.update_required?).to be_false
+          expect(@proposed_config.update_required?).to be(false)
 
-          expect(@proposed_config.config.empty?).to be_true
+          expect(@proposed_config.config.empty?).to be(true)
         end
 
       end
@@ -244,13 +244,13 @@ module Vcloud
         end
 
         it "does not require update" do
-          expect(@proposed_config.update_required?).to be_false
+          expect(@proposed_config.update_required?).to be(false)
         end
 
         it "there is no proposed config" do
-          expect(@proposed_config.update_required?).to be_false
+          expect(@proposed_config.update_required?).to be(false)
 
-          expect(@proposed_config.config.empty?).to be_true
+          expect(@proposed_config.config.empty?).to be(true)
         end
 
       end
