@@ -144,7 +144,7 @@ module Vcloud
 
         end
 
-     end
+      end
 
       def test_firewall_config
           {:policy=>"drop", :log_default_action=>true, :firewall_rules=>[{:enabled=>true, :description=>"A rule", :policy=>"allow", :protocols=>"tcp", :destination_port_range=>"Any", :destination_ip=>"10.10.1.2", :source_port_range=>"Any", :source_ip=>"192.0.2.2"}, {:enabled=>true, :destination_ip=>"10.10.1.3-10.10.1.5", :source_ip=>"192.0.2.2/24"}]}
