@@ -30,7 +30,7 @@ module Vcloud
           @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
         end
 
-        it "if `config` is called before `update_required` then config is not empty when it shoudln't be" do
+        it "if `config` is called before `update_required` then config is not empty when it shouldn't be" do
           config = @proposed_config.config
           expect(config.empty?).to be_false
         end
@@ -69,16 +69,11 @@ module Vcloud
         end
 
         it "proposed config contains firewall config in the form expected" do
-          # bug in that if update required is not called, config is nil
-          @proposed_config.update_required?
-
           proposed_firewall_config = @proposed_config.config[:FirewallService]
           expect(proposed_firewall_config).to eq(expected_firewall_config)
         end
 
         it "proposed config contains nat config in the form expected" do
-          @proposed_config.update_required?
-
           proposed_nat_config = @proposed_config.config[:NatService]
           expect(proposed_nat_config).to eq(expected_nat_config)
         end
@@ -118,14 +113,11 @@ module Vcloud
         end
 
         it "proposed config contains firewall config in the form expected" do
-          expect(@proposed_config.update_required?).to be(true)
-
           proposed_firewall_config = @proposed_config.config[:FirewallService]
           expect(proposed_firewall_config).to eq(expected_firewall_config)
         end
 
         it "proposed config does not contain nat config" do
-          expect(@proposed_config.update_required?).to be(true)
           expect(@proposed_config.config.key?(:NatService)).to be(false)
         end
 
@@ -162,15 +154,11 @@ module Vcloud
         end
 
         it "proposed config contains firewall config in the form expected" do
-          expect(@proposed_config.update_required?).to be(true)
-
           proposed_firewall_config = @proposed_config.config[:FirewallService]
           expect(proposed_firewall_config).to eq(expected_firewall_config)
         end
 
         it "proposed config does not contain nat config" do
-          expect(@proposed_config.update_required?).to be(true)
-
           expect(@proposed_config.config.key?(:NatService)).to be(false)
         end
 
@@ -208,8 +196,6 @@ module Vcloud
         end
 
         it "there is no proposed config" do
-          expect(@proposed_config.update_required?).to be(false)
-
           expect(@proposed_config.config.empty?).to be(true)
         end
 
@@ -245,8 +231,6 @@ module Vcloud
         end
 
         it "there is no proposed config" do
-          expect(@proposed_config.update_required?).to be(false)
-
           expect(@proposed_config.config.empty?).to be(true)
         end
 
@@ -282,8 +266,6 @@ module Vcloud
         end
 
         it "there is no proposed config" do
-          expect(@proposed_config.update_required?).to be(false)
-
           expect(@proposed_config.config.empty?).to be(true)
         end
 
