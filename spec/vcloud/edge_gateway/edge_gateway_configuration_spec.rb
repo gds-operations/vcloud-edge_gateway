@@ -12,7 +12,7 @@ module Vcloud
             :vcloud_gateway_interface_by_id => {
               Network: {
                 :name => 'ane012345',
-                :href => 'https://vmware.example.com/api/admin/network/01234567-1234-1234-1234-0123456789aa' 
+                :href => 'https://vmware.example.com/api/admin/network/01234567-1234-1234-1234-0123456789aa'
               }
             })
             Vcloud::Core::EdgeGateway.stub(:get_by_name).with(@edge_gateway_id).and_return(@edge_gateway)
@@ -147,11 +147,39 @@ module Vcloud
       end
 
       def test_firewall_config
-          {:policy =>"drop", :log_default_action =>true, :firewall_rules =>[{:enabled =>true, :description =>"A rule", :policy =>"allow", :protocols =>"tcp", :destination_port_range =>"Any", :destination_ip =>"10.10.1.2", :source_port_range =>"Any", :source_ip =>"192.0.2.2"}, {:enabled =>true, :destination_ip =>"10.10.1.3-10.10.1.5", :source_ip =>"192.0.2.2/24"}]}
+        {
+          :policy => "drop",
+          :log_default_action => true,
+          :firewall_rules => [{
+            :enabled => true,
+            :description => "A rule",
+            :policy => "allow",
+            :protocols => "tcp",
+            :destination_port_range => "Any",
+            :destination_ip => "10.10.1.2",
+            :source_port_range => "Any",
+            :source_ip => "192.0.2.2"
+          }, {
+            :enabled => true,
+            :destination_ip =>  "10.10.1.3-10.10.1.5",
+            :source_ip => "192.0.2.2/24"
+          }]
+        }
       end
 
       def test_nat_config
-          {:nat_rules =>[{:enabled =>true, :network_id =>"01234567-1234-1234-1234-0123456789ab", :rule_type =>"DNAT", :translated_ip =>"10.10.1.2-10.10.1.3", :translated_port =>"3412", :original_ip =>"192.0.2.58", :original_port =>"3412", :protocol =>"tcp"}]}
+        {
+          :nat_rules => [{
+            :enabled => true,
+            :network_id => "01234567-1234-1234-1234-0123456789ab",
+            :rule_type => "DNAT",
+            :translated_ip => "10.10.1.2-10.10.1.3",
+            :translated_port => "3412",
+            :original_ip => "192.0.2.58",
+            :original_port => "3412",
+            :protocol =>"tcp"
+          }]
+        }
       end
 
       def different_firewall_config
@@ -159,23 +187,150 @@ module Vcloud
       end
 
       def different_nat_config
-        {:IsEnabled =>"true", :NatRule =>[{:RuleType =>"SNAT", :IsEnabled =>"true", :Id =>"65538", :GatewayNatRule =>{:Interface =>{:type =>"application/vnd.vmware.admin.network+xml", :name =>"RemoteVSE", :href =>"https://api.vmware.example.com/api/admin/network/01234567-1234-1234-1234-012345678912"}, :OriginalIp =>"10.10.1.2-10.10.1.3", :TranslatedIp =>"192.0.2.40"}}]}
+        {
+          :IsEnabled => "true",
+          :NatRule => [{
+            :RuleType => "SNAT",
+            :IsEnabled => "true",
+            :Id => "65538",
+            :GatewayNatRule => {
+              :Interface => {
+                :type => "application/vnd.vmware.admin.network+xml",
+                :name => "RemoteVSE",
+                :href =>"https://api.vmware.example.com/api/admin/network/01234567-1234-1234-1234-012345678912"
+              },
+            :OriginalIp => "10.10.1.2-10.10.1.3",
+            :TranslatedIp => "192.0.2.40"
+            }
+          }]
+        }
       end
 
       def same_firewall_config
-        {:IsEnabled =>"true", :DefaultAction =>"drop", :LogDefaultAction =>"true", :FirewallRule =>[{:Id =>"1", :IsEnabled =>"true", :MatchOnTranslate =>"false", :Description =>"A rule", :Policy =>"allow", :Protocols =>{:Tcp =>"true"}, :DestinationPortRange =>"Any", :Port =>"-1", :DestinationIp =>"10.10.1.2", :SourcePortRange =>"Any", :SourcePort =>"-1", :SourceIp =>"192.0.2.2", :EnableLogging =>"false"}, {:Id =>"2", :IsEnabled =>"true", :MatchOnTranslate =>"false", :Description =>"", :Policy =>"allow", :Protocols =>{:Tcp =>"true"}, :DestinationPortRange =>"Any", :Port =>"-1", :DestinationIp =>"10.10.1.3-10.10.1.5", :SourcePortRange =>"Any", :SourcePort =>"-1", :SourceIp =>"192.0.2.2/24", :EnableLogging =>"false"}]}
+        {
+          :IsEnabled => "true",
+          :DefaultAction => "drop",
+          :LogDefaultAction => "true",
+          :FirewallRule => [{
+            :Id => "1",
+            :IsEnabled => "true",
+            :MatchOnTranslate => "false",
+            :Description => "A rule",
+            :Policy => "allow",
+            :Protocols => {
+              :Tcp => "true"
+            },
+            :DestinationPortRange => "Any",
+            :Port => "-1",
+            :DestinationIp => "10.10.1.2",
+            :SourcePortRange => "Any",
+            :SourcePort => "-1",
+            :SourceIp => "192.0.2.2",
+            :EnableLogging => "false"
+            }, {
+            :Id => "2",
+            :IsEnabled => "true",
+            :MatchOnTranslate => "false",
+            :Description => "",
+            :Policy => "allow",
+            :Protocols => {
+              :Tcp => "true"
+            },
+            :DestinationPortRange => "Any",
+            :Port => "-1",
+            :DestinationIp => "10.10.1.3-10.10.1.5",
+            :SourcePortRange => "Any",
+            :SourcePort => "-1",
+            :SourceIp => "192.0.2.2/24",
+            :EnableLogging =>"false"
+          }]
+        }
       end
 
       def same_nat_config
-        {:IsEnabled =>"true", :NatRule =>[{:Id =>"65537", :IsEnabled =>"true", :RuleType =>"DNAT", :GatewayNatRule =>{:Interface =>{:name =>"ane012345", :href =>"https://vmware.example.com/api/admin/network/01234567-1234-1234-1234-0123456789aa"}, :OriginalIp =>"192.0.2.58", :TranslatedIp =>"10.10.1.2-10.10.1.3", :OriginalPort =>"3412", :TranslatedPort =>"3412", :Protocol =>"tcp"}}]}
+        {
+          :IsEnabled => "true",
+          :NatRule => [{
+            :Id => "65537",
+            :IsEnabled => "true",
+            :RuleType => "DNAT",
+            :GatewayNatRule => {
+              :Interface => {
+                :name => "ane012345",
+                :href =>"https://vmware.example.com/api/admin/network/01234567-1234-1234-1234-0123456789aa"
+              },
+              :OriginalIp => "192.0.2.58",
+              :TranslatedIp => "10.10.1.2-10.10.1.3",
+              :OriginalPort => "3412",
+              :TranslatedPort => "3412",
+              :Protocol => "tcp"
+            }
+          }]
+        }
       end
 
       def expected_firewall_config
-          {:IsEnabled =>"true", :DefaultAction =>"drop", :LogDefaultAction =>"true", :FirewallRule =>[{:Id =>"1", :IsEnabled =>"true", :MatchOnTranslate =>"false", :Description =>"A rule", :Policy =>"allow", :Protocols =>{:Tcp =>"true"}, :DestinationPortRange =>"Any", :Port =>"-1", :DestinationIp =>"10.10.1.2", :SourcePortRange =>"Any", :SourcePort =>"-1", :SourceIp =>"192.0.2.2", :EnableLogging =>"false"}, {:Id =>"2", :IsEnabled =>"true", :MatchOnTranslate =>"false", :Description =>"", :Policy =>"allow", :Protocols =>{:Tcp =>"true"}, :DestinationPortRange =>"Any", :Port =>"-1", :DestinationIp =>"10.10.1.3-10.10.1.5", :SourcePortRange =>"Any", :SourcePort =>"-1", :SourceIp =>"192.0.2.2/24", :EnableLogging =>"false"}]}
+        {
+          :IsEnabled => "true",
+          :DefaultAction => "drop",
+          :LogDefaultAction => "true",
+          :FirewallRule => [{
+            :Id => "1",
+            :IsEnabled => "true",
+            :MatchOnTranslate => "false",
+            :Description => "A rule",
+            :Policy =>"allow",
+            :Protocols => {
+              :Tcp => "true"
+            },
+            :DestinationPortRange => "Any",
+            :Port => "-1",
+            :DestinationIp => "10.10.1.2",
+            :SourcePortRange => "Any",
+            :SourcePort => "-1",
+            :SourceIp => "192.0.2.2",
+            :EnableLogging => "false"
+            },
+            {
+            :Id => "2",
+            :IsEnabled => "true",
+            :MatchOnTranslate => "false",
+            :Description => "",
+            :Policy => "allow",
+            :Protocols => {
+              :Tcp => "true"
+            },
+            :DestinationPortRange => "Any",
+            :Port => "-1",
+            :DestinationIp => "10.10.1.3-10.10.1.5",
+            :SourcePortRange => "Any",
+            :SourcePort => "-1",
+            :SourceIp => "192.0.2.2/24",
+            :EnableLogging => "false"
+          }]
+        }
       end
 
       def expected_nat_config
-          {:IsEnabled =>"true", :NatRule =>[{:Id =>"65537", :IsEnabled =>"true", :RuleType =>"DNAT", :GatewayNatRule =>{:Interface =>{:name =>"ane012345", :href =>"https://vmware.example.com/api/admin/network/01234567-1234-1234-1234-0123456789aa"}, :OriginalIp =>"192.0.2.58", :TranslatedIp =>"10.10.1.2-10.10.1.3", :OriginalPort =>"3412", :TranslatedPort =>"3412", :Protocol =>"tcp"}}]}
+        {
+          :IsEnabled => "true",
+          :NatRule => [{
+            :Id => "65537",
+            :IsEnabled => "true",
+            :RuleType => "DNAT",
+            :GatewayNatRule => {
+              :Interface => {
+                :name => "ane012345",
+                :href => "https://vmware.example.com/api/admin/network/01234567-1234-1234-1234-0123456789aa"
+              },
+              :OriginalIp => "192.0.2.58",
+              :TranslatedIp => "10.10.1.2-10.10.1.3",
+              :OriginalPort => "3412",
+              :TranslatedPort => "3412",
+              :Protocol => "tcp"
+            }
+          }]
+        }
       end
     end
   end
