@@ -27,23 +27,23 @@ module Vcloud
             :FirewallService => different_firewall_config,
             :NatService => different_nat_config
           }
-          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config)
+          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
         end
 
         it "requires update" do
-          expect(@proposed_config.update_required?(@remote_config)).to be_true
+          expect(@proposed_config.update_required?).to be_true
         end
 
         it "proposed config contains firewall config in the form expected" do
           # bug in that if update required is not called, config is nil
-          @proposed_config.update_required?(@remote_config)
+          @proposed_config.update_required?
 
           proposed_firewall_config = @proposed_config.config[:FirewallService]
           expect(proposed_firewall_config).to eq(expected_firewall_config)
         end
 
         it "proposed config contains nat config in the form expected" do
-          @proposed_config.update_required?(@remote_config)
+          @proposed_config.update_required?
 
           proposed_nat_config = @proposed_config.config[:NatService]
           expect(proposed_nat_config).to eq(expected_nat_config)
@@ -75,23 +75,23 @@ module Vcloud
             :NatService => same_nat_config
           }
 
-          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config)
+          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
         end
 
 
         it "requires update" do
-          expect(@proposed_config.update_required?(@remote_config)).to be_true
+          expect(@proposed_config.update_required?).to be_true
         end
 
         it "proposed config contains firewall config in the form expected" do
-          expect(@proposed_config.update_required?(@remote_config)).to be_true
+          expect(@proposed_config.update_required?).to be_true
 
           proposed_firewall_config = @proposed_config.config[:FirewallService]
           expect(proposed_firewall_config).to eq(expected_firewall_config)
         end
 
         it "proposed config does not contain nat config" do
-          expect(@proposed_config.update_required?(@remote_config)).to be_true
+          expect(@proposed_config.update_required?).to be_true
           expect(@proposed_config.config.key?(:NatService)).to be_false
         end
 
@@ -120,22 +120,22 @@ module Vcloud
             :NatService => same_nat_config
           }
 
-          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config)
+          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
         end
 
         it "requires update" do
-          expect(@proposed_config.update_required?(@remote_config)).to be_true
+          expect(@proposed_config.update_required?).to be_true
         end
 
         it "proposed config contains firewall config in the form expected" do
-          expect(@proposed_config.update_required?(@remote_config)).to be_true
+          expect(@proposed_config.update_required?).to be_true
 
           proposed_firewall_config = @proposed_config.config[:FirewallService]
           expect(proposed_firewall_config).to eq(expected_firewall_config)
         end
 
         it "proposed config does not contain nat config" do
-          expect(@proposed_config.update_required?(@remote_config)).to be_true
+          expect(@proposed_config.update_required?).to be_true
 
           expect(@proposed_config.config.key?(:NatService)).to be_false
         end
@@ -166,15 +166,15 @@ module Vcloud
             :NatService => same_nat_config
           }
 
-          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config)
+          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
         end
 
         it "does not require update" do
-          expect(@proposed_config.update_required?(@remote_config)).to be_false
+          expect(@proposed_config.update_required?).to be_false
         end
 
         it "there is no proposed config" do
-          expect(@proposed_config.update_required?(@remote_config)).to be_false
+          expect(@proposed_config.update_required?).to be_false
 
           expect(@proposed_config.config.empty?).to be_true
         end
@@ -203,15 +203,15 @@ module Vcloud
             :NatService => different_nat_config
           }
 
-          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config)
+          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
         end
 
         it "does not require update" do
-          expect(@proposed_config.update_required?(@remote_config)).to be_false
+          expect(@proposed_config.update_required?).to be_false
         end
 
         it "there is no proposed config" do
-          expect(@proposed_config.update_required?(@remote_config)).to be_false
+          expect(@proposed_config.update_required?).to be_false
 
           expect(@proposed_config.config.empty?).to be_true
         end
@@ -240,15 +240,15 @@ module Vcloud
             :NatService => different_nat_config
           }
 
-          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config)
+          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
         end
 
         it "does not require update" do
-          expect(@proposed_config.update_required?(@remote_config)).to be_false
+          expect(@proposed_config.update_required?).to be_false
         end
 
         it "there is no proposed config" do
-          expect(@proposed_config.update_required?(@remote_config)).to be_false
+          expect(@proposed_config.update_required?).to be_false
 
           expect(@proposed_config.config.empty?).to be_true
         end
