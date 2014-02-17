@@ -92,7 +92,7 @@ module Vcloud
         end
 
         it "and then should not configure the LoadBalancerService if updated again with the same configuration (idempotency)" do
-          expect(Vcloud.logger).to receive(:info).with('EdgeGatewayServices.update: Configuration is already up to date. Skipping.')
+          expect(Vcloud::EdgeGateway.logger).to receive(:info).with('EdgeGatewayServices.update: Configuration is already up to date. Skipping.')
           EdgeGatewayServices.new.update(@initial_load_balancer_config_file)
         end
 
