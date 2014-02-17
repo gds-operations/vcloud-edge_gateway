@@ -51,6 +51,9 @@ module Vcloud
       end
 
       def config
+        if @update_required.nil?
+          update_required?
+        end
         @config
       end
 
