@@ -4,7 +4,7 @@ module Vcloud
   module EdgeGateway
     describe EdgeGatewayConfiguration do
 
-      context "whether update is required" do
+      context "both configurations are changed" do
 
         before(:each) do
           @edge_gateway_id = "1111111-7b54-43dd-9eb1-631dd337e5a7"
@@ -16,124 +16,241 @@ module Vcloud
               }
             })
             Vcloud::Core::EdgeGateway.stub(:get_by_name).with(@edge_gateway_id).and_return(@edge_gateway)
-        end
 
-        it "requires update to both when both configurations are changed" do
-          test_config = {
+          @test_config = {
             :gateway => @edge_gateway_id,
             :nat_service => test_nat_config,
             :firewall_service => test_firewall_config
           }
 
-          proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(test_config)
-
-          remote_config = {
+          @remote_config = {
             :FirewallService => different_firewall_config,
             :NatService => different_nat_config
           }
+          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config)
+        end
 
-          expect(proposed_config.update_required?(remote_config)).to be_true
+        it "requires update" do
+          expect(@proposed_config.update_required?(@remote_config)).to be_true
+        end
 
-          proposed_firewall_config = proposed_config.config[:FirewallService]
+        it "proposed config contains firewall config in the form expected" do
+          # bug in that if update required is not called, config is nil
+          @proposed_config.update_required?(@remote_config)
+
+          proposed_firewall_config = @proposed_config.config[:FirewallService]
           expect(proposed_firewall_config).to eq(expected_firewall_config)
+        end
 
-          proposed_nat_config = proposed_config.config[:NatService]
+        it "proposed config contains nat config in the form expected" do
+          @proposed_config.update_required?(@remote_config)
+
+          proposed_nat_config = @proposed_config.config[:NatService]
           expect(proposed_nat_config).to eq(expected_nat_config)
         end
 
-        it "requires update to firewall only when firewall has changed and nat has not" do
-          test_config = {
+      end
+
+      context "firewall config has changed and nat has not" do
+
+        before(:each) do
+          @edge_gateway_id = "1111111-7b54-43dd-9eb1-631dd337e5a7"
+          @edge_gateway = double(:edge_gateway,
+            :vcloud_gateway_interface_by_id => {
+              Network: {
+                :name => 'ane012345',
+                :href => 'https://vmware.example.com/api/admin/network/01234567-1234-1234-1234-0123456789aa'
+              }
+            })
+            Vcloud::Core::EdgeGateway.stub(:get_by_name).with(@edge_gateway_id).and_return(@edge_gateway)
+
+          @test_config = {
             :gateway => @edge_gateway_id,
             :nat_service => test_nat_config,
             :firewall_service => test_firewall_config
           }
 
-          proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(test_config)
-
-          remote_config = {
+          @remote_config = {
             :FirewallService => different_firewall_config,
             :NatService => same_nat_config
           }
 
-          expect(proposed_config.update_required?(remote_config)).to be_true
-
-          proposed_firewall_config = proposed_config.config[:FirewallService]
-          expect(proposed_firewall_config).to eq(expected_firewall_config)
-
-          expect(proposed_config.config.key?(:NatService)).to be_false
+          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config)
         end
 
-        it "requires update to firewall only when firewall has changed and nat is absent" do
-          test_config = {
+
+        it "requires update" do
+          expect(@proposed_config.update_required?(@remote_config)).to be_true
+        end
+
+        it "proposed config contains firewall config in the form expected" do
+          expect(@proposed_config.update_required?(@remote_config)).to be_true
+
+          proposed_firewall_config = @proposed_config.config[:FirewallService]
+          expect(proposed_firewall_config).to eq(expected_firewall_config)
+        end
+
+        it "proposed config does not contain nat config" do
+          expect(@proposed_config.update_required?(@remote_config)).to be_true
+          expect(@proposed_config.config.key?(:NatService)).to be_false
+        end
+
+      end
+
+      context "firewall config has changed and nat config is absent" do
+
+        before(:each) do
+          @edge_gateway_id = "1111111-7b54-43dd-9eb1-631dd337e5a7"
+          @edge_gateway = double(:edge_gateway,
+            :vcloud_gateway_interface_by_id => {
+              Network: {
+                :name => 'ane012345',
+                :href => 'https://vmware.example.com/api/admin/network/01234567-1234-1234-1234-0123456789aa'
+              }
+            })
+            Vcloud::Core::EdgeGateway.stub(:get_by_name).with(@edge_gateway_id).and_return(@edge_gateway)
+
+          @test_config = {
             :gateway => @edge_gateway_id,
             :firewall_service => test_firewall_config
           }
 
-          proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(test_config)
-
-          remote_config = {
+          @remote_config = {
             :FirewallService => different_firewall_config,
             :NatService => same_nat_config
           }
 
-          expect(proposed_config.update_required?(remote_config)).to be_true
-
-          proposed_firewall_config = proposed_config.config[:FirewallService]
-          expect(proposed_firewall_config).to eq(expected_firewall_config)
-
-          #expect proposed config not to contain nat config
-          expect(proposed_config.config.key?(:NatService)).to be_false
+          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config)
         end
 
-        it "does not require change when both configs are present but have not changed" do
-          test_config = {
+        it "requires update" do
+          expect(@proposed_config.update_required?(@remote_config)).to be_true
+        end
+
+        it "proposed config contains firewall config in the form expected" do
+          expect(@proposed_config.update_required?(@remote_config)).to be_true
+
+          proposed_firewall_config = @proposed_config.config[:FirewallService]
+          expect(proposed_firewall_config).to eq(expected_firewall_config)
+        end
+
+        it "proposed config does not contain nat config" do
+          expect(@proposed_config.update_required?(@remote_config)).to be_true
+
+          expect(@proposed_config.config.key?(:NatService)).to be_false
+        end
+
+      end
+
+      context "both configs are present but haven't changed" do
+
+        before(:each) do
+          @edge_gateway_id = "1111111-7b54-43dd-9eb1-631dd337e5a7"
+          @edge_gateway = double(:edge_gateway,
+            :vcloud_gateway_interface_by_id => {
+              Network: {
+                :name => 'ane012345',
+                :href => 'https://vmware.example.com/api/admin/network/01234567-1234-1234-1234-0123456789aa'
+              }
+            })
+            Vcloud::Core::EdgeGateway.stub(:get_by_name).with(@edge_gateway_id).and_return(@edge_gateway)
+
+          @test_config = {
             :gateway => @edge_gateway_id,
             :nat_service => test_nat_config,
             :firewall_service => test_firewall_config
           }
 
-          proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(test_config)
-
-          remote_config = {
+          @remote_config = {
             :FirewallService => same_firewall_config,
             :NatService => same_nat_config
           }
 
-          expect(proposed_config.update_required?(remote_config)).to be_false
-          expect(proposed_config.config.empty?).to be_true
+          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config)
         end
 
-        it "does not require change when firewall is unchanged and nat is absent" do
-          test_config = {
+        it "does not require update" do
+          expect(@proposed_config.update_required?(@remote_config)).to be_false
+        end
+
+        it "there is no proposed config" do
+          expect(@proposed_config.update_required?(@remote_config)).to be_false
+
+          expect(@proposed_config.config.empty?).to be_true
+        end
+
+    end
+
+    context "firewall config has not changed and nat config is absent" do
+        before(:each) do
+          @edge_gateway_id = "1111111-7b54-43dd-9eb1-631dd337e5a7"
+          @edge_gateway = double(:edge_gateway,
+            :vcloud_gateway_interface_by_id => {
+              Network: {
+                :name => 'ane012345',
+                :href => 'https://vmware.example.com/api/admin/network/01234567-1234-1234-1234-0123456789aa'
+              }
+            })
+            Vcloud::Core::EdgeGateway.stub(:get_by_name).with(@edge_gateway_id).and_return(@edge_gateway)
+
+          @test_config = {
             :gateway => @edge_gateway_id,
             :firewall_service => test_firewall_config
           }
 
-          proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(test_config)
-
-          remote_config = {
+          @remote_config = {
             :FirewallService => same_firewall_config,
             :NatService => different_nat_config
           }
 
-          expect(proposed_config.update_required?(remote_config)).to be_false
-          expect(proposed_config.config.empty?).to be_true
+          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config)
         end
 
-        it "does not require change when both are absent" do
-          test_config = {
+        it "does not require update" do
+          expect(@proposed_config.update_required?(@remote_config)).to be_false
+        end
+
+        it "there is no proposed config" do
+          expect(@proposed_config.update_required?(@remote_config)).to be_false
+
+          expect(@proposed_config.config.empty?).to be_true
+        end
+
+      end
+
+      context "no service config is present" do
+
+        before(:each) do
+          @edge_gateway_id = "1111111-7b54-43dd-9eb1-631dd337e5a7"
+          @edge_gateway = double(:edge_gateway,
+            :vcloud_gateway_interface_by_id => {
+              Network: {
+                :name => 'ane012345',
+                :href => 'https://vmware.example.com/api/admin/network/01234567-1234-1234-1234-0123456789aa'
+              }
+            })
+            Vcloud::Core::EdgeGateway.stub(:get_by_name).with(@edge_gateway_id).and_return(@edge_gateway)
+
+          @test_config = {
             :gateway => @edge_gateway_id,
           }
 
-          proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(test_config)
-
-          remote_config = {
+          @remote_config = {
             :FirewallService => different_firewall_config,
             :NatService => different_nat_config
           }
 
-          expect(proposed_config.update_required?(remote_config)).to be_false
-          expect(proposed_config.config.empty?).to be_true
+          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config)
+        end
+
+        it "does not require update" do
+          expect(@proposed_config.update_required?(@remote_config)).to be_false
+        end
+
+        it "there is no proposed config" do
+          expect(@proposed_config.update_required?(@remote_config)).to be_false
+
+          expect(@proposed_config.config.empty?).to be_true
         end
 
       end
