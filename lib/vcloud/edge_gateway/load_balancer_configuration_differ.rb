@@ -1,5 +1,3 @@
-require 'vcloud'
-
 module Vcloud
   module EdgeGateway
     class LoadBalancerConfigurationDiffer
