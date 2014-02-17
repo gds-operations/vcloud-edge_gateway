@@ -8,14 +8,14 @@ module Vcloud
     end
 
     def update(config_file = nil)
-      config = @config_loader.load_config(config_file, Vcloud::Schema::EDGE_GATEWAY_SERVICES)
+      local_config = @config_loader.load_config(config_file, Vcloud::Schema::EDGE_GATEWAY_SERVICES)
 
-      edge_gateway = Core::EdgeGateway.get_by_name config[:gateway]
+      edge_gateway = Core::EdgeGateway.get_by_name local_config[:gateway]
       remote_config = edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration]
 
-      proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(config)
+      proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(local_config, remote_config)
 
-      if proposed_config.update_required?(remote_config)
+      if proposed_config.update_required?
         edge_gateway.update_configuration proposed_config.config
       else
         Vcloud::EdgeGateway.logger.info("EdgeGatewayServices.update: Configuration is already up to date. Skipping.")
