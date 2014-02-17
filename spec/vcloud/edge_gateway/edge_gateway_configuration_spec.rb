@@ -175,7 +175,28 @@ module Vcloud
       end
 
       def different_firewall_config
-        {:IsEnabled =>"true", :DefaultAction =>"drop", :LogDefaultAction =>"false", :FirewallRule =>[{:Id =>"1", :IsEnabled =>"true", :MatchOnTranslate =>"false", :Description =>"A rule", :Policy =>"allow", :Protocols =>{:Tcp =>"true"}, :Port =>"-1", :DestinationPortRange =>"Any", :DestinationIp =>"10.10.1.2", :SourcePort =>"-1", :SourcePortRange =>"Any", :SourceIp =>"192.0.2.2", :EnableLogging =>"false"}]}
+        {
+          :IsEnabled => "true",
+          :DefaultAction => "drop",
+          :LogDefaultAction => "false",
+          :FirewallRule => [{
+            :Id => "1",
+            :IsEnabled => "true",
+            :MatchOnTranslate => "false",
+            :Description => "A rule",
+            :Policy => "allow",
+            :Protocols => {
+              :Tcp => "true"
+            },
+            :Port => "-1",
+            :DestinationPortRange => "Any",
+            :DestinationIp => "10.10.1.2",
+            :SourcePort => "-1",
+            :SourcePortRange => "Any",
+            :SourceIp => "192.0.2.2",
+            :EnableLogging =>"false"
+          }]
+        }
       end
 
       def different_nat_config
