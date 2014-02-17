@@ -98,26 +98,38 @@ module Vcloud
 
       end
 
-      context "Check specific update cases" do
+      context "Check specific LoadBalancerService update cases" do
 
-        it "should be able to configure the LoadBalancerService with no pools and virtual_servers" do
-          config_file = generate_input_config_file('load_balancer_empty.yaml.erb', edge_gateway_erb_input)
+        it "should be able to configure with no pools and virtual_servers" do
+          config_file = generate_input_config_file(
+            'load_balancer_empty.yaml.erb',
+            edge_gateway_erb_input
+          )
           EdgeGatewayServices.new.update(config_file)
-          remote_vcloud_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration][:LoadBalancerService]
+          edge_config = @edge_gateway.vcloud_attributes[:Configuration]
+          remote_vcloud_config = edge_config[:EdgeGatewayServiceConfiguration][:LoadBalancerService]
           expect(remote_vcloud_config[:Pool].size).to be == 0
           expect(remote_vcloud_config[:VirtualServer].size).to be == 0
         end
 
-        it "should be able to configure the LoadBalancerService with a single Pool" do
-          config_file = generate_input_config_file('load_balancer_single_pool.yaml.erb', edge_gateway_erb_input)
+        it "should be able to configure with a single Pool and no VirtualServers" do
+          config_file = generate_input_config_file(
+            'load_balancer_single_pool.yaml.erb',
+            edge_gateway_erb_input
+          )
           EdgeGatewayServices.new.update(config_file)
-          remote_vcloud_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration][:LoadBalancerService]
+          edge_config = @edge_gateway.vcloud_attributes[:Configuration]
+          remote_vcloud_config = edge_config[:EdgeGatewayServiceConfiguration][:LoadBalancerService]
           expect(remote_vcloud_config[:Pool].size).to be == 1
         end
 
-        it "should raise an error when trying configure the LoadBalancerService with a single VirtualServer" do
-          config_file = generate_input_config_file('load_balancer_single_virtual_server.yaml.erb', edge_gateway_erb_input)
-          expect { EdgeGatewayServices.new.update(config_file) }.to raise_error('Load balancer virtual server integration-test-vs-1 does not have a valid backing pool.')
+        it "should raise an error when trying configure with a single VirtualServer, with an unconfigured pool" do
+          config_file = generate_input_config_file(
+            'load_balancer_single_virtual_server_invalid_pool.yaml.erb',
+            edge_gateway_erb_input
+          )
+          expect { EdgeGatewayServices.new.update(config_file) }.
+            to raise_error('Load balancer virtual server integration-test-vs-1 does not have a valid backing pool.')
         end
 
       end

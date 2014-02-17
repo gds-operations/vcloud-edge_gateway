@@ -7,7 +7,7 @@ load_balancer_service:
     description: 'A virtual server'
     ip_address: <%= edge_gateway_ext_network_ip %>
     network: <%= edge_gateway_ext_network_id %>
-    pool: 'integration-test-pool-1'
+    pool: 'unconfigured-test-pool-1'
     service_profiles:
       http:
         port: 8080
