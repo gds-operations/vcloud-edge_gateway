@@ -307,6 +307,132 @@ module Vcloud
                     }
                   }
                 ]
+              },
+
+              title: 'output rule order should be same as the input rule order',
+              input: {
+                nat_rules: [
+                  {
+                    rule_type: 'DNAT',
+                    network_id: '2ad93597-7b54-43dd-9eb1-631dd337e5a7',
+                    original_ip: "192.0.2.2",
+                    original_port: '8081',
+                    translated_port: '8080',
+                    translated_ip: "10.10.20.21",
+                  },
+                  {
+                    rule_type: 'SNAT',
+                    network_id: '2ad93597-7b54-43dd-9eb1-631dd337e5a7',
+                    original_ip: "192.0.2.2",
+                    translated_ip: "10.10.20.20",
+                  },
+                  {
+                    rule_type: 'DNAT',
+                    network_id: '2ad93597-7b54-43dd-9eb1-631dd337e5a7',
+                    original_ip: "192.0.2.2",
+                    original_port: '8082',
+                    translated_port: '8080',
+                    translated_ip: "10.10.20.22",
+                  },
+                  {
+                    rule_type: 'SNAT',
+                    network_id: '2ad93597-7b54-43dd-9eb1-631dd337e5a7',
+                    original_ip: "192.0.2.3",
+                    translated_ip: "10.10.20.21",
+                  },
+                  {
+                    rule_type: 'DNAT',
+                    network_id: '2ad93597-7b54-43dd-9eb1-631dd337e5a7',
+                    original_ip: "192.0.2.2",
+                    original_port: '8083',
+                    translated_port: '8080',
+                    translated_ip: "10.10.20.23",
+                  },
+                ],
+              },
+              output: {
+                IsEnabled: 'true',
+                NatRule: [
+                  {
+                    :Id => '65537',
+                    :IsEnabled => 'true',
+                    :RuleType => 'DNAT',
+                    :GatewayNatRule => {
+                      :Interface =>
+                        {
+                          :name => 'ane012345',
+                          :href => 'https://vmware.api.net/api/admin/network/2ad93597-7b54-43dd-9eb1-631dd337e5a7'
+                        },
+                      :OriginalIp => "192.0.2.2",
+                      :TranslatedIp => "10.10.20.21",
+                      :OriginalPort => '8081',
+                      :TranslatedPort => '8080',
+                      :Protocol => 'tcp',
+                    },
+                  },
+                  {
+                    :Id => '65538',
+                    :IsEnabled => 'true',
+                    :RuleType => 'SNAT',
+                    :GatewayNatRule => {
+                      :Interface =>
+                        {
+                          :name => 'ane012345',
+                          :href => 'https://vmware.api.net/api/admin/network/2ad93597-7b54-43dd-9eb1-631dd337e5a7'
+                        },
+                      :OriginalIp => "192.0.2.2",
+                      :TranslatedIp => "10.10.20.20",
+                    },
+                  },
+                  {
+                    :Id => '65539',
+                    :IsEnabled => 'true',
+                    :RuleType => 'DNAT',
+                    :GatewayNatRule => {
+                      :Interface =>
+                        {
+                          :name => 'ane012345',
+                          :href => 'https://vmware.api.net/api/admin/network/2ad93597-7b54-43dd-9eb1-631dd337e5a7'
+                        },
+                      :OriginalIp => "192.0.2.2",
+                      :TranslatedIp => "10.10.20.22",
+                      :OriginalPort => '8082',
+                      :TranslatedPort => '8080',
+                      :Protocol => 'tcp',
+                    },
+                  },
+                  {
+                    :Id => '65540',
+                    :IsEnabled => 'true',
+                    :RuleType => 'SNAT',
+                    :GatewayNatRule => {
+                      :Interface =>
+                        {
+                          :name => 'ane012345',
+                          :href => 'https://vmware.api.net/api/admin/network/2ad93597-7b54-43dd-9eb1-631dd337e5a7'
+                        },
+                      :OriginalIp => "192.0.2.3",
+                      :TranslatedIp => "10.10.20.21",
+                    },
+                  },
+                  {
+                    :Id => '65541',
+                    :IsEnabled => 'true',
+                    :RuleType => 'DNAT',
+                    :GatewayNatRule => {
+                      :Interface =>
+                        {
+                          :name => 'ane012345',
+                          :href => 'https://vmware.api.net/api/admin/network/2ad93597-7b54-43dd-9eb1-631dd337e5a7'
+                        },
+                      :OriginalIp => "192.0.2.2",
+                      :TranslatedIp => "10.10.20.23",
+                      :OriginalPort => '8083',
+                      :TranslatedPort => '8080',
+                      :Protocol => 'tcp',
+                    },
+                  }
+                ]
               }
 
             }
