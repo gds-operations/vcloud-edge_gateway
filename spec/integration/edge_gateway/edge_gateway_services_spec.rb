@@ -36,23 +36,35 @@ module Vcloud
 
       before(:all) do
         reset_edge_gateway
-        @initial_config_file = generate_input_config_file('nat_and_firewall_config.yaml.erb', edge_gateway_erb_input)
+        @initial_config_file = generate_input_config_file(
+          'nat_and_firewall_config.yaml.erb',
+          edge_gateway_erb_input
+        )
+        @adding_load_balancer_config_file = generate_input_config_file(
+          'nat_and_firewall_plus_load_balancer_config.yaml.erb',
+          edge_gateway_erb_input
+        )
         @edge_gateway = Vcloud::Core::EdgeGateway.get_by_name(@edge_name)
       end
 
       context "Check update is functional" do
 
         before(:all) do
-          local_config = ConfigLoader.new.load_config(@initial_config_file, Vcloud::Schema::EDGE_GATEWAY_SERVICES)
+          local_config = ConfigLoader.new.load_config(
+            @initial_config_file,
+            Vcloud::Schema::EDGE_GATEWAY_SERVICES
+          )
         end
 
         it "should be starting our tests from an empty EdgeGateway" do
           remote_vcloud_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration]
           expect(remote_vcloud_config[:FirewallService][:FirewallRule].empty?).to be_true
           expect(remote_vcloud_config[:NatService][:NatRule].empty?).to be_true
+          expect(remote_vcloud_config[:LoadBalancerService][:Pool].empty?).to be_true
+          expect(remote_vcloud_config[:LoadBalancerService][:VirtualServer].empty?).to be_true
         end
 
-        it "should only need to make one call to Core::EdgeGateway.update_configuration to update configuration" do
+        it "should only need to make one call to EdgeGateway.update_configuration to update configuration" do
           start_time = DateTime.now()
           task_list_before_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
           EdgeGatewayServices.new.update(@initial_config_file)
@@ -60,13 +72,40 @@ module Vcloud
           expect(task_list_after_update.size - task_list_before_update.size).to be(1)
         end
 
-        it "should now have nat and firewall rules configured" do
+        it "should now have nat and firewall rules configured, no load balancer yet" do
           remote_vcloud_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration]
           expect(remote_vcloud_config[:FirewallService][:FirewallRule].empty?).to be_false
           expect(remote_vcloud_config[:NatService][:NatRule].empty?).to be_false
+          expect(remote_vcloud_config[:LoadBalancerService][:Pool].empty?).to be(true)
+          expect(remote_vcloud_config[:LoadBalancerService][:VirtualServer].empty?).to be(true)
         end
 
         it "should not update the EdgeGateway again if the config hasn't changed" do
+          start_time = DateTime.now()
+          task_list_before_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
+          EdgeGatewayServices.new.update(@initial_config_file)
+          task_list_after_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
+          expect(task_list_after_update.size - task_list_before_update.size).to be(0)
+        end
+
+        it "should only make one call to Core::EdgeGateway.update_configuration to add the LoadBalancer config" do
+          start_time = DateTime.now()
+          task_list_before_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
+          EdgeGatewayServices.new.update(@adding_load_balancer_config_file)
+          task_list_after_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
+          expect(task_list_after_update.size - task_list_before_update.size).to be(1)
+        end
+
+        it "should not update the EdgeGateway again if we reapply the 'adding load balancer' config" do
+          start_time = DateTime.now()
+          task_list_before_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
+          EdgeGatewayServices.new.update(@adding_load_balancer_config_file)
+          task_list_after_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
+          expect(task_list_after_update.size - task_list_before_update.size).to be(0)
+        end
+
+        it "should not update the EdgeGateway again if we apply the previous config" +
+            ", as it does not include a load balancer" do
           start_time = DateTime.now()
           task_list_before_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
           EdgeGatewayServices.new.update(@initial_config_file)
@@ -110,13 +149,16 @@ module Vcloud
           edge_gateway_name: @edge_name,
           network_id: @ext_net_id,
           original_ip: @ext_net_ip,
+          edge_gateway_ext_network_id: @ext_net_id,
+          edge_gateway_ext_network_ip: @ext_net_ip,
         }
       end
 
       def get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(timestamp)
         vcloud_time = timestamp.strftime('%FT%T.000Z')
         q = Query.new('task',
-          :filter => "name==networkConfigureEdgeGatewayServices;objectName==#{@edge_name};startDate=ge=#{vcloud_time}",
+          :filter =>
+            "name==networkConfigureEdgeGatewayServices;objectName==#{@edge_name};startDate=ge=#{vcloud_time}",
           :sortDesc => 'startDate',
         )
         q.get_all_results
