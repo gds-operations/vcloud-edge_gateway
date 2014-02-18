@@ -16,7 +16,6 @@ module Vcloud
         Vcloud::Core::EdgeGateway.stub(:get_by_name).with(@edge_gateway_id).and_return(@edge_gateway)
       end
 
-
       context "config object doesn't require methods called in a particular order" do
 
         before(:each) do
@@ -40,7 +39,6 @@ module Vcloud
         end
 
       end
-
 
       context "all configurations are changed" do
 
@@ -94,7 +92,6 @@ module Vcloud
           }
           @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
         end
-
 
         it "requires update" do
           expect(@proposed_config.update_required?).to be(true)
@@ -165,9 +162,10 @@ module Vcloud
           expect(@proposed_config.config.empty?).to be(true)
         end
 
-    end
+      end
 
-    context "firewall config has not changed and nat config is absent" do
+      context "firewall config has not changed and nat config is absent" do
+
         before(:each) do
           @test_config = {
             :gateway => @edge_gateway_id,
