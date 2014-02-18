@@ -53,18 +53,11 @@ module Vcloud
         end
 
         it "should only need to make one call to Core::EdgeGateway.update_configuration to update configuration" do
-          q = Query.new('edgeGateway', :filter => "name==#{@edge_name}")
-          result = q.get_all_results
-          latest_task = result.first[:task]
-
-          expect_any_instance_of(Core::EdgeGateway).to receive(:update_configuration).exactly(1).times.and_call_original
+          start_time = DateTime.now()
+          task_list_before_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
           EdgeGatewayServices.new.update(@initial_config_file)
-
-          test_result = q.get_all_results
-          test_latest_task = test_result.first[:task]
-
-          # confirm that a task has been run on the EdgeGateway
-          expect(latest_task == test_latest_task).to be_false
+          task_list_after_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
+          expect(task_list_after_update.size - task_list_before_update.size).to be(1)
         end
 
         it "should now have nat and firewall rules configured" do
@@ -74,17 +67,11 @@ module Vcloud
         end
 
         it "should not update the EdgeGateway again if the config hasn't changed" do
-          q = Query.new('edgeGateway', :filter => "name==#{@edge_name}")
-          result = q.get_all_results
-          latest_task = result.first[:task]
-
+          start_time = DateTime.now()
+          task_list_before_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
           EdgeGatewayServices.new.update(@initial_config_file)
-
-          test_result = q.get_all_results
-          test_latest_task = result.first[:task]
-
-          # No task has been run on the EdgeGateway since the one before update was called
-          expect(latest_task == test_latest_task).to be_true
+          task_list_after_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
+          expect(task_list_after_update.size - task_list_before_update.size).to be(0)
         end
 
       end
@@ -124,6 +111,15 @@ module Vcloud
           network_id: @ext_net_id,
           original_ip: @ext_net_ip,
         }
+      end
+
+      def get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(timestamp)
+        vcloud_time = timestamp.strftime('%FT%T.000Z')
+        q = Query.new('task',
+          :filter => "name==networkConfigureEdgeGatewayServices;objectName==#{@edge_name};startDate=ge=#{vcloud_time}",
+          :sortDesc => 'startDate',
+        )
+        q.get_all_results
       end
 
     end
