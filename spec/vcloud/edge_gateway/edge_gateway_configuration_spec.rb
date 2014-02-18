@@ -173,7 +173,7 @@ module Vcloud
 
       end
 
-      context "both configs are present but haven't changed" do
+      context "all configs are present but haven't changed" do
 
         before(:each) do
           @edge_gateway_id = "1111111-7b54-43dd-9eb1-631dd337e5a7"
@@ -189,12 +189,14 @@ module Vcloud
           @test_config = {
             :gateway => @edge_gateway_id,
             :nat_service => test_nat_config,
-            :firewall_service => test_firewall_config
+            :firewall_service => test_firewall_config,
+            :load_balancer_service => test_load_balancer_config,
           }
 
           @remote_config = {
             :FirewallService => same_firewall_config,
-            :NatService => same_nat_config
+            :NatService => same_nat_config,
+            :LoadBalancerService => same_load_balancer_config,
           }
 
           @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
@@ -574,6 +576,127 @@ module Vcloud
               :TranslatedPort => "3412",
               :Protocol => "tcp"
             }
+          }]
+        }
+      end
+
+      def same_load_balancer_config
+        {
+          :IsEnabled=>"true",
+          :Pool=>[{
+            :Name=>"unit-test-pool-1",
+            :Description=>"A pool",
+            :ServicePort=>[{
+              :IsEnabled=>"true",
+              :Protocol=>"HTTP",
+              :Algorithm=>"ROUND_ROBIN",
+              :Port=>"8080",
+              :HealthCheckPort=>"",
+              :HealthCheck=>{
+                :Mode=>"HTTP",
+                :Uri=>"",
+                :HealthThreshold=>"2",
+                :UnhealthThreshold=>"3",
+                :Interval=>"5",
+                :Timeout=>"15"
+              }
+            }, {
+              :IsEnabled=>"false",
+              :Protocol=>"HTTPS",
+              :Algorithm=>"ROUND_ROBIN",
+              :Port=>"443",
+              :HealthCheckPort=>"",
+              :HealthCheck=>{
+                :Mode=>"SSL",
+                :Uri=>"",
+                :HealthThreshold=>"2",
+                :UnhealthThreshold=>"3",
+                :Interval=>"5",
+                :Timeout=>"15"
+              }
+            }, {
+              :IsEnabled=>"false",
+              :Protocol=>"TCP",
+              :Algorithm =>"ROUND_ROBIN",
+              :Port=>"",
+              :HealthCheckPort=>"",
+              :HealthCheck=>{
+                :Mode=>"TCP",
+                :Uri=>"",
+                :HealthThreshold=>"2",
+                :UnhealthThreshold=>"3",
+                :Interval=>"5",
+                :Timeout=>"15"
+              }
+            }],
+            :Member=>[{
+              :IpAddress=>"10.0.2.55",
+              :Weight=>"1",
+              :ServicePort=>[{
+                :Protocol=>"HTTP",
+                :Port=>"",
+                :HealthCheckPort=>""
+              }, {
+                :Protocol=>"HTTPS",
+                :Port=>"",
+                :HealthCheckPort=>""
+              }, {
+                :Protocol=>"TCP",
+                :Port=>"",
+                :HealthCheckPort=>""
+              }]
+            }, {
+              :IpAddress=>"10.0.2.56",
+              :Weight=>"1",
+              :ServicePort=>[{
+                :Protocol=>"HTTP",
+                :Port=>"",
+                :HealthCheckPort=>""
+              }, {
+                :Protocol=>"HTTPS",
+                :Port=>"",
+                :HealthCheckPort=>""
+              }, {
+                :Protocol=>"TCP",
+                :Port=>"",
+                :HealthCheckPort=>""
+              }]
+            }]
+          }],
+          :VirtualServer=>[{
+            :IsEnabled=>"true",
+            :Name=>"unit-test-vs-1",
+            :Description=>"A virtual server",
+            :Interface=>{
+              :type=>"application/vnd.vmware.vcloud.orgVdcNetwork+xml",
+              :name=>"ane012345",
+              :href=>"https://vmware.example.com/api/admin/network/01234567-1234-1234-1234-0123456789aa"
+            },
+            :IpAddress=>"192.0.2.88",
+            :ServiceProfile=>[{
+              :IsEnabled=>"true",
+              :Protocol=>"HTTP",
+              :Port=>"8080",
+              :Persistence=>{
+                :Method =>""
+              }
+            }, {
+              :IsEnabled=>"false",
+              :Protocol=>"HTTPS",
+              :Port=>"443",
+              :Persistence=>{
+                :Method=>""
+              }
+            }, {
+              :IsEnabled=>"false",
+              :Protocol=>"TCP",
+              :Port=>"",
+              :Persistence=>{
+                :Method=>""
+              }
+            }],
+            :Logging=>"false",
+            :Pool=>"unit-test-pool-1"
           }]
         }
       end
