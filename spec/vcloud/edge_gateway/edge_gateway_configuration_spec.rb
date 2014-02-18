@@ -4,26 +4,28 @@ module Vcloud
   module EdgeGateway
     describe EdgeGatewayConfiguration do
 
+      before(:each) do
+        @edge_gateway_id = "1111111-7b54-43dd-9eb1-631dd337e5a7"
+        @edge_gateway = double(:edge_gateway,
+          :vcloud_gateway_interface_by_id => {
+            Network: {
+              :name => 'ane012345',
+              :href => 'https://vmware.example.com/api/admin/network/01234567-1234-1234-1234-0123456789aa'
+            }
+          })
+        Vcloud::Core::EdgeGateway.stub(:get_by_name).with(@edge_gateway_id).and_return(@edge_gateway)
+      end
+
+
       context "config object doesn't require methods called in a particular order" do
 
         before(:each) do
-          @edge_gateway_id = "1111111-7b54-43dd-9eb1-631dd337e5a7"
-          @edge_gateway = double(:edge_gateway,
-            :vcloud_gateway_interface_by_id => {
-              Network: {
-                :name => 'ane012345',
-                :href => 'https://vmware.example.com/api/admin/network/01234567-1234-1234-1234-0123456789aa'
-              }
-            })
-            Vcloud::Core::EdgeGateway.stub(:get_by_name).with(@edge_gateway_id).and_return(@edge_gateway)
-
           @test_config = {
             :gateway => @edge_gateway_id,
             :nat_service => test_nat_config,
             :firewall_service => test_firewall_config,
             :load_balancer_service => test_load_balancer_config,
           }
-
           @remote_config = {
             :FirewallService => different_firewall_config,
             :NatService => different_nat_config,
@@ -43,23 +45,12 @@ module Vcloud
       context "all configurations are changed" do
 
         before(:each) do
-          @edge_gateway_id = "1111111-7b54-43dd-9eb1-631dd337e5a7"
-          @edge_gateway = double(:edge_gateway,
-            :vcloud_gateway_interface_by_id => {
-              Network: {
-                :name => 'ane012345',
-                :href => 'https://vmware.example.com/api/admin/network/01234567-1234-1234-1234-0123456789aa'
-              }
-            })
-            Vcloud::Core::EdgeGateway.stub(:get_by_name).with(@edge_gateway_id).and_return(@edge_gateway)
-
           @test_config = {
             :gateway => @edge_gateway_id,
             :nat_service => test_nat_config,
             :firewall_service => test_firewall_config,
             :load_balancer_service => test_load_balancer_config
           }
-
           @remote_config = {
             :FirewallService => different_firewall_config,
             :NatService => different_nat_config,
@@ -92,27 +83,15 @@ module Vcloud
       context "firewall config has changed and nat has not" do
 
         before(:each) do
-          @edge_gateway_id = "1111111-7b54-43dd-9eb1-631dd337e5a7"
-          @edge_gateway = double(:edge_gateway,
-            :vcloud_gateway_interface_by_id => {
-              Network: {
-                :name => 'ane012345',
-                :href => 'https://vmware.example.com/api/admin/network/01234567-1234-1234-1234-0123456789aa'
-              }
-            })
-            Vcloud::Core::EdgeGateway.stub(:get_by_name).with(@edge_gateway_id).and_return(@edge_gateway)
-
           @test_config = {
             :gateway => @edge_gateway_id,
             :nat_service => test_nat_config,
             :firewall_service => test_firewall_config
           }
-
           @remote_config = {
             :FirewallService => different_firewall_config,
             :NatService => same_nat_config
           }
-
           @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
         end
 
@@ -135,26 +114,14 @@ module Vcloud
       context "firewall config has changed and nat config is absent" do
 
         before(:each) do
-          @edge_gateway_id = "1111111-7b54-43dd-9eb1-631dd337e5a7"
-          @edge_gateway = double(:edge_gateway,
-            :vcloud_gateway_interface_by_id => {
-              Network: {
-                :name => 'ane012345',
-                :href => 'https://vmware.example.com/api/admin/network/01234567-1234-1234-1234-0123456789aa'
-              }
-            })
-            Vcloud::Core::EdgeGateway.stub(:get_by_name).with(@edge_gateway_id).and_return(@edge_gateway)
-
           @test_config = {
             :gateway => @edge_gateway_id,
             :firewall_service => test_firewall_config
           }
-
           @remote_config = {
             :FirewallService => different_firewall_config,
             :NatService => same_nat_config
           }
-
           @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
         end
 
@@ -176,29 +143,17 @@ module Vcloud
       context "all configs are present but haven't changed" do
 
         before(:each) do
-          @edge_gateway_id = "1111111-7b54-43dd-9eb1-631dd337e5a7"
-          @edge_gateway = double(:edge_gateway,
-            :vcloud_gateway_interface_by_id => {
-              Network: {
-                :name => 'ane012345',
-                :href => 'https://vmware.example.com/api/admin/network/01234567-1234-1234-1234-0123456789aa'
-              }
-            })
-            Vcloud::Core::EdgeGateway.stub(:get_by_name).with(@edge_gateway_id).and_return(@edge_gateway)
-
           @test_config = {
             :gateway => @edge_gateway_id,
             :nat_service => test_nat_config,
             :firewall_service => test_firewall_config,
             :load_balancer_service => test_load_balancer_config,
           }
-
           @remote_config = {
             :FirewallService => same_firewall_config,
             :NatService => same_nat_config,
             :LoadBalancerService => same_load_balancer_config,
           }
-
           @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
         end
 
@@ -214,26 +169,14 @@ module Vcloud
 
     context "firewall config has not changed and nat config is absent" do
         before(:each) do
-          @edge_gateway_id = "1111111-7b54-43dd-9eb1-631dd337e5a7"
-          @edge_gateway = double(:edge_gateway,
-            :vcloud_gateway_interface_by_id => {
-              Network: {
-                :name => 'ane012345',
-                :href => 'https://vmware.example.com/api/admin/network/01234567-1234-1234-1234-0123456789aa'
-              }
-            })
-            Vcloud::Core::EdgeGateway.stub(:get_by_name).with(@edge_gateway_id).and_return(@edge_gateway)
-
           @test_config = {
             :gateway => @edge_gateway_id,
             :firewall_service => test_firewall_config
           }
-
           @remote_config = {
             :FirewallService => same_firewall_config,
             :NatService => different_nat_config
           }
-
           @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
         end
 
@@ -250,25 +193,13 @@ module Vcloud
       context "no service config is present" do
 
         before(:each) do
-          @edge_gateway_id = "1111111-7b54-43dd-9eb1-631dd337e5a7"
-          @edge_gateway = double(:edge_gateway,
-            :vcloud_gateway_interface_by_id => {
-              Network: {
-                :name => 'ane012345',
-                :href => 'https://vmware.example.com/api/admin/network/01234567-1234-1234-1234-0123456789aa'
-              }
-            })
-            Vcloud::Core::EdgeGateway.stub(:get_by_name).with(@edge_gateway_id).and_return(@edge_gateway)
-
           @test_config = {
             :gateway => @edge_gateway_id,
           }
-
           @remote_config = {
             :FirewallService => different_firewall_config,
             :NatService => different_nat_config
           }
-
           @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
         end
 
