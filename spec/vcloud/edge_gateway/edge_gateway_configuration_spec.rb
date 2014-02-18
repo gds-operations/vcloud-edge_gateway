@@ -182,6 +182,44 @@ module Vcloud
 
       end
 
+      context "load_balancer & firewall config have changed and nat has not" do
+
+        before(:each) do
+          @test_config = {
+            :gateway => @edge_gateway_id,
+            :nat_service => test_nat_config,
+            :firewall_service => test_firewall_config,
+            :load_balancer_service => test_load_balancer_config,
+          }
+          @remote_config = {
+            :FirewallService => different_firewall_config,
+            :NatService => same_nat_config,
+            :LoadBalancerService => different_load_balancer_config,
+          }
+          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
+        end
+
+        it "requires update" do
+          expect(@proposed_config.update_required?).to be(true)
+        end
+
+        it "proposed config contains load_balancer config in the form expected" do
+          proposed_load_balancer_config = @proposed_config.config[:LoadBalancerService]
+          expect(proposed_load_balancer_config).to eq(expected_load_balancer_config)
+        end
+
+        it "proposed config does not contain nat config" do
+          expect(@proposed_config.config.key?(:NatService)).to be(false)
+        end
+
+        it "proposed config contains firewall config in the form expected" do
+          proposed_firewall_config = @proposed_config.config[:FirewallService]
+          expect(proposed_firewall_config).to eq(expected_firewall_config)
+        end
+
+      end
+
+
       context "load_balancer config has changed and firewall & nat are absent" do
 
         before(:each) do
