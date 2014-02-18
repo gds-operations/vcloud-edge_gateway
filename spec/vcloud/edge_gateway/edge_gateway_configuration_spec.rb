@@ -78,7 +78,7 @@ module Vcloud
 
       end
 
-      context "firewall config has changed and nat has not" do
+      context "firewall config has changed and nat has not, load_balancer absent" do
 
         before(:each) do
           @test_config = {
@@ -106,9 +106,13 @@ module Vcloud
           expect(@proposed_config.config.key?(:NatService)).to be(false)
         end
 
+        it "proposed config does not contain load_balancer config" do
+          expect(@proposed_config.config.key?(:LoadBalancerService)).to be(false)
+        end
+
       end
 
-      context "firewall config has changed and nat config is absent" do
+      context "firewall config has changed and nat & load_balancer configs are absent" do
 
         before(:each) do
           @test_config = {
@@ -117,7 +121,8 @@ module Vcloud
           }
           @remote_config = {
             :FirewallService => different_firewall_config,
-            :NatService => same_nat_config
+            :NatService => same_nat_config,
+            :LoadBalancerService => same_load_balancer_config,
           }
           @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
         end
@@ -133,6 +138,10 @@ module Vcloud
 
         it "proposed config does not contain nat config" do
           expect(@proposed_config.config.key?(:NatService)).to be(false)
+        end
+
+        it "proposed config does not contain load_balancer config" do
+          expect(@proposed_config.config.key?(:LoadBalancerService)).to be(false)
         end
 
       end
@@ -232,7 +241,8 @@ module Vcloud
           }
           @remote_config = {
             :FirewallService => different_firewall_config,
-            :NatService => different_nat_config
+            :NatService => different_nat_config,
+            :LoadBalancerService => different_load_balancer_config,
           }
           @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
         end
