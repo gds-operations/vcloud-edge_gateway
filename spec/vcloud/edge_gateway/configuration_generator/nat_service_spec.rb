@@ -457,40 +457,6 @@ module Vcloud
             expect(generated_config).to eq(output)
           end
 
-          it "should only make a single API call per network specified" do
-            input = {
-              nat_rules: [
-                {
-                  rule_type: 'DNAT',
-                  network_id: '2ad93597-7b54-43dd-9eb1-631dd337e5a7',
-                  original_ip: "192.0.2.2",
-                  original_port: '8081',
-                  translated_port: '8081',
-                  translated_ip: "10.10.20.21",
-                },
-                {
-                  rule_type: 'DNAT',
-                  network_id: '2ad93597-7b54-43dd-9eb1-631dd337e5a7',
-                  original_ip: "192.0.2.2",
-                  original_port: '8082',
-                  translated_port: '8082',
-                  translated_ip: "10.10.20.22",
-                },
-                {
-                  rule_type: 'DNAT',
-                  network_id: '2ad93597-7b54-43dd-9eb1-631dd337e5a7',
-                  original_ip: "192.0.2.2",
-                  original_port: '8083',
-                  translated_port: '8083',
-                  translated_ip: "10.10.20.23",
-                },
-              ]
-            }
-            expect(@mock_edge_gateway).
-              to receive(:vcloud_gateway_interface_by_id).exactly(1).times
-            NatService.new(@edge_gw_interface_list, input).generate_fog_config
-          end
-
         end
       end
     end
