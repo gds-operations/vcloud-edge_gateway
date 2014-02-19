@@ -6,6 +6,7 @@ module Vcloud
       describe NatService do
 
         before(:each) do
+          @base_nat_id = ID_RANGES::NAT_SERVICE[:min]
           @edge_id = '1111111-7b54-43dd-9eb1-631dd337e5a7'
           @mock_edge_gateway = double(
             :edge_gateway,
@@ -47,7 +48,7 @@ module Vcloud
 
           it 'should completely match our expected default rule' do
             expect(@rule).to eq({
-              :Id=>"65537",
+              :Id=>"#{@base_nat_id}",
               :IsEnabled=>"true",
               :RuleType=>"SNAT",
               :GatewayNatRule=>{
@@ -92,7 +93,7 @@ module Vcloud
 
           it 'should completely match our expected default rule' do
             expect(@rule).to eq({
-              :Id=>"65537",
+              :Id=>"#{@base_nat_id}",
               :IsEnabled=>"true",
               :RuleType=>"DNAT",
               :GatewayNatRule=>{
@@ -113,10 +114,8 @@ module Vcloud
 
         context "nat service config generation" do
 
-          test_cases = [
-            {
-              title: 'should generate config for enabled nat service with single disabled DNAT rule',
-              input: {
+          it 'should generate config for enabled nat service with single disabled DNAT rule' do
+              input = {
                 enabled: 'true',
                 nat_rules: [
                   {
@@ -131,8 +130,8 @@ module Vcloud
                     protocol: 'tcp',
                   }
                 ]
-              },
-              output: {
+              }
+              output = {
                 :IsEnabled => 'true',
                 :NatRule => [
                   {
@@ -154,11 +153,12 @@ module Vcloud
                   }
                 ]
               }
-            },
+            generated_config = NatService.new(@edge_id, input).generate_fog_config
+            expect(generated_config).to eq(output)
+          end
 
-            {
-              title: 'should handle specification of UDP based DNAT rules',
-              input: {
+          it 'should handle specification of UDP based DNAT rules' do
+              input = {
                 enabled: 'true',
                 nat_rules: [
                   {
@@ -171,14 +171,14 @@ module Vcloud
                     protocol: 'udp',
                   }
                 ]
-              },
-              output: {
+              }
+              output = {
                 :IsEnabled => 'true',
                 :NatRule => [
                   {
                     :RuleType => 'DNAT',
                     :IsEnabled => 'true',
-                    :Id => '65537',
+                    :Id => "#{@base_nat_id}",
                     :GatewayNatRule => {
                       :Interface =>
                         {
@@ -194,11 +194,12 @@ module Vcloud
                   }
                 ]
               }
-            },
+            generated_config = NatService.new(@edge_id, input).generate_fog_config
+            expect(generated_config).to eq(output)
+          end
 
-            {
-              title: 'should generate config for enabled nat service with single disabled SNAT rule',
-              input: {
+          it 'should generate config for enabled nat service with single disabled SNAT rule' do
+              input = {
                 enabled: 'true',
                 nat_rules: [
                   {
@@ -209,14 +210,14 @@ module Vcloud
                     translated_ip: "10.10.20.20",
                   }
                 ]
-              },
-              output: {
+              }
+              output = {
                 :IsEnabled => 'true',
                 :NatRule => [
                   {
                     :RuleType => 'SNAT',
                     :IsEnabled => 'false',
-                    :Id => '65537',
+                    :Id => "#{@base_nat_id}",
                     :GatewayNatRule => {
                       :Interface =>
                         {
@@ -229,11 +230,12 @@ module Vcloud
                   }
                 ]
               }
-            },
+            generated_config = NatService.new(@edge_id, input).generate_fog_config
+            expect(generated_config).to eq(output)
+          end
 
-            {
-              title: 'should auto generate rule id if not provided',
-              input: {
+          it 'should auto generate rule id if not provided' do
+              input = {
                 enabled: 'true',
                 nat_rules: [
                   {
@@ -247,14 +249,14 @@ module Vcloud
                     protocol: 'tcp',
                   }
                 ]
-              },
-              output: {
+              }
+              output = {
                 :IsEnabled => 'true',
                 :NatRule => [
                   {
                     :RuleType => 'DNAT',
                     :IsEnabled => 'false',
-                    :Id => '65537',
+                    :Id => "#{@base_nat_id}",
                     :GatewayNatRule => {
                       :Interface =>
                         {
@@ -270,11 +272,12 @@ module Vcloud
                   }
                 ]
               }
-            },
+            generated_config = NatService.new(@edge_id, input).generate_fog_config
+            expect(generated_config).to eq(output)
+          end
 
-            {
-              title: 'should use default values for optional fields if they are missing',
-              input: {
+          it 'should use default values for optional fields if they are missing' do
+              input = {
                 nat_rules: [
                   {
                     rule_type: 'DNAT',
@@ -285,14 +288,14 @@ module Vcloud
                     translated_ip: "10.10.20.20",
                   }
                 ]
-              },
-              output: {
+              }
+              output = {
                 :IsEnabled => 'true',
                 :NatRule => [
                   {
                     :RuleType => 'DNAT',
                     :IsEnabled => 'true',
-                    :Id => '65537',
+                    :Id => "#{@base_nat_id}",
                     :GatewayNatRule => {
                       :Interface =>
                         {
@@ -308,15 +311,137 @@ module Vcloud
                   }
                 ]
               }
+            generated_config = NatService.new(@edge_id, input).generate_fog_config
+            expect(generated_config).to eq(output)
+          end
 
-            }
-          ]
-
-          test_cases.each do |test_case|
-            it "#{test_case[:title]}" do
-              generated_config = NatService.new(@edge_id, test_case[:input]).generate_fog_config
-              expect(generated_config).to eq(test_case[:output])
-            end
+          it 'output rule order should be same as the input rule order' do
+              input = {
+                nat_rules: [
+                  {
+                    rule_type: 'DNAT',
+                    network_id: '2ad93597-7b54-43dd-9eb1-631dd337e5a7',
+                    original_ip: "192.0.2.2",
+                    original_port: '8081',
+                    translated_port: '8080',
+                    translated_ip: "10.10.20.21",
+                  },
+                  {
+                    rule_type: 'SNAT',
+                    network_id: '2ad93597-7b54-43dd-9eb1-631dd337e5a7',
+                    original_ip: "192.0.2.2",
+                    translated_ip: "10.10.20.20",
+                  },
+                  {
+                    rule_type: 'DNAT',
+                    network_id: '2ad93597-7b54-43dd-9eb1-631dd337e5a7',
+                    original_ip: "192.0.2.2",
+                    original_port: '8082',
+                    translated_port: '8080',
+                    translated_ip: "10.10.20.22",
+                  },
+                  {
+                    rule_type: 'SNAT',
+                    network_id: '2ad93597-7b54-43dd-9eb1-631dd337e5a7',
+                    original_ip: "192.0.2.3",
+                    translated_ip: "10.10.20.21",
+                  },
+                  {
+                    rule_type: 'DNAT',
+                    network_id: '2ad93597-7b54-43dd-9eb1-631dd337e5a7',
+                    original_ip: "192.0.2.2",
+                    original_port: '8083',
+                    translated_port: '8080',
+                    translated_ip: "10.10.20.23",
+                  },
+                ],
+              }
+              output = {
+                IsEnabled: 'true',
+                NatRule: [
+                  {
+                    :Id => "#{@base_nat_id}",
+                    :IsEnabled => 'true',
+                    :RuleType => 'DNAT',
+                    :GatewayNatRule => {
+                      :Interface =>
+                        {
+                          :name => 'ane012345',
+                          :href => 'https://vmware.api.net/api/admin/network/2ad93597-7b54-43dd-9eb1-631dd337e5a7'
+                        },
+                      :OriginalIp => "192.0.2.2",
+                      :TranslatedIp => "10.10.20.21",
+                      :OriginalPort => '8081',
+                      :TranslatedPort => '8080',
+                      :Protocol => 'tcp',
+                    },
+                  },
+                  {
+                    :Id => "#{@base_nat_id + 1}",
+                    :IsEnabled => 'true',
+                    :RuleType => 'SNAT',
+                    :GatewayNatRule => {
+                      :Interface =>
+                        {
+                          :name => 'ane012345',
+                          :href => 'https://vmware.api.net/api/admin/network/2ad93597-7b54-43dd-9eb1-631dd337e5a7'
+                        },
+                      :OriginalIp => "192.0.2.2",
+                      :TranslatedIp => "10.10.20.20",
+                    },
+                  },
+                  {
+                    :Id => "#{@base_nat_id + 2}",
+                    :IsEnabled => 'true',
+                    :RuleType => 'DNAT',
+                    :GatewayNatRule => {
+                      :Interface =>
+                        {
+                          :name => 'ane012345',
+                          :href => 'https://vmware.api.net/api/admin/network/2ad93597-7b54-43dd-9eb1-631dd337e5a7'
+                        },
+                      :OriginalIp => "192.0.2.2",
+                      :TranslatedIp => "10.10.20.22",
+                      :OriginalPort => '8082',
+                      :TranslatedPort => '8080',
+                      :Protocol => 'tcp',
+                    },
+                  },
+                  {
+                    :Id => "#{@base_nat_id + 3}",
+                    :IsEnabled => 'true',
+                    :RuleType => 'SNAT',
+                    :GatewayNatRule => {
+                      :Interface =>
+                        {
+                          :name => 'ane012345',
+                          :href => 'https://vmware.api.net/api/admin/network/2ad93597-7b54-43dd-9eb1-631dd337e5a7'
+                        },
+                      :OriginalIp => "192.0.2.3",
+                      :TranslatedIp => "10.10.20.21",
+                    },
+                  },
+                  {
+                    :Id => "#{@base_nat_id + 4}",
+                    :IsEnabled => 'true',
+                    :RuleType => 'DNAT',
+                    :GatewayNatRule => {
+                      :Interface =>
+                        {
+                          :name => 'ane012345',
+                          :href => 'https://vmware.api.net/api/admin/network/2ad93597-7b54-43dd-9eb1-631dd337e5a7'
+                        },
+                      :OriginalIp => "192.0.2.2",
+                      :TranslatedIp => "10.10.20.23",
+                      :OriginalPort => '8083',
+                      :TranslatedPort => '8080',
+                      :Protocol => 'tcp',
+                    },
+                  }
+                ]
+              }
+            generated_config = NatService.new(@edge_id, input).generate_fog_config
+            expect(generated_config).to eq(output)
           end
 
           it "should only make a single API call per network specified" do
