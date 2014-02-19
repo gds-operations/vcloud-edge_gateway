@@ -115,10 +115,8 @@ module Vcloud
 
         context "nat service config generation" do
 
-          test_cases = [
-            {
-              title: 'should generate config for enabled nat service with single disabled DNAT rule',
-              input: {
+          it 'should generate config for enabled nat service with single disabled DNAT rule' do
+              input = {
                 enabled: 'true',
                 nat_rules: [
                   {
@@ -133,8 +131,8 @@ module Vcloud
                     protocol: 'tcp',
                   }
                 ]
-              },
-              output: {
+              }
+              output = {
                 :IsEnabled => 'true',
                 :NatRule => [
                   {
@@ -156,11 +154,12 @@ module Vcloud
                   }
                 ]
               }
-            },
+            generated_config = NatService.new(@edge_id, input).generate_fog_config
+            expect(generated_config).to eq(output)
+          end
 
-            {
-              title: 'should handle specification of UDP based DNAT rules',
-              input: {
+          it 'should handle specification of UDP based DNAT rules' do
+              input = {
                 enabled: 'true',
                 nat_rules: [
                   {
@@ -173,8 +172,8 @@ module Vcloud
                     protocol: 'udp',
                   }
                 ]
-              },
-              output: {
+              }
+              output = {
                 :IsEnabled => 'true',
                 :NatRule => [
                   {
@@ -196,11 +195,12 @@ module Vcloud
                   }
                 ]
               }
-            },
+            generated_config = NatService.new(@edge_id, input).generate_fog_config
+            expect(generated_config).to eq(output)
+          end
 
-            {
-              title: 'should generate config for enabled nat service with single disabled SNAT rule',
-              input: {
+          it 'should generate config for enabled nat service with single disabled SNAT rule' do
+              input = {
                 enabled: 'true',
                 nat_rules: [
                   {
@@ -211,8 +211,8 @@ module Vcloud
                     translated_ip: "10.10.20.20",
                   }
                 ]
-              },
-              output: {
+              }
+              output = {
                 :IsEnabled => 'true',
                 :NatRule => [
                   {
@@ -231,11 +231,12 @@ module Vcloud
                   }
                 ]
               }
-            },
+            generated_config = NatService.new(@edge_id, input).generate_fog_config
+            expect(generated_config).to eq(output)
+          end
 
-            {
-              title: 'should auto generate rule id if not provided',
-              input: {
+          it 'should auto generate rule id if not provided' do
+              input = {
                 enabled: 'true',
                 nat_rules: [
                   {
@@ -249,8 +250,8 @@ module Vcloud
                     protocol: 'tcp',
                   }
                 ]
-              },
-              output: {
+              }
+              output = {
                 :IsEnabled => 'true',
                 :NatRule => [
                   {
@@ -272,11 +273,12 @@ module Vcloud
                   }
                 ]
               }
-            },
+            generated_config = NatService.new(@edge_id, input).generate_fog_config
+            expect(generated_config).to eq(output)
+          end
 
-            {
-              title: 'should use default values for optional fields if they are missing',
-              input: {
+          it 'should use default values for optional fields if they are missing' do
+              input = {
                 nat_rules: [
                   {
                     rule_type: 'DNAT',
@@ -287,8 +289,8 @@ module Vcloud
                     translated_ip: "10.10.20.20",
                   }
                 ]
-              },
-              output: {
+              }
+              output = {
                 :IsEnabled => 'true',
                 :NatRule => [
                   {
@@ -309,10 +311,13 @@ module Vcloud
                     }
                   }
                 ]
-              },
+              }
+            generated_config = NatService.new(@edge_id, input).generate_fog_config
+            expect(generated_config).to eq(output)
+          end
 
-              title: 'output rule order should be same as the input rule order',
-              input: {
+          it 'output rule order should be same as the input rule order' do
+              input = {
                 nat_rules: [
                   {
                     rule_type: 'DNAT',
@@ -351,8 +356,8 @@ module Vcloud
                     translated_ip: "10.10.20.23",
                   },
                 ],
-              },
-              output: {
+              }
+              output = {
                 IsEnabled: 'true',
                 NatRule: [
                   {
@@ -436,15 +441,8 @@ module Vcloud
                   }
                 ]
               }
-
-            }
-          ]
-
-          test_cases.each do |test_case|
-            it "#{test_case[:title]}" do
-              generated_config = NatService.new(@edge_id, test_case[:input]).generate_fog_config
-              expect(generated_config).to eq(test_case[:output])
-            end
+            generated_config = NatService.new(@edge_id, input).generate_fog_config
+            expect(generated_config).to eq(output)
           end
 
           it "should only make a single API call per network specified" do
