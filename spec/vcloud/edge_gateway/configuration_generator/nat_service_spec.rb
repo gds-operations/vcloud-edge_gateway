@@ -5,9 +5,8 @@ module Vcloud
     module ConfigurationGenerator
       describe NatService do
 
-        BASE_NAT_ID = ID_RANGES::NAT_SERVICE[:min]
-
         before(:each) do
+          @base_nat_id = ID_RANGES::NAT_SERVICE[:min]
           @edge_id = '1111111-7b54-43dd-9eb1-631dd337e5a7'
           @mock_edge_gateway = double(
             :edge_gateway,
@@ -49,7 +48,7 @@ module Vcloud
 
           it 'should completely match our expected default rule' do
             expect(@rule).to eq({
-              :Id=>"#{BASE_NAT_ID}",
+              :Id=>"#{@base_nat_id}",
               :IsEnabled=>"true",
               :RuleType=>"SNAT",
               :GatewayNatRule=>{
@@ -94,7 +93,7 @@ module Vcloud
 
           it 'should completely match our expected default rule' do
             expect(@rule).to eq({
-              :Id=>"#{BASE_NAT_ID}",
+              :Id=>"#{@base_nat_id}",
               :IsEnabled=>"true",
               :RuleType=>"DNAT",
               :GatewayNatRule=>{
@@ -179,7 +178,7 @@ module Vcloud
                   {
                     :RuleType => 'DNAT',
                     :IsEnabled => 'true',
-                    :Id => "#{BASE_NAT_ID}",
+                    :Id => "#{@base_nat_id}",
                     :GatewayNatRule => {
                       :Interface =>
                         {
@@ -218,7 +217,7 @@ module Vcloud
                   {
                     :RuleType => 'SNAT',
                     :IsEnabled => 'false',
-                    :Id => "#{BASE_NAT_ID}",
+                    :Id => "#{@base_nat_id}",
                     :GatewayNatRule => {
                       :Interface =>
                         {
@@ -257,7 +256,7 @@ module Vcloud
                   {
                     :RuleType => 'DNAT',
                     :IsEnabled => 'false',
-                    :Id => "#{BASE_NAT_ID}",
+                    :Id => "#{@base_nat_id}",
                     :GatewayNatRule => {
                       :Interface =>
                         {
@@ -296,7 +295,7 @@ module Vcloud
                   {
                     :RuleType => 'DNAT',
                     :IsEnabled => 'true',
-                    :Id => "#{BASE_NAT_ID}",
+                    :Id => "#{@base_nat_id}",
                     :GatewayNatRule => {
                       :Interface =>
                         {
@@ -361,7 +360,7 @@ module Vcloud
                 IsEnabled: 'true',
                 NatRule: [
                   {
-                    :Id => "#{BASE_NAT_ID}",
+                    :Id => "#{@base_nat_id}",
                     :IsEnabled => 'true',
                     :RuleType => 'DNAT',
                     :GatewayNatRule => {
@@ -378,7 +377,7 @@ module Vcloud
                     },
                   },
                   {
-                    :Id => "#{BASE_NAT_ID + 1}",
+                    :Id => "#{@base_nat_id + 1}",
                     :IsEnabled => 'true',
                     :RuleType => 'SNAT',
                     :GatewayNatRule => {
@@ -392,7 +391,7 @@ module Vcloud
                     },
                   },
                   {
-                    :Id => "#{BASE_NAT_ID + 2}",
+                    :Id => "#{@base_nat_id + 2}",
                     :IsEnabled => 'true',
                     :RuleType => 'DNAT',
                     :GatewayNatRule => {
@@ -409,7 +408,7 @@ module Vcloud
                     },
                   },
                   {
-                    :Id => "#{BASE_NAT_ID + 3}",
+                    :Id => "#{@base_nat_id + 3}",
                     :IsEnabled => 'true',
                     :RuleType => 'SNAT',
                     :GatewayNatRule => {
@@ -423,7 +422,7 @@ module Vcloud
                     },
                   },
                   {
-                    :Id => "#{BASE_NAT_ID + 4}",
+                    :Id => "#{@base_nat_id + 4}",
                     :IsEnabled => 'true',
                     :RuleType => 'DNAT',
                     :GatewayNatRule => {
