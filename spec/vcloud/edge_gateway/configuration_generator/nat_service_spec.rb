@@ -12,6 +12,7 @@ module Vcloud
             :edge_gateway,
             :vcloud_gateway_interface_by_id => {
               Network: {
+                type: 'application/vnd.vmware.admin.network+xml',
                 name: 'ane012345',
                 href: 'https://vmware.api.net/api/admin/network/2ad93597-7b54-43dd-9eb1-631dd337e5a7'
               }
@@ -53,8 +54,9 @@ module Vcloud
               :RuleType=>"SNAT",
               :GatewayNatRule=>{
                 :Interface=>{
-                  :name=>"ane012345",
-                  :href=>"https://vmware.api.net/api/admin/network/2ad93597-7b54-43dd-9eb1-631dd337e5a7"
+                  :type => 'application/vnd.vmware.admin.network+xml',
+                  :name => "ane012345",
+                  :href => "https://vmware.api.net/api/admin/network/2ad93597-7b54-43dd-9eb1-631dd337e5a7"
                 },
               :OriginalIp=>"192.0.2.2",
               :TranslatedIp=>"10.10.20.20"}
@@ -98,8 +100,9 @@ module Vcloud
               :RuleType=>"DNAT",
               :GatewayNatRule=>{
                 :Interface=>{
-                  :name=>"ane012345",
-                  :href=>"https://vmware.api.net/api/admin/network/2ad93597-7b54-43dd-9eb1-631dd337e5a7"
+                  :type => 'application/vnd.vmware.admin.network+xml',
+                  :name => "ane012345",
+                  :href => "https://vmware.api.net/api/admin/network/2ad93597-7b54-43dd-9eb1-631dd337e5a7"
                 },
                 :OriginalIp=>"192.0.2.2",
                 :TranslatedIp=>"10.10.20.20",
@@ -141,6 +144,7 @@ module Vcloud
                     :GatewayNatRule => {
                       :Interface =>
                         {
+                          :type => 'application/vnd.vmware.admin.network+xml',
                           :name => 'ane012345',
                           :href => 'https://vmware.api.net/api/admin/network/2ad93597-7b54-43dd-9eb1-631dd337e5a7'
                         },
@@ -182,6 +186,7 @@ module Vcloud
                     :GatewayNatRule => {
                       :Interface =>
                         {
+                          :type => 'application/vnd.vmware.admin.network+xml',
                           :name => 'ane012345',
                           :href => 'https://vmware.api.net/api/admin/network/2ad93597-7b54-43dd-9eb1-631dd337e5a7'
                         },
@@ -221,6 +226,7 @@ module Vcloud
                     :GatewayNatRule => {
                       :Interface =>
                         {
+                          :type => 'application/vnd.vmware.admin.network+xml',
                           :name => 'ane012345',
                           :href => 'https://vmware.api.net/api/admin/network/2ad93597-7b54-43dd-9eb1-631dd337e5a7'
                         },
@@ -260,6 +266,7 @@ module Vcloud
                     :GatewayNatRule => {
                       :Interface =>
                         {
+                          :type => 'application/vnd.vmware.admin.network+xml',
                           :name => 'ane012345',
                           :href => 'https://vmware.api.net/api/admin/network/2ad93597-7b54-43dd-9eb1-631dd337e5a7'
                         },
@@ -299,6 +306,7 @@ module Vcloud
                     :GatewayNatRule => {
                       :Interface =>
                         {
+                          :type => 'application/vnd.vmware.admin.network+xml',
                           :name => 'ane012345',
                           :href => 'https://vmware.api.net/api/admin/network/2ad93597-7b54-43dd-9eb1-631dd337e5a7'
                         },
@@ -366,6 +374,7 @@ module Vcloud
                     :GatewayNatRule => {
                       :Interface =>
                         {
+                          :type => 'application/vnd.vmware.admin.network+xml',
                           :name => 'ane012345',
                           :href => 'https://vmware.api.net/api/admin/network/2ad93597-7b54-43dd-9eb1-631dd337e5a7'
                         },
@@ -383,6 +392,7 @@ module Vcloud
                     :GatewayNatRule => {
                       :Interface =>
                         {
+                          :type => 'application/vnd.vmware.admin.network+xml',
                           :name => 'ane012345',
                           :href => 'https://vmware.api.net/api/admin/network/2ad93597-7b54-43dd-9eb1-631dd337e5a7'
                         },
@@ -397,6 +407,7 @@ module Vcloud
                     :GatewayNatRule => {
                       :Interface =>
                         {
+                          :type => 'application/vnd.vmware.admin.network+xml',
                           :name => 'ane012345',
                           :href => 'https://vmware.api.net/api/admin/network/2ad93597-7b54-43dd-9eb1-631dd337e5a7'
                         },
@@ -414,6 +425,7 @@ module Vcloud
                     :GatewayNatRule => {
                       :Interface =>
                         {
+                          :type => 'application/vnd.vmware.admin.network+xml',
                           :name => 'ane012345',
                           :href => 'https://vmware.api.net/api/admin/network/2ad93597-7b54-43dd-9eb1-631dd337e5a7'
                         },
@@ -428,6 +440,7 @@ module Vcloud
                     :GatewayNatRule => {
                       :Interface =>
                         {
+                          :type => 'application/vnd.vmware.admin.network+xml',
                           :name => 'ane012345',
                           :href => 'https://vmware.api.net/api/admin/network/2ad93597-7b54-43dd-9eb1-631dd337e5a7'
                         },

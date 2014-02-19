@@ -9,6 +9,7 @@ module Vcloud
         @edge_gateway = double(:edge_gateway,
           :vcloud_gateway_interface_by_id => {
             Network: {
+              :type => "application/vnd.vmware.admin.network+xml",
               :name => 'ane012345',
               :href => 'https://vmware.example.com/api/admin/network/01234567-1234-1234-1234-0123456789aa'
             }
@@ -747,6 +748,7 @@ module Vcloud
             :RuleType => "DNAT",
             :GatewayNatRule => {
               :Interface => {
+                :type => "application/vnd.vmware.admin.network+xml",
                 :name => "ane012345",
                 :href =>"https://vmware.example.com/api/admin/network/01234567-1234-1234-1234-0123456789aa"
               },
@@ -932,6 +934,7 @@ module Vcloud
             :RuleType => "DNAT",
             :GatewayNatRule => {
               :Interface => {
+                :type => "application/vnd.vmware.admin.network+xml",
                 :name => "ane012345",
                 :href => "https://vmware.example.com/api/admin/network/01234567-1234-1234-1234-0123456789aa"
               },
