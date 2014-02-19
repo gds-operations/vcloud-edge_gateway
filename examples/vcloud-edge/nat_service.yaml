@@ -1,0 +1,28 @@
+# EdgeGateway nat_service configuration example
+#
+# The edge gateway nat_service comprises a list of DNAT and SNAT
+# rules.
+#
+# DNAT (Destination-NAT) rules translate Destination IP addresses.
+# Generally this is for port forwarding from external addresses to
+# internal addresses.
+#
+# SNAT (Source-NAT) rules translate Source IP addresses. These are generally used for
+# ensuring internal addresses are rewritten to external addresses for
+# outbound comms.
+#
+---
+gateway: OurEdgeGatewayName
+nat_service:
+  enabled: true  # default to enabled
+  nat_rules:
+  - rule_type: 'DNAT'
+    network_id: '12345678-1234-1234-1234-1234567890bb' # id of EdgeGateway external network
+    original_ip: "192.0.2.2" # Useable address on external network
+    original_port: "8080"
+    translated_ip: "10.10.20.20"
+    translated_port: "8085"
+  - rule_type: 'SNAT'
+    network_id: '12345678-1234-1234-1234-1234567890bb' # id of EdgeGateway external network
+    original_ip: "10.10.20.20"
+    translated_ip: "192.0.2.2" # useable address on external network
