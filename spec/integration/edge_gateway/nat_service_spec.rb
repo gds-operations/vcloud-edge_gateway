@@ -50,7 +50,7 @@ module Vcloud
 
         before(:all) do
           local_config = ConfigLoader.new.load_config(@initial_nat_config_file, Vcloud::Schema::EDGE_GATEWAY_SERVICES)
-          @local_vcloud_config  = EdgeGateway::ConfigurationGenerator::NatService.new(@edge_name, local_config[:nat_service]).generate_fog_config
+          @local_vcloud_config  = EdgeGateway::ConfigurationGenerator::NatService.new(@edge_gateway.interfaces, local_config[:nat_service]).generate_fog_config
         end
 
         it "should be starting our tests from an empty NatService" do

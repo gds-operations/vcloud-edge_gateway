@@ -15,6 +15,13 @@ module Vcloud
             }
           })
         Vcloud::Core::EdgeGateway.stub(:get_by_name).with(@edge_gateway_id).and_return(@edge_gateway)
+        mock_edge_gateway_interface = double(
+          :mock_edge_gateway_interface,
+          :network_name => "ane012345",
+          :network_id   => "01234567-1234-1234-1234-0123456789aa",
+          :network_href => 'https://vmware.example.com/api/admin/network/01234567-1234-1234-1234-0123456789aa',
+        )
+        @edge_gw_interface_list = [ mock_edge_gateway_interface ]
       end
 
       context "config object doesn't require methods called in a particular order" do
@@ -31,7 +38,11 @@ module Vcloud
             :NatService => different_nat_config,
             :LoadBalancerService => different_load_balancer_config,
           }
-          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
+          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(
+            @test_config,
+            @remote_config,
+            @edge_gw_interface_list
+          )
         end
 
         it "if `config` is called before `update_required` then config is not empty when it shouldn't be" do
@@ -55,7 +66,11 @@ module Vcloud
             :NatService => different_nat_config,
             :LoadBalancerService => different_load_balancer_config
           }
-          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
+          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(
+            @test_config,
+            @remote_config,
+            @edge_gw_interface_list
+          )
         end
 
         it "requires update" do
@@ -91,7 +106,11 @@ module Vcloud
             :FirewallService => different_firewall_config,
             :NatService => same_nat_config
           }
-          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
+          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(
+            @test_config,
+            @remote_config,
+            @edge_gw_interface_list
+          )
         end
 
         it "requires update" do
@@ -125,7 +144,11 @@ module Vcloud
             :NatService => same_nat_config,
             :LoadBalancerService => same_load_balancer_config,
           }
-          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
+          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(
+            @test_config,
+            @remote_config,
+            @edge_gw_interface_list
+          )
         end
 
         it "requires update" do
@@ -161,7 +184,11 @@ module Vcloud
             :NatService => same_nat_config,
             :LoadBalancerService => different_load_balancer_config,
           }
-          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
+          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(
+            @test_config,
+            @remote_config,
+            @edge_gw_interface_list
+          )
         end
 
         it "requires update" do
@@ -197,7 +224,11 @@ module Vcloud
             :NatService => same_nat_config,
             :LoadBalancerService => different_load_balancer_config,
           }
-          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
+          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(
+            @test_config,
+            @remote_config,
+            @edge_gw_interface_list
+          )
         end
 
         it "requires update" do
@@ -233,7 +264,11 @@ module Vcloud
             :NatService => same_nat_config,
             :LoadBalancerService => different_load_balancer_config,
           }
-          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
+          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(
+            @test_config,
+            @remote_config,
+            @edge_gw_interface_list
+          )
         end
 
         it "requires update" do
@@ -269,7 +304,11 @@ module Vcloud
             :NatService => same_nat_config,
             :LoadBalancerService => same_load_balancer_config,
           }
-          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
+          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(
+            @test_config,
+            @remote_config,
+            @edge_gw_interface_list
+          )
         end
 
         it "does not require update" do
@@ -294,7 +333,11 @@ module Vcloud
             :NatService => different_nat_config,
             :LoadBalancerService => different_load_balancer_config,
           }
-          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
+          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(
+            @test_config,
+            @remote_config,
+            @edge_gw_interface_list
+          )
         end
 
         it "does not require update" do
@@ -318,7 +361,11 @@ module Vcloud
             :NatService => different_nat_config,
             :LoadBalancerService => different_load_balancer_config,
           }
-          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
+          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(
+            @test_config,
+            @remote_config,
+            @edge_gw_interface_list
+          )
         end
 
         it "does not require update" do
@@ -342,7 +389,11 @@ module Vcloud
             :FirewallService => different_firewall_config,
             :NatService => different_nat_config,
           }
-          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
+          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(
+            @test_config,
+            @remote_config,
+            @edge_gw_interface_list
+          )
         end
 
         it "requires update" do
@@ -375,7 +426,11 @@ module Vcloud
             :NatService => different_nat_config,
             :LoadBalancerService => different_load_balancer_config,
           }
-          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
+          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(
+            @test_config,
+            @remote_config,
+            @edge_gw_interface_list
+          )
         end
 
         it "requires update" do
@@ -408,7 +463,11 @@ module Vcloud
             :FirewallService => different_firewall_config,
             :LoadBalancerService => different_load_balancer_config,
           }
-          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
+          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(
+            @test_config,
+            @remote_config,
+            @edge_gw_interface_list
+          )
         end
 
         it "requires update" do
@@ -441,7 +500,11 @@ module Vcloud
             :FirewallService => different_firewall_config,
             :NatService => different_nat_config,
           }
-          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
+          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(
+            @test_config,
+            @remote_config,
+            @edge_gw_interface_list
+          )
         end
 
         it "requires update" do

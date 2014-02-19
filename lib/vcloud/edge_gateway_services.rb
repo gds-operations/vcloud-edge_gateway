@@ -12,8 +12,13 @@ module Vcloud
 
       edge_gateway = Core::EdgeGateway.get_by_name local_config[:gateway]
       remote_config = edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration]
+      edge_gateway_interface_list = edge_gateway.interfaces
 
-      proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(local_config, remote_config)
+      proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(
+        local_config,
+        remote_config,
+        edge_gateway_interface_list
+      )
 
       if proposed_config.update_required?
         edge_gateway.update_configuration proposed_config.config
