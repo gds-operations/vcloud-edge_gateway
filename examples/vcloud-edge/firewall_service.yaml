@@ -1,0 +1,44 @@
+# Example Firewall configuration
+#
+# The EdgeGateway firewall_service mostly consists of:
+#  * a default policy
+#  * a list of firewall rules
+#
+# Our default firewall policy is 'drop', with a default
+# per-rule policy of 'allow'
+#
+# Rules are listed in order of application.
+#
+# The 'source_ip' and 'destination_ip' fields take a
+# valid 'vCloud IP range' value, so the following are valid:
+#  * IP address, eg 192.0.2.55
+#  * CIDR range, eg 192.0.2.0/24
+#  * IP range, eg 192.0.2.55-192.0.2.75
+#  * Keyword: Any, internal, external
+#
+---
+gateway: OurEdgeGatewayName
+firewall_service:
+  enabled: true  # default to enabled, can disable service with 'false'
+  policy: drop   # firewall policy: default to drop
+  firewall_rules:
+    # rules default to allow
+  - description: "Public HTTP access to WebServer1"
+    destination_port_range: "80"
+    destination_ip: "10.10.10.10"
+    source_ip: Any
+  - description: "IP Restricted access to port 8080"
+    destination_port_range: "8080"
+    destination_ip: "10.10.10.15"
+    source_ip: "192.0.2.55"
+  - description: "Only allow certain source ports"
+    destination_port_range: "8081"
+    destination_ip: "10.10.10.15"
+    source_ip: Any
+    source_port_range: "10000-11000"
+  - description: "Drop some ports within above range though"
+    policy: drop
+    destination_port_range: "8081"
+    destination_ip: "10.10.10.15"
+    source_ip: Any
+    source_port_range: "10500-10600"
