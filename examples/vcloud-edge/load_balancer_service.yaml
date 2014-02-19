@@ -1,0 +1,56 @@
+# Load Balancer comprises of pools and virtual_servers. A pool+virtual_server
+# pair creates a working load balanced service.
+#
+# A pool is a group of one or more nodes (specified by port and IP),
+# which traffic is to be balanced across. Pools can be specified without
+# a corresponding virtual_server, and can potentially be referenced by multiple
+# virtual_servers.
+#
+# A virtual_server is a front end representation of a pool, typically with an
+# IP address on an external network. A virtual_server cannot be specified
+# without a connected pool entry.
+#
+---
+gateway: OurEdgeGatewayName
+load_balancer_service:
+
+  pools:
+
+  - name: 'example-pool-1'
+    description: 'A pool balancing HTTP traffic, round robin'
+    service:
+      http:
+        #enabled: true
+        port: 8080
+    members:
+    - ip_address: 10.10.10.21
+    - ip_address: 10.10.10.22
+
+  - name: 'example-pool-2'
+    description: 'A pool balancing TCP'
+    service:
+      tcp:
+        #enabled: true
+        port: 8085
+        algorithm: 'IP_HASH' # default is ROUND_ROBIN
+    members:
+    - ip_address: 10.10.10.31
+    - ip_address: 10.10.10.32
+
+  virtual_servers:
+  - name: 'example-virtual-server-1'
+    description: 'A virtual server connecting to example-pool-1'
+    ip_address: 192.0.2.10
+    network: '12345678-1234-1234-1234-123456789012' # id of external network
+    pool: 'example-pool-1'
+    service_profiles:
+      http:         # protocol to balance, can be tcp/http/https.
+        port: 8080  # external port
+  - name: 'example-virtual-server-2'
+    description: 'A virtual server connecting to example-pool-2'
+    ip_address: 192.0.2.11
+    network: '12345678-1234-1234-1234-123456789012' # id of external network
+    pool: 'example-pool-2'
+    service_profiles:
+      tcp:
+        port: 8080
