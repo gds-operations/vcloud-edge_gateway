@@ -354,7 +354,7 @@ module Vcloud
         {
           :nat_rules => [{
             :enabled => true,
-            :network_id => "01234567-1234-1234-1234-0123456789ab",
+            :network_id => "01234567-1234-1234-1234-0123456789aa",
             :rule_type => "DNAT",
             :translated_ip => "10.10.1.2-10.10.1.3",
             :translated_port => "3412",
@@ -387,7 +387,7 @@ module Vcloud
             name: 'unit-test-vs-1',
             description: 'A virtual server',
             ip_address: '192.0.2.88',
-            network: '12345678-1234-1234-1234-1234567890dd',
+            network: '01234567-1234-1234-1234-0123456789aa',
             pool: 'unit-test-pool-1',
             service_profiles: {
               http: {
