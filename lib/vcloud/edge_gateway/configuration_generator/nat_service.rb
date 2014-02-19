@@ -3,7 +3,7 @@ module Vcloud
     module ConfigurationGenerator
 
       class NatService
-        def initialize edge_gateway_interfaces, input_config
+        def initialize input_config, edge_gateway_interfaces
           @input_config = input_config
           @edge_gateway_interfaces = edge_gateway_interfaces
         end

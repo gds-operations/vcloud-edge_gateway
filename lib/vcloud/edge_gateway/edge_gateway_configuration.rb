@@ -23,8 +23,8 @@ module Vcloud
         end
 
         nat_service_config = EdgeGateway::ConfigurationGenerator::NatService.new(
-          @edge_gateway_interfaces,
-          @local_config[:nat_service]
+          @local_config[:nat_service],
+          @edge_gateway_interfaces
         ).generate_fog_config
 
         unless nat_service_config.nil?

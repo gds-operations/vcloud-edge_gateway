@@ -31,7 +31,7 @@ module Vcloud
               original_ip: "192.0.2.2",
               translated_ip: "10.10.20.20",
             }]} # minimum NAT configuration with a rule
-            output = NatService.new(@edge_gw_interface_list, input).generate_fog_config
+            output = NatService.new(input, @edge_gw_interface_list).generate_fog_config
             @rule = output[:NatRule].first
           end
 
@@ -77,7 +77,7 @@ module Vcloud
               translated_ip: "10.10.20.20",
               protocol: 'tcp',
             }]} # minimum NAT configuration with a rule
-            output = NatService.new(@edge_gw_interface_list, input).generate_fog_config
+            output = NatService.new(input, @edge_gw_interface_list).generate_fog_config
             @rule = output[:NatRule].first
           end
 
@@ -157,7 +157,7 @@ module Vcloud
                   }
                 ]
               }
-            generated_config = NatService.new(@edge_gw_interface_list, input).generate_fog_config
+            generated_config = NatService.new(input, @edge_gw_interface_list).generate_fog_config
             expect(generated_config).to eq(output)
           end
 
@@ -199,7 +199,7 @@ module Vcloud
                   }
                 ]
               }
-            generated_config = NatService.new(@edge_gw_interface_list, input).generate_fog_config
+            generated_config = NatService.new(input, @edge_gw_interface_list).generate_fog_config
             expect(generated_config).to eq(output)
           end
 
@@ -236,7 +236,7 @@ module Vcloud
                   }
                 ]
               }
-            generated_config = NatService.new(@edge_gw_interface_list, input).generate_fog_config
+            generated_config = NatService.new(input, @edge_gw_interface_list).generate_fog_config
             expect(generated_config).to eq(output)
           end
 
@@ -279,7 +279,7 @@ module Vcloud
                   }
                 ]
               }
-            generated_config = NatService.new(@edge_gw_interface_list, input).generate_fog_config
+            generated_config = NatService.new(input, @edge_gw_interface_list).generate_fog_config
             expect(generated_config).to eq(output)
           end
 
@@ -319,7 +319,7 @@ module Vcloud
                   }
                 ]
               }
-            generated_config = NatService.new(@edge_gw_interface_list, input).generate_fog_config
+            generated_config = NatService.new(input, @edge_gw_interface_list).generate_fog_config
             expect(generated_config).to eq(output)
           end
 
@@ -453,7 +453,7 @@ module Vcloud
                   }
                 ]
               }
-            generated_config = NatService.new(@edge_gw_interface_list, input).generate_fog_config
+            generated_config = NatService.new(input, @edge_gw_interface_list).generate_fog_config
             expect(generated_config).to eq(output)
           end
 
