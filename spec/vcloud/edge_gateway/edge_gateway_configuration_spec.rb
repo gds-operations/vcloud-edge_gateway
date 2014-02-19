@@ -281,7 +281,7 @@ module Vcloud
 
       end
 
-      context "firewall config has not changed and nat config is absent" do
+      context "firewall config has not changed and nat & load_balancer config is absent" do
 
         before(:each) do
           @test_config = {
@@ -290,7 +290,8 @@ module Vcloud
           }
           @remote_config = {
             :FirewallService => same_firewall_config,
-            :NatService => different_nat_config
+            :NatService => different_nat_config,
+            :LoadBalancerService => different_load_balancer_config,
           }
           @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
         end
