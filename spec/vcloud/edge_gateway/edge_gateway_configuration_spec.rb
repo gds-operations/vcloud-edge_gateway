@@ -532,11 +532,11 @@ module Vcloud
             :Name=>"unit-test-vs-1",
             :Description=>"A virtual server that has been updated",
             :Interface=>{
-              :type=>"application/vnd.vmware.vcloud.orgVdcNetwork+xml",
-              :name=>"ane012345",
-              :href=>"https://vmware.example.com/api/admin/network/01234567-1234-1234-1234-0123456789aa"
+              :type => "application/vnd.vmware.admin.network+xml",
+              :name => "RemoteVSE",
+              :href =>"https://api.vmware.example.com/api/admin/network/01234567-1234-1234-1234-012345678912"
             },
-            :IpAddress=>"192.0.2.89",
+            :IpAddress=>"192.0.2.199",
             :ServiceProfile=>[{
               :IsEnabled=>"true",
               :Protocol=>"HTTP",
