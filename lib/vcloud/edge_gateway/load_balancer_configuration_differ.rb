@@ -12,6 +12,7 @@ module Vcloud
         end
 
         def stripped_remote_config
+          return nil if @remote.nil?
           deep_cloned_remote_config = Marshal.load( Marshal.dump(@remote) )
           if deep_cloned_remote_config.key?(:Pool)
             deep_cloned_remote_config[:Pool].each do |pool_entry|

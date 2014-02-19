@@ -330,6 +330,105 @@ module Vcloud
 
       end
 
+      context "there is no remote FirewallService config, but we are trying to update it" do
+
+        before(:each) do
+          @test_config = {
+            :gateway => @edge_gateway_id,
+            :firewall_service => test_firewall_config,
+          }
+          @remote_config = {
+            :NatService => different_nat_config,
+            :LoadBalancerService => different_load_balancer_config,
+          }
+          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
+        end
+
+        it "requires update" do
+          expect(@proposed_config.update_required?).to be(true)
+        end
+
+        it "proposed config contains firewall config in the form expected" do
+          proposed_firewall_config = @proposed_config.config[:FirewallService]
+          expect(proposed_firewall_config).to eq(expected_firewall_config)
+        end
+
+        it "proposed config does not contain load balancer config" do
+          expect(@proposed_config.config.key?(:LoadBalancerService)).to be(false)
+        end
+
+        it "proposed config does not contain nat config" do
+          expect(@proposed_config.config.key?(:NatService)).to be(false)
+        end
+
+      end
+
+      context "there is no remote NatService config, but we are trying to update it" do
+
+        before(:each) do
+          @test_config = {
+            :gateway => @edge_gateway_id,
+            :nat_service => test_nat_config,
+          }
+          @remote_config = {
+            :FirewallService => different_firewall_config,
+            :LoadBalancerService => different_load_balancer_config,
+          }
+          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
+        end
+
+        it "requires update" do
+          expect(@proposed_config.update_required?).to be(true)
+        end
+
+        it "proposed config contains nat config in the form expected" do
+          proposed_nat_config = @proposed_config.config[:NatService]
+          expect(proposed_nat_config).to eq(expected_nat_config)
+        end
+
+        it "proposed config does not contain load balancer config" do
+          expect(@proposed_config.config.key?(:LoadBalancerService)).to be(false)
+        end
+
+        it "proposed config does not contain firewall config" do
+          expect(@proposed_config.config.key?(:FirewallService)).to be(false)
+        end
+
+      end
+
+      context "there is no remote LoadBalancer config, but we are trying to update it" do
+
+        before(:each) do
+          @test_config = {
+            :gateway => @edge_gateway_id,
+            :load_balancer_service => test_load_balancer_config,
+          }
+          @remote_config = {
+            :FirewallService => different_firewall_config,
+            :NatService => different_nat_config,
+          }
+          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(@test_config, @remote_config)
+        end
+
+        it "requires update" do
+          expect(@proposed_config.update_required?).to be(true)
+        end
+
+        it "proposed config contains load_balancer config in the form expected" do
+          proposed_load_balancer_config = @proposed_config.config[:LoadBalancerService]
+          expect(proposed_load_balancer_config).to eq(expected_load_balancer_config)
+        end
+
+        it "proposed config does not contain nat config" do
+          expect(@proposed_config.config.key?(:NatService)).to be(false)
+        end
+
+        it "proposed config does not contain firewall config" do
+          expect(@proposed_config.config.key?(:FirewallService)).to be(false)
+        end
+
+      end
+
       def test_firewall_config
         {
           :policy => "drop",
