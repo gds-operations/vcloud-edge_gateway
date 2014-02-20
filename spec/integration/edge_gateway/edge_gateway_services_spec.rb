@@ -64,7 +64,7 @@ module Vcloud
           expect(remote_vcloud_config[:LoadBalancerService][:VirtualServer].empty?).to be_true
         end
 
-        it "should only need to make one call to EdgeGateway.update_configuration to update configuration" do
+        it "should only create one edgeGateway update task when updating the configuration" do
           start_time = DateTime.now()
           task_list_before_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
           EdgeGatewayServices.new.update(@initial_config_file)
@@ -88,7 +88,7 @@ module Vcloud
           expect(task_list_after_update.size - task_list_before_update.size).to be(0)
         end
 
-        it "should only make one call to Core::EdgeGateway.update_configuration to add the LoadBalancer config" do
+        it "should only create one additional edgeGateway update task when adding the LoadBalancer config" do
           start_time = DateTime.now()
           task_list_before_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
           EdgeGatewayServices.new.update(@adding_load_balancer_config_file)
