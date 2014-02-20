@@ -16,6 +16,8 @@
 #  * IP range, eg 192.0.2.55-192.0.2.75
 #  * Keyword: Any, internal, external
 #
+# 'protocol' can be 'tcp', 'udp', 'tcp+udp', or 'icmp'
+#
 ---
 gateway: OurEdgeGatewayName
 firewall_service:
@@ -26,6 +28,15 @@ firewall_service:
   - description: "Public HTTP access to WebServer1"
     destination_port_range: "80"
     destination_ip: "10.10.10.10"
+    source_ip: Any
+  - description: "Public ICMP access to frontend network"
+    protocols: icmp
+    destination_ip: "10.10.10.10/24"
+    source_ip: Any
+  - description: "Public TCP+UDP access to DNS Servers"
+    protocols: tcp+udp
+    destination_port_range: "53"
+    destination_ip: "10.10.10.50-10.10.10.59"
     source_ip: Any
   - description: "IP Restricted access to port 8080"
     destination_port_range: "8080"
