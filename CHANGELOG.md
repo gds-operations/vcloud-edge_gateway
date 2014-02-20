@@ -1,3 +1,9 @@
+## 0.1.0 (2014-02-20)
+
+Features:
+
+  - Add LoadBalancerService configuration management
+
 ## 0.0.2 (2014-02-14)
 
   - First release of gem
