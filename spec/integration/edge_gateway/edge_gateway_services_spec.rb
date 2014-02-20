@@ -104,15 +104,6 @@ module Vcloud
           expect(task_list_after_update.size - task_list_before_update.size).to be(0)
         end
 
-        it "should not update the EdgeGateway again if we apply the previous config" +
-            ", as it does not include a load balancer" do
-          start_time = DateTime.now()
-          task_list_before_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
-          EdgeGatewayServices.new.update(@initial_config_file)
-          task_list_after_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
-          expect(task_list_after_update.size - task_list_before_update.size).to be(0)
-        end
-
       end
 
       after(:all) do
