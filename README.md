@@ -18,7 +18,9 @@ Or install it yourself as:
 
 ## Usage
 
-TODO
+To configure an Edge Gateway:
+
+    $ vcloud-configure-edge input.yaml
 
 ## Contributing
 
@@ -28,7 +30,9 @@ TODO
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
 
-#Configure edge gateway services
+#Below here, rules are out of date - they will be updated shortly
+
+###Configure edge gateway services
 
 You can configure following services on an existing edgegateway using fog.
 - FirewallService
