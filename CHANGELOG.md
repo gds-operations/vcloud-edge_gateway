@@ -1,3 +1,9 @@
+## 0.2.0 (2014-02-21)
+
+Features:
+
+  - Add very basic CLI. Only configures - does not yet diff
+
 ## 0.1.0 (2014-02-20)
 
 Features:

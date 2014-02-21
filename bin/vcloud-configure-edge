@@ -1,0 +1,30 @@
+#!/usr/bin/env ruby
+
+begin
+  require 'rubygems'
+  require 'methadone'
+  gem 'vcloud-edge_gateway'
+rescue LoadError
+end
+
+require 'vcloud/edge_gateway'
+
+class App
+  include Methadone::Main
+  include Methadone::CLILogging
+
+  main do |config_file|
+    Vcloud::EdgeGatewayServices.new.update(config_file)
+  end
+
+  arg :resource
+
+  description '
+  vcloud-edge_gateway allows you to configure an EdgeGateway with an input file
+
+  See https://github.com/alphagov/vcloud-edge_gateway for more info'
+
+  version Vcloud::EdgeGateway::VERSION
+
+  go!
+end
