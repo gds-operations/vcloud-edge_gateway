@@ -12,10 +12,9 @@ require 'vcloud/edge_gateway'
 class App
   include Methadone::Main
   include Methadone::CLILogging
-  include Vcloud::EdgeGateway
 
   main do |config_file|
-    print config_file
+    Vcloud::EdgeGatewayServices.new.update(config_file)
   end
 
   arg :resource
