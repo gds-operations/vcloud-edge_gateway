@@ -2,11 +2,30 @@
 
 begin
   require 'rubygems'
+  require 'methadone'
   gem 'vcloud-edge_gateway'
 rescue LoadError
 end
 
 require 'vcloud/edge_gateway'
 
-puts "Test message just to string this together"
-puts "No CLI for vCloud Edge Gateway yet"
+class App
+  include Methadone::Main
+  include Methadone::CLILogging
+  include Vcloud::EdgeGateway
+
+  main do |config_file|
+    print config_file
+  end
+
+  arg :resource
+
+  description '
+  vcloud-edge_gateway allows you to configure an EdgeGateway with an input file
+
+  See https://github.com/alphagov/vcloud-edge_gateway for more info'
+
+  version Vcloud::EdgeGateway::VERSION
+
+  go!
+end
