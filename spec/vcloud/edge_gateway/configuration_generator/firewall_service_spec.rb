@@ -169,9 +169,8 @@ module Vcloud
                   }
                 ]
               }
+            },
 
-
-            } ,
             {
               title: 'should send port as -1 if destination/source_port_ranges are ranges',
               input: {
@@ -207,7 +206,8 @@ module Vcloud
                   }
                 ]
               }
-            } ,
+            },
+
             {
               title: 'should send port same as destination/source_port_range if destination/source_port_range are decimals and not ranges',
               input: {
@@ -243,6 +243,9 @@ module Vcloud
                   }
                 ]
               },
+            },
+
+            {
               title: 'output rule order should be same as the input rule order',
               input: {
                 firewall_rules: [
@@ -361,6 +364,7 @@ module Vcloud
                 ]
               }
             }
+
           ]
 
           test_cases.each do |test_case|
