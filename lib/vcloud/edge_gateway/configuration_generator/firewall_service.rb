@@ -52,7 +52,7 @@ module Vcloud
             when "icmp"
               {Icmp: 'true'}
             when "any"
-              {Tcp: 'true', Udp: 'true', Icmp: 'true'}
+              {Any: 'true'}
           end
         end
 

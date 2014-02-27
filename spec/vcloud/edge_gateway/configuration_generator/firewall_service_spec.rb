@@ -169,9 +169,8 @@ module Vcloud
                   }
                 ]
               }
+            },
 
-
-            } ,
             {
               title: 'should send port as -1 if destination/source_port_ranges are ranges',
               input: {
@@ -207,7 +206,8 @@ module Vcloud
                   }
                 ]
               }
-            } ,
+            },
+
             {
               title: 'should send port same as destination/source_port_range if destination/source_port_range are decimals and not ranges',
               input: {
@@ -243,6 +243,45 @@ module Vcloud
                   }
                 ]
               },
+            },
+
+            {
+              title: 'should handle a rule specifiying "any" protocols',
+              input: {
+                firewall_rules: [
+                  {
+                    description: "allow any protocol",
+                    protocols: "any",
+                    destination_ip: "10.10.20.20",
+                    source_ip: "192.0.2.2",
+                  }
+                ]
+              },
+              output: {
+                IsEnabled: 'true',
+                DefaultAction: "drop",
+                LogDefaultAction: 'false',
+                FirewallRule: [
+                  {
+                    Id: '1',
+                    IsEnabled: 'true',
+                    Description: "allow any protocol",
+                    MatchOnTranslate: 'false',
+                    Policy: "allow",
+                    Protocols: {Any: 'true'},
+                    Port: '-1',
+                    SourcePort: '-1',
+                    DestinationPortRange: "Any",
+                    DestinationIp: "10.10.20.20",
+                    SourcePortRange: "Any",
+                    SourceIp: "192.0.2.2",
+                    EnableLogging: 'false',
+                  }
+                ]
+              },
+            },
+
+            {
               title: 'output rule order should be same as the input rule order',
               input: {
                 firewall_rules: [
@@ -361,6 +400,7 @@ module Vcloud
                 ]
               }
             }
+
           ]
 
           test_cases.each do |test_case|
