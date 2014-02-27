@@ -1,3 +1,9 @@
+## 0.2.1 (2014-02-27)
+
+Bugfixes:
+
+  - [#66591522] Firewall rules with 'protocol: any' broken
+
 ## 0.2.0 (2014-02-21)
 
 Features:
