@@ -25,31 +25,20 @@ firewall_service:
   policy: drop   # firewall policy: default to drop
   firewall_rules:
     # rules default to allow
-  - description: "Public HTTP access to WebServer1"
-    destination_port_range: "80"
-    destination_ip: "10.10.10.10"
-    source_ip: Any
   - description: "Public ICMP access to frontend network"
-    protocols: icmp
-    destination_ip: "10.10.10.10/24"
-    source_ip: Any
-  - description: "Public TCP+UDP access to DNS Servers"
-    protocols: tcp+udp
-    destination_port_range: "53"
-    destination_ip: "10.10.10.50-10.10.10.59"
-    source_ip: Any
-  - description: "IP Restricted access to port 8080"
-    destination_port_range: "8080"
-    destination_ip: "10.10.10.15"
-    source_ip: "192.0.2.55"
-  - description: "Only allow certain source ports"
-    destination_port_range: "8081"
-    destination_ip: "10.10.10.15"
-    source_ip: Any
-    source_port_range: "10000-11000"
-  - description: "Drop some ports within above range though"
-    policy: drop
-    destination_port_range: "8081"
-    destination_ip: "10.10.10.15"
-    source_ip: Any
-    source_port_range: "10500-10600"
+    protocols: "icmp"
+    destination_ip: "192.0.2.10-192.0.2.19"
+    source_ip: "Any"
+  - description: "Public HTTPS access to Load Balancer"
+    destination_port_range: "443"
+    destination_ip: "192.0.2.15"
+    source_ip: "Any"
+  - description: "SSH Access from secure site"
+    destination_ip: "192.0.2.10-192.0.2.19"
+    source_ip: "198.51.100.44"
+    destination_port_range: '22'
+  - description: "Outbound all"
+    protocols: "any"
+    destination_ip: "external"
+    source_ip: 'Any'
+    destination_port_range: 'any'

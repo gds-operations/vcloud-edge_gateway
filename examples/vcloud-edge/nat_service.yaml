@@ -18,11 +18,11 @@ nat_service:
   nat_rules:
   - rule_type: 'DNAT'
     network_id: '12345678-1234-1234-1234-1234567890bb' # id of EdgeGateway external network
-    original_ip: "192.0.2.2" # Useable address on external network
-    original_port: "8080"
-    translated_ip: "10.10.20.20"
-    translated_port: "8085"
+    original_ip: "192.0.2.98" # Useable address on external network
+    original_port: "22"       # external port
+    translated_ip: "10.10.10.10"  # internal address to DNAT to
+    translated_port: "22"     # internal port
   - rule_type: 'SNAT'
     network_id: '12345678-1234-1234-1234-1234567890bb' # id of EdgeGateway external network
-    original_ip: "10.10.20.20"
-    translated_ip: "192.0.2.2" # useable address on external network
+    original_ip: "10.10.10.0/24"  # internal IP range
+    translated_ip: "192.0.2.100"   # useable address on external network
