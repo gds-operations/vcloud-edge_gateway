@@ -47,7 +47,7 @@ module Vcloud
             input = { virtual_servers: [{
               name: "virtual-server-1",
               ip_address: '192.2.0.1',
-              network: "12345678-1234-1234-1234-123456789aa",
+              network: "12345678-1234-1234-1234-123456789012",
               pool: "pool-1",
             }]}
             output = LoadBalancerService.new(@edge_gw_name).generate_fog_config(input)
