@@ -3,8 +3,8 @@ module Vcloud
     module ConfigurationGenerator
       class LoadBalancerService
 
-        def initialize edge_gateway
-          @edge_gateway = Vcloud::Core::EdgeGateway.get_by_name(edge_gateway)
+        def initialize(edge_gateway_interfaces)
+          @edge_gateway_interfaces = edge_gateway_interfaces
         end
 
         def generate_fog_config(load_balancer_input_config)
@@ -51,23 +51,15 @@ module Vcloud
         end
 
         def generate_virtual_server_interface_section(network_id)
+          edge_gw_interface = @edge_gateway_interfaces.find do |interface|
+            interface.network_id == network_id
+          end
+          raise "unable to find gateway network interface with id #{network_id}" unless edge_gw_interface
           vcloud_virtual_server_interface = {}
           vcloud_virtual_server_interface[:type] = 'application/vnd.vmware.vcloud.orgVdcNetwork+xml'
-          vcloud_virtual_server_interface[:name] = look_up_network_name(network_id)
-          vcloud_virtual_server_interface[:href] = look_up_network_href(network_id)
+          vcloud_virtual_server_interface[:name] = edge_gw_interface.network_name
+          vcloud_virtual_server_interface[:href] = edge_gw_interface.network_href
           vcloud_virtual_server_interface
-        end
-
-        def look_up_network_name(network_id)
-          gateway_interface = @edge_gateway.vcloud_gateway_interface_by_id(network_id)
-          raise "Could not find network #{network_id}" unless gateway_interface
-          gateway_interface[:Network][:name]
-        end
-
-        def look_up_network_href(network_id)
-          gateway_interface = @edge_gateway.vcloud_gateway_interface_by_id(network_id)
-          raise "Could not find network #{network_id}" unless gateway_interface
-          gateway_interface[:Network][:href]
         end
 
         def generate_virtual_server_service_profile_section(input_service_profile)

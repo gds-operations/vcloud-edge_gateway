@@ -6,27 +6,26 @@ module Vcloud
       describe LoadBalancerService do
 
         before(:each) do
-          @edge_gw_name = 'EdgeGateway1'
-          @edge_gw_id = '1111111-7b54-43dd-9eb1-631dd337e5a7'
-          edge_gateway = double(:edge_gateway,
-            :vcloud_gateway_interface_by_id => {
-              Network: {
-                :name => 'ExternalNetwork',
-                :href => 'https://example.com/api/admin/network/12345678-1234-1234-1234-123456789012'
-              }
-            }
+          mock_uplink_interface = double(
+            :mock_uplink,
+            :network_name => "ExternalNetwork",
+            :network_id   => "12345678-1234-1234-1234-123456789012",
+            :network_href => 'https://example.com/api/admin/network/12345678-1234-1234-1234-123456789012',
           )
-          expect(Vcloud::Core::EdgeGateway).
-            to receive(:get_by_name).
-            with(@edge_gw_name).
-            and_return(edge_gateway)
+          mock_internal_interface = double(
+            :mock_uplink,
+            :network_name => "InternalNetwork",
+            :network_id   => "12346788-1234-1234-1234-123456789000",
+            :network_href => "https://example.com/api/admin/network/12346788-1234-1234-1234-123456789000",
+          )
+          @edge_gw_interface_list = [ mock_internal_interface, mock_uplink_interface ]
         end
 
         context "top level LoadBalancer configuration defaults" do
 
           before(:each) do
             input = { } # minimum configuration
-            @output = LoadBalancerService.new(@edge_gw_name).generate_fog_config(input)
+            @output = LoadBalancerService.new(@edge_gw_interface_list).generate_fog_config(input)
           end
 
           it 'should default to LoadBalancerService enabled' do
@@ -50,7 +49,7 @@ module Vcloud
               network: "12345678-1234-1234-1234-123456789012",
               pool: "pool-1",
             }]}
-            output = LoadBalancerService.new(@edge_gw_name).generate_fog_config(input)
+            output = LoadBalancerService.new(@edge_gw_interface_list).generate_fog_config(input)
             @rule = output[:VirtualServer].first
           end
 
@@ -107,7 +106,7 @@ module Vcloud
               name: "pool-1",
               members: [ { ip_address: '10.10.10.10' } ],
             }]}
-            output = LoadBalancerService.new(@edge_gw_name).generate_fog_config(input)
+            output = LoadBalancerService.new(@edge_gw_interface_list).generate_fog_config(input)
             @rule = output[:Pool].first
           end
 
@@ -190,7 +189,7 @@ module Vcloud
           it 'should expand out input config into Fog expected input' do
             input            = read_data_file('load_balancer_http-input.yaml')
             expected_output  = read_data_file('load_balancer_http-output.yaml')
-            generated_config = LoadBalancerService.new(@edge_gw_name).
+            generated_config = LoadBalancerService.new(@edge_gw_interface_list).
               generate_fog_config input
             expect(generated_config).to eq(expected_output)
           end
@@ -202,7 +201,7 @@ module Vcloud
           it 'should expand out input config into Fog expected input' do
             input            = read_data_file('load_balancer_https-input.yaml')
             expected_output  = read_data_file('load_balancer_https-output.yaml')
-            generated_config = LoadBalancerService.new(@edge_gw_name).
+            generated_config = LoadBalancerService.new(@edge_gw_interface_list).
               generate_fog_config input
             expect(generated_config).to eq(expected_output)
           end
@@ -214,7 +213,7 @@ module Vcloud
           it 'should expand out input config into Fog expected input' do
             input            = read_data_file('load_balancer_mixed_complex-input.yaml')
             expected_output  = read_data_file('load_balancer_mixed_complex-output.yaml')
-            generated_config = LoadBalancerService.new(@edge_gw_name).
+            generated_config = LoadBalancerService.new(@edge_gw_interface_list).
               generate_fog_config input
             expect(generated_config).to eq(expected_output)
           end
