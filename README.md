@@ -1,6 +1,9 @@
-# vCloud Edge Gateway
+# vCloud Edge Gateway Configuration Tool
 
-vCloud Edge Gateway is a tool that supports automated provisiong of a VMware vCloud Edge Gateway. It depends on [vCloud Core](https://github.com/alphagov/vcloud-core) and uses Fog under the hood.
+vCloud Edge Gateway is a tool and Ruby library that supports automated
+provisiong of a VMware vCloud Director Edge Gateway appliance. It depends on
+[vCloud Core](https://github.com/alphagov/vcloud-core) and uses
+[Fog](https://fog.io) under the hood
 
 ## Installation
 
@@ -21,6 +24,7 @@ Or install it yourself as:
 To configure an Edge Gateway:
 
     $ vcloud-configure-edge input.yaml
+
 
 ## Contributing
 
