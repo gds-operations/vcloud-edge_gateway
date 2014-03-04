@@ -102,6 +102,44 @@ coming from. SNAT rules are typically used to enable outbound connectivity from
 a private address range behind the edge. The UUID of the external network that
 the traffic should appear to come from must also be specified, eg:
 
+A SNAT rule has the following form:
+
+```
+ - rule_type: 'SNAT'
+   network_id: '12345678-1234-1234-1234-1234567890bb' # id of EdgeGateway external network
+   original_ip: "10.10.10.0/24"  # internal IP range
+   translated_ip: "192.0.2.100
+```
+
+* `original_ip` can be a single IP address, a CIDR range, or a hyphenated
+  IP range.
+* `network_id` must be the UUID of the network on which the `translated_ip` sits.
+   This can be found using the `vcloud-walk edgegateways` tool.
+* `translated_ip` must be an available address on the network specified by
+   `network_id`
+
+
+DNAT rules translate packets addressed to a particular destination IP (and
+typically port) and translate it to an internal address - they are usually
+defined to allow external hosts to connect to services on hosts with private IP
+addresses.
+
+A DNAT rule has the following form, and translates packets going to the
+`original_ip` (and `original_port`) to the `translated_ip` and
+`translated_port` values.
+
+```
+- rule_type: 'DNAT'
+  network_id: '12345678-1234-1234-1234-1234567890bb' # id of EdgeGateway external network
+  original_ip: "192.0.2.98" # Useable address on external network
+  original_port: "22"       # external port
+  translated_ip: "10.10.10.10"  # internal address to DNAT to
+  translated_port: "22"
+```
+
+* `network_id` specifies the UUID of the external network that packets are
+  translated from.
+* `original_ip` is an IP address on the external network above.
 
 #### load_balancer_service
 
