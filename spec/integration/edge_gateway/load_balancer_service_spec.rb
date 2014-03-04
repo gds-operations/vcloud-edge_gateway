@@ -44,12 +44,18 @@ module Vcloud
       context "Check update is functional" do
 
         before(:all) do
-          local_config = ConfigLoader.new.load_config(@initial_load_balancer_config_file, Vcloud::Schema::EDGE_GATEWAY_SERVICES)
-          @local_vcloud_config  = EdgeGateway::ConfigurationGenerator::LoadBalancerService.new(@edge_name).generate_fog_config(local_config[:load_balancer_service])
+          local_config = ConfigLoader.new.load_config(
+            @initial_load_balancer_config_file,
+            Vcloud::Schema::EDGE_GATEWAY_SERVICES
+          )
+          @local_vcloud_config  = EdgeGateway::ConfigurationGenerator::LoadBalancerService.new(
+            @edge_name
+          ).generate_fog_config(local_config[:load_balancer_service])
         end
 
         it "should be starting our tests from an empty LoadBalancerService" do
-          remote_vcloud_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration][:LoadBalancerService]
+          edge_service_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration]
+          remote_vcloud_config = edge_service_config[:LoadBalancerService]
           expect(remote_vcloud_config[:Pool].empty?).to be_true
           expect(remote_vcloud_config[:VirtualServer].empty?).to be_true
         end
@@ -63,36 +69,42 @@ module Vcloud
         end
 
         it "should have configured at least one LoadBancer Pool entry" do
-          remote_vcloud_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration][:LoadBalancerService]
+          edge_service_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration]
+          remote_vcloud_config = edge_service_config[:LoadBalancerService]
           expect(remote_vcloud_config[:Pool].empty?).to be_false
         end
 
         it "should have configured at least one LoadBancer VirtualServer entry" do
-          remote_vcloud_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration][:LoadBalancerService]
+          edge_service_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration]
+          remote_vcloud_config = edge_service_config[:LoadBalancerService]
           expect(remote_vcloud_config[:VirtualServer].empty?).to be_false
         end
 
         it "should have configured the same number of Pools as in our configuration" do
-          remote_vcloud_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration][:LoadBalancerService]
+          edge_service_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration]
+          remote_vcloud_config = edge_service_config[:LoadBalancerService]
           expect(remote_vcloud_config[:Pool].size).
             to eq(@local_vcloud_config[:Pool].size)
         end
 
         it "should have configured the same number of VirtualServers as in our configuration" do
-          remote_vcloud_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration][:LoadBalancerService]
+          edge_service_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration]
+          remote_vcloud_config = edge_service_config[:LoadBalancerService]
           expect(remote_vcloud_config[:VirtualServer].size).
             to eq(@local_vcloud_config[:VirtualServer].size)
         end
 
         it "ConfigurationDiffer should return empty if local and remote LoadBalancer configs match" do
-          remote_vcloud_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration][:LoadBalancerService]
+          edge_service_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration]
+          remote_vcloud_config = edge_service_config[:LoadBalancerService]
           differ = EdgeGateway::LoadBalancerConfigurationDiffer.new(@local_vcloud_config, remote_vcloud_config)
           diff_output = differ.diff
           expect(diff_output).to eq([])
         end
 
-        it "and then should not configure the LoadBalancerService if updated again with the same configuration (idempotency)" do
-          expect(Vcloud::EdgeGateway.logger).to receive(:info).with('EdgeGatewayServices.update: Configuration is already up to date. Skipping.')
+        it "should not then configure the LoadBalancerService if updated again with the same configuration" do
+          expect(Vcloud::EdgeGateway.logger).
+            to receive(:info).with('EdgeGatewayServices.update: Configuration is already up to date. Skipping.')
           EdgeGatewayServices.new.update(@initial_load_balancer_config_file)
         end
 
@@ -138,7 +150,9 @@ module Vcloud
             edge_gateway_erb_input
           )
           expect { EdgeGatewayServices.new.update(config_file) }.
-            to raise_error('Load balancer virtual server integration-test-vs-1 does not have a valid backing pool.')
+            to raise_error(
+              'Load balancer virtual server integration-test-vs-1 does not have a valid backing pool.'
+            )
         end
 
       end
@@ -177,7 +191,8 @@ module Vcloud
       def get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(timestamp)
         vcloud_time = timestamp.strftime('%FT%T.000Z')
         q = Query.new('task',
-          :filter => "name==networkConfigureEdgeGatewayServices;objectName==#{@edge_name};startDate=ge=#{vcloud_time}",
+          :filter =>
+            "name==networkConfigureEdgeGatewayServices;objectName==#{@edge_name};startDate=ge=#{vcloud_time}",
           :sortDesc => 'startDate',
         )
         q.get_all_results

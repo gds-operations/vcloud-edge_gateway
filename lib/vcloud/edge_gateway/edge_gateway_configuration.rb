@@ -2,9 +2,10 @@ module Vcloud
   module EdgeGateway
     class EdgeGatewayConfiguration
 
-      def initialize(local_config, remote_config)
+      def initialize(local_config, remote_config, edge_gateway_interfaces)
         @local_config = local_config
         @remote_config = remote_config
+        @edge_gateway_interfaces = edge_gateway_interfaces
         @config = { }
         @update_required = nil
       end
@@ -21,7 +22,10 @@ module Vcloud
           end
         end
 
-        nat_service_config = EdgeGateway::ConfigurationGenerator::NatService.new(@local_config[:gateway], @local_config[:nat_service]).generate_fog_config
+        nat_service_config = EdgeGateway::ConfigurationGenerator::NatService.new(
+          @local_config[:nat_service],
+          @edge_gateway_interfaces
+        ).generate_fog_config
 
         unless nat_service_config.nil?
           differ = EdgeGateway::ConfigurationDiffer.new(nat_service_config, @remote_config[:NatService])
