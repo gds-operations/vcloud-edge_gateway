@@ -182,6 +182,44 @@ load_balancer_service:
       port: '80'  # external port
 ```
 
+### Finding external network details from vcloud-walk
+
+Unfortunately, there is a weakness in the vCloud Director system that makes it
+hard to find the network UUID and external address allocations, which are
+needed for NAT and Load Balancer configurations above.
+
+Thankfully, [vcloud-walk](https://github.com/alphagov/vcloud-walker) can be used to
+dig out the relevant section from the remote edge gateway configuration.
+
+To do this, do:
+
+```
+export FOG_CREDENTIAL={crediental-tag-for-your-organization}
+vcloud-walk edgegateways > edges.out
+```
+
+`edges.out` will contain the complete configuration of all edge gateways in
+your organization. Find the edge gateway you are interested in by searching for
+its name, then look for a GatewayInterface section that has an InterfaceType of
+'uplink'. This should define:
+
+* a 'href' element in a Network section. The UUID at the end of this href is
+  what you need.
+* an IpRange section with a StartAddress and EndAddress -- these define the
+  addresses that you can use for services on this external network.
+
+This bit of 'jq' magic pulls out the details you need:
+```
+cat edges.out | jq '
+  .[] | select(.name == "NAME_OF_YOUR_EDGE_GATEWAY")
+      | .Configuration.GatewayInterfaces.GatewayInterface[]
+      | select(.InterfaceType == "uplink")
+      | ( .Network.href, .SubnetParticipation )
+      '
+```
+
+
+
 ### Debug output
 
 Set environment variable DEBUG=true and/or EXCON_DEBUG=true to see Fog debug info.
