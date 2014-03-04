@@ -143,6 +143,44 @@ A DNAT rule has the following form, and translates packets going to the
 
 #### load_balancer_service
 
+The load balancer service comprises two sets of configurations: 'pools' and
+'virtual_servers'. These are coupled together to form a load balanced service:
+
+* A virtual_server provides the front-end of a load balancer - the port and
+  IP that clients connect to.
+* A pool is a collection of one or more back-end nodes (IP+port combination)
+  that traffic is balanced across.
+* Each virtual_server entry specifies a pool that serves requests destined to
+  it.
+* Multiple virtual_servers can specify the same pool (to run the same service
+  on different FQDNs, for example)
+
+A typical load balancer configuration (for one service) would look something like:
+
+```
+load_balancer_service:
+
+  pools:
+  - name: 'example-pool-1'
+    description: 'A pool balancing traffic across backend nodes on port 8080'
+    service:
+      http:
+        port: 8080
+    members:
+    - ip_address: 10.10.10.11
+    - ip_address: 10.10.10.12
+    - ip_address: 10.10.10.13
+
+  virtual_servers:
+  - name: 'example-virtual-server-1'
+    description: 'A virtual server connecting to example-pool-1'
+    ip_address: 192.0.2.10
+    network: '12345678-1234-1234-1234-123456789012' # id of external network
+    pool: 'example-pool-1' # must refer to a pool name detailed above
+    service_profiles:
+      http:  # protocol to balance, can be tcp/http/https.
+      port: '80'  # external port
+```
 
 ### Debug output
 
