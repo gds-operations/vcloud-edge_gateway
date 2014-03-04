@@ -1,0 +1,9 @@
+---
+gateway: EDGE_GATEWAY_NAME
+nat_service:
+  nat_rules: []
+firewall_service:
+  firewall_rules: []  # Will block by default
+load_balancer_service:
+  pools: []
+  virtual_servers: []
