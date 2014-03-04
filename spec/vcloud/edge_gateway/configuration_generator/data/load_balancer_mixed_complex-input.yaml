@@ -38,7 +38,7 @@
       name: 'test-vs-1',
       description: 'Description of VirtualServer',
       ip_address: '192.2.0.88',
-      network: 'ExternalNetwork',
+      network: '12345678-1234-1234-1234-123456789012',
       pool: 'test-pool-2',
       service_profiles: {
         http: {

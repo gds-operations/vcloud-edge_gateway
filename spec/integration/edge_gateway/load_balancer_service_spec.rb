@@ -49,7 +49,7 @@ module Vcloud
             Vcloud::Schema::EDGE_GATEWAY_SERVICES
           )
           @local_vcloud_config  = EdgeGateway::ConfigurationGenerator::LoadBalancerService.new(
-            @edge_name
+            @edge_gateway.interfaces
           ).generate_fog_config(local_config[:load_balancer_service])
         end
 

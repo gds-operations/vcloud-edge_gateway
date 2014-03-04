@@ -37,7 +37,7 @@ module Vcloud
 
         load_balancer_service_config =
           EdgeGateway::ConfigurationGenerator::LoadBalancerService.new(
-            @local_config[:gateway]
+            @edge_gateway_interfaces
           ).generate_fog_config(@local_config[:load_balancer_service])
 
         unless load_balancer_service_config.nil?
