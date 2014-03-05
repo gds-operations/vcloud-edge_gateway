@@ -1,3 +1,9 @@
+## 0.2.2 (2014-03-05)
+
+Bugfixes:
+
+  - [#66941992] Default healthcheck Uri should be '/'
+
 ## 0.2.1 (2014-02-27)
 
 Bugfixes:
