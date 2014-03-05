@@ -2,8 +2,8 @@
 
 vCloud Edge Gateway is a tool and Ruby library that supports automated
 provisiong of a VMware vCloud Director Edge Gateway appliance. It depends on
-[vCloud Core](https://github.com/alphagov/vcloud-core) and uses
-[Fog](https://fog.io) under the hood
+[vCloud Core](https://rubygems.org/gems/vcloud-core) and uses
+[Fog](http://fog.io) under the hood
 
 ## Installation
 
@@ -37,15 +37,18 @@ To configure an Edge Gateway:
 
 ### Configure edge gateway services
 
-You can configure following services on an existing edgegateway using
+You can configure the following services on an existing edgegateway using
 `vcloud-configure-edge`.
 
 - firewall_service
 - nat_service
 - load_balancer_service
 
+NB: DHCP and VPN Services are not yet supported by the Fog platform underneath.
+Support for these is being considered.
+
 The `vcloud-configure-edge` tool takes an input YAML file describing one
-or more of these services, and intelligently updates the edge gateway
+or more of these services, and efficiently updates the edge gateway
 configuration to match.
 
 Specifically:
@@ -188,7 +191,7 @@ Unfortunately, there is a weakness in the vCloud Director system that makes it
 hard to find the network UUID and external address allocations, which are
 needed for NAT and Load Balancer configurations above.
 
-Thankfully, [vcloud-walk](https://github.com/alphagov/vcloud-walker) can be used to
+Thankfully, [vcloud-walk](https://rubygems.org/gems/vcloud-walker) can be used to
 dig out the relevant section from the remote edge gateway configuration.
 
 To do this, do:
@@ -222,7 +225,7 @@ cat edges.out | jq '
 
 ### Debug output
 
-Set environment variable DEBUG=true and/or EXCON_DEBUG=true to see Fog debug info.
+Set environment variable `DEBUG=true` and/or `EXCON_DEBUG=true` to see Fog debug info.
 
 ### References
 
