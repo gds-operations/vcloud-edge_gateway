@@ -48,15 +48,13 @@ NB: DHCP and VPN Services are not yet supported by the Fog platform underneath.
 Support for these is being considered.
 
 The `vcloud-configure-edge` tool takes an input YAML file describing one
-or more of these services, and efficiently updates the edge gateway
-configuration to match.
-
-Specifically:
+or more of these services and updates the edge gateway configuration to match,
+obeying the following rules:
 
 * A given service will not be reconfigured if its input configuration matches
-  the live configuration.
+  the live configuration - to prevent unneccessary service reloads.
 * If a service is not defined in the input config, it will not be updated on
-  the remote edge gateway
+  the remote edge gateway - to permit per-service configurations.
 * If more than one service is defined and have changed, then all changed
   services will be updated in the same API request.
 
@@ -190,12 +188,8 @@ load_balancer_service:
 
 ### Finding external network details from vcloud-walk
 
-Unfortunately, there is a weakness in the vCloud Director system that makes it
-hard to find the network UUID and external address allocations via the web UI,
-and these are needed for NAT and Load Balancer configurations above.
-
-Thankfully, [vcloud-walk](https://rubygems.org/gems/vcloud-walker) can be used to
-dig out the relevant section from the remote edge gateway configuration.
+You can find the network UUID and external address allocations using [vCloud
+Walker](https://rubygems.org/gems/vcloud-walker):
 
 To do this, do:
 
@@ -214,7 +208,7 @@ its name, then look for a GatewayInterface section that has an InterfaceType of
 * an IpRange section with a StartAddress and EndAddress -- these define the
   addresses that you can use for services on this external network.
 
-This bit of 'jq' magic pulls out the details you need:
+You can use [jq](http://stedolan.github.io/jq/) to make this easier:
 ```
 cat edges.out | jq '
   .[] | select(.name == "NAME_OF_YOUR_EDGE_GATEWAY")
