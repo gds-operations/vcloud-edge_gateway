@@ -1,9 +1,9 @@
-# vCloud Edge Gateway Configuration Tool
+# vCloud Edge Gateway
 
-vCloud Edge Gateway is a tool and Ruby library that supports automated
+vCloud Edge Gateway is a CLI tool and Ruby library that supports automated
 provisiong of a VMware vCloud Director Edge Gateway appliance. It depends on
 [vCloud Core](https://rubygems.org/gems/vcloud-core) and uses
-[Fog](http://fog.io) under the hood
+[Fog](http://fog.io) under the hood.
 
 ## Installation
 
@@ -62,7 +62,7 @@ Specifically:
 
 #### firewall_service
 
-The edge gateway firewall service offers basic inbound and outbound stateful
+The edge gateway firewall service offers basic inbound and outbound
 IPv4 firewall rules, applied on top of a default policy.
 
 We default to the global firewall policy being 'drop', and each individual
@@ -86,7 +86,8 @@ Rule fields have the following behaviour
 * `protocol` defaults to 'tcp'. Can be 'icmp', 'udp', 'tcp+udp' or 'any'
 * `source_port_range` and `destination_port_range` can be `Any` (default),
   a single port number (eg '443'), or a port range such as '10000-20000'
-* `source_ip` and `destination_ip` have no default. They can be one of:
+* `source_ip` and `destination_ip` *must* be specified.
+* `source_ip` and `destination_ip` can be one of:
   * `Any` to match any address.
   * `external`, or `internal` to refer to addresses on the respective 'sides'
    of the edge gateway.
@@ -103,7 +104,8 @@ SNAT rules take a source IP address range and 'Translated IP address'. The trans
 address is generally the public address that you wish traffic to appear to be
 coming from. SNAT rules are typically used to enable outbound connectivity from
 a private address range behind the edge. The UUID of the external network that
-the traffic should appear to come from must also be specified, eg:
+the traffic should appear to come from must also be specified, as per the
+`network_id` field below.
 
 A SNAT rule has the following form:
 
@@ -117,7 +119,8 @@ A SNAT rule has the following form:
 * `original_ip` can be a single IP address, a CIDR range, or a hyphenated
   IP range.
 * `network_id` must be the UUID of the network on which the `translated_ip` sits.
-   This can be found using the `vcloud-walk edgegateways` tool.
+  Instructions are in the [finding external network
+  details](#finding-external-network-details-from-vcloud-walk) section below.
 * `translated_ip` must be an available address on the network specified by
    `network_id`
 
@@ -188,8 +191,8 @@ load_balancer_service:
 ### Finding external network details from vcloud-walk
 
 Unfortunately, there is a weakness in the vCloud Director system that makes it
-hard to find the network UUID and external address allocations, which are
-needed for NAT and Load Balancer configurations above.
+hard to find the network UUID and external address allocations via the web UI,
+and these are needed for NAT and Load Balancer configurations above.
 
 Thankfully, [vcloud-walk](https://rubygems.org/gems/vcloud-walker) can be used to
 dig out the relevant section from the remote edge gateway configuration.
