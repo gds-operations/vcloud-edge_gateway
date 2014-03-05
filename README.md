@@ -228,7 +228,64 @@ load_balancer_service:
 ```
 
 The above is particularly useful for services that require balancing of HTTP
-and HTTPS traffic.
+and HTTPS traffic together.
+
+#### load_balancer_servicer pool entries
+
+Each pool entry consists of:
+
+* a pool name, and optional description
+* a 'service' section - which protocol(s) to balance, and how to balance them.
+* a 'members' list - which backend nodes to use.
+
+For example:
+
+```
+name: test-pool-1
+description: Balances HTTP and HTTPS
+service:
+  http: {}
+  https: {}
+members:
+- ip_address: 10.10.10.11
+- ip_address: 10.10.10.12
+  weight: 10
+```
+
+Here we have:
+
+* HTTP and HTTPS traffic balanced across 10.10.10.11 and 10.10.10.12.
+* member 10.10.10.11 has a default `weight` of 1
+* member 10.10.10.12 has a `weight` of 10, so will receive 10x the traffic of
+  10.10.10.11
+* http and https services are using all defaults, which means:
+  * they use standard ports (80 for HTTP, 443 for HTTPS)
+  * they will use 'round robin' balancing
+  * HTTP service will 'GET /' from each node to check its health
+  * HTTPS service will check 'SSL hello' response to confirm its health.
+
+Service entries are the most complex, but generally the defaults are ok.
+
+A more complete HTTP service entry looks like:
+
+```
+service:
+  http:
+    port: 8080
+    algorithm: 'ROUND_ROBIN'  # can also IP_HASHbe 'LEAST_CONNECTED', 'IP_HASH', 'URI'
+    health_check:
+      port: 8081            # port to check health on, if not service port above.
+      uri: /healthcheck     # for HTTP, the URI to check for 200/30* response
+      protocol: HTTP        # the protocol to talk to health check service: HTTP, SSL, TCP
+      health_threshold:  2  # how many checks to success before reenabling member
+      unhealth_threshold: 3 # how many checks to fail before disabling member
+      interval: 5           # interval between checks
+      timeout: 15           # how long to wait before assuming healthcheck has failed
+
+```
+
+See [the vCloud Director Admin Guide](http://pubs.vmware.com/vcd-51/topic/com.vmware.vcloud.admin.doc_51/GUID-C12B3954-155F-48AF-9855-E0DE026752D0.html)
+for more details on configuring Pool entries.
 
 
 ### Finding external network details from vcloud-walk
