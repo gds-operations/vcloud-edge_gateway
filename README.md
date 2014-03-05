@@ -230,7 +230,7 @@ load_balancer_service:
 The above is particularly useful for services that require balancing of HTTP
 and HTTPS traffic together.
 
-#### load_balancer_servicer pool entries
+#### load_balancer_service pool entries in detail
 
 Each pool entry consists of:
 
@@ -287,6 +287,27 @@ service:
 See [the vCloud Director Admin Guide](http://pubs.vmware.com/vcd-51/topic/com.vmware.vcloud.admin.doc_51/GUID-C12B3954-155F-48AF-9855-E0DE026752D0.html)
 for more details on configuring Pool entries.
 
+#### load_balancer_service virtual_server entries in detail
+
+Each virtual_server entry must consist of:
+
+* a virtual_server name, and optional description
+* a 'service_profiles' section: which protocol(s) to handle
+* a `network` reference - the UUID of the network which the ip_address sits on.
+* a backend `pool` to use, referenced by name
+
+For example:
+
+```
+name: test-virtual_server-1
+description: Public facing side of test-pool-1
+pool: test-pool-1
+ip_address: 192.0.2.55  # front-end IP address, usually external
+network: 12345678-1234-1234-1234-1234567890aa # UUID of network that ip_address sits on
+service_profiles:
+  http: { port: 8080 }   # port defaults to 80
+  https: { port: 8443 }  # port defaults to 443
+```
 
 ### Finding external network details from vcloud-walk
 
