@@ -1,6 +1,9 @@
 # vCloud Edge Gateway
 
-vCloud Edge Gateway is a tool that supports automated provisiong of a VMware vCloud Edge Gateway. It depends on [vCloud Core](https://github.com/alphagov/vcloud-core) and uses Fog under the hood.
+vCloud Edge Gateway is a CLI tool and Ruby library that supports automated
+provisiong of a VMware vCloud Director Edge Gateway appliance. It depends on
+[vCloud Core](https://rubygems.org/gems/vcloud-core) and uses
+[Fog](http://fog.io) under the hood.
 
 ## Installation
 
@@ -22,6 +25,7 @@ To configure an Edge Gateway:
 
     $ vcloud-configure-edge input.yaml
 
+
 ## Contributing
 
 1. Fork it
@@ -30,160 +34,196 @@ To configure an Edge Gateway:
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
 
-#Below here, rules are out of date - they will be updated shortly
 
-###Configure edge gateway services
+### Configure edge gateway services
 
-You can configure following services on an existing edgegateway using fog.
-- FirewallService
-- NatService
-- LoadBalancerService
+You can configure the following services on an existing edgegateway using
+`vcloud-configure-edge`.
 
-###How to configure:
+- firewall_service
+- nat_service
+- load_balancer_service
 
-```ruby
-require 'fog'
-vcloud = Fog::Compute::VcloudDirector.new
-vcloud.post_configure_edge_gateway_services edge_gateway_id, configuration
-vcloud.process_task(task.body)
+NB: DHCP and VPN Services are not yet supported by the Fog platform underneath.
+Support for these is being considered.
+
+The `vcloud-configure-edge` tool takes an input YAML file describing one
+or more of these services and updates the edge gateway configuration to match,
+obeying the following rules:
+
+* A given service will not be reconfigured if its input configuration matches
+  the live configuration - to prevent unneccessary service reloads.
+* If a service is not defined in the input config, it will not be updated on
+  the remote edge gateway - to permit per-service configurations.
+* If more than one service is defined and have changed, then all changed
+  services will be updated in the same API request.
+
+#### firewall_service
+
+The edge gateway firewall service offers basic inbound and outbound
+IPv4 firewall rules, applied on top of a default policy.
+
+We default to the global firewall policy being 'drop', and each individual
+rule to be 'allow'. Rules are applied in order, with the last match winning.
+
+Each rule has the following form:
+
+```
+ - description: "Description of your rule"
+   destination_port_range: "53"  # defaults to 'Any'
+   destination_ip: "192.0.2.15"
+   source_ip: "Any"
+   source_port_range: "1024-65535"  # defaults to 'Any'
+   protocol: 'udp' # defaults to 'tcp'
+   policy: 'allow'  # defaults to 'drop'
 ```
 
-The Configuration contain definitions of any of the services listed.Details of service configurations may vary,
-but the mechanism is the same for updating any Edge Gateway service.<br/>You can include one or more services when you configure an Edge Gateway.
+Rule fields have the following behaviour
 
-###Examples:
+* `policy` defaults to 'allow', can also be 'drop'.
+* `protocol` defaults to 'tcp'. Can be 'icmp', 'udp', 'tcp+udp' or 'any'
+* `source_port_range` and `destination_port_range` can be `Any` (default),
+  a single port number (eg '443'), or a port range such as '10000-20000'
+* `source_ip` and `destination_ip` *must* be specified.
+* `source_ip` and `destination_ip` can be one of:
+  * `Any` to match any address.
+  * `external`, or `internal` to refer to addresses on the respective 'sides'
+   of the edge gateway.
+  * A single IP address, such as `192.0.2.44`
+  * A CIDR range, eg `192.0.2.0/24`
+  * A hyphened range, such as `192.0.2.50-192.0.2.60`
 
-Service examples, to be used in place of the `configuration` object above.
+#### nat_service
 
-Firewall:
-```ruby
-configuration = {
-  :FirewallService => {
-    :IsEnabled => true,
-    :DefaultAction => 'allow',
-    :LogDefaultAction => false,
-    :FirewallRule => [
-      {
-        :Policy => 'allow',
-        :Description => 'description',
-        :Protocols => {:Tcp => true},
-        :Port => 22,
-        :DestinationPortRange => 22,
-        :DestinationIp => 'Internal',
-        :SourcePort => 22,
-        :SourceIp => 'External',
-        :SourcePortRange => '22'
-      }
-    ]
-  }
-}
+The edge gateway NAT service offers simple stateful Source-NAT and
+Destination-NAT rules.
+
+SNAT rules take a source IP address range and 'Translated IP address'. The translated
+address is generally the public address that you wish traffic to appear to be
+coming from. SNAT rules are typically used to enable outbound connectivity from
+a private address range behind the edge. The UUID of the external network that
+the traffic should appear to come from must also be specified, as per the
+`network_id` field below.
+
+A SNAT rule has the following form:
+
+```
+ - rule_type: 'SNAT'
+   network_id: '12345678-1234-1234-1234-1234567890bb' # id of EdgeGateway external network
+   original_ip: "10.10.10.0/24"  # internal IP range
+   translated_ip: "192.0.2.100
 ```
 
-Load balancer:
-```ruby
-configuration = {
-  :LoadBalancerService => {
-    :IsEnabled => "true",
-    :Pool => [
-      {
-        :Name => 'web-app',
-        :ServicePort => [
-          {
-            :IsEnabled => "true",
-            :Protocol => "HTTP",
-            :Algorithm => "ROUND_ROBIN",
-            :Port => 80,
-            :HealthCheckPort => 80,
-            :HealthCheck => {
-              :Mode => "HTTP", :HealthThreshold => 1, :UnhealthThreshold => 6, :Interval => 20, :Timeout => 25
-            }
-          },
-          {
-            :IsEnabled => true,
-            :Protocol => "HTTPS",
-            :Algorithm => "ROUND_ROBIN",
-            :Port => 443,
-            :HealthCheckPort => 443,
-            :HealthCheck => {
-              :Mode => "SSL", :HealthThreshold => 1, :UnhealthThreshold => 6, :Interval => 20, :Timeout => 25
-            }
-          }
-        ],
-        :Member => [
-          {
-            :IpAddress => "192.0.2.0",
-            :Weight => 1,
-            :ServicePort => [
-              {:Protocol => "HTTP", :Port => 80, :HealthCheckPort => 80}
-            ]
-          }
-        ]
-      }
-    ],
-    :VirtualServer => [
-      {
-        :IsEnabled => "true",
-        :Name => "app1",
-        :Description => "app1",
-        :Interface => {:name => "Default", :href => "https://vmware.api.net/api/admin/network/2ad93597-7b54-43dd-9eb1-631dd337e5a7"},
-        :IpAddress => '192.0.2.0',
-        :ServiceProfile => [
-          {:IsEnabled => "true", :Protocol => "HTTP", :Port => 80, :Persistence => {:Method => ""}},
-          {:IsEnabled => "true", :Protocol => "HTTPS", :Port => 443, :Persistence => {:Method => ""}}
-        ],
-        :Logging => false,
-        :Pool => 'web-app'
-      }
-    ]
-  }
-}
+* `original_ip` can be a single IP address, a CIDR range, or a hyphenated
+  IP range.
+* `network_id` must be the UUID of the network on which the `translated_ip` sits.
+  Instructions are in the [finding external network
+  details](#finding-external-network-details-from-vcloud-walk) section below.
+* `translated_ip` must be an available address on the network specified by
+   `network_id`
+
+
+DNAT rules translate packets addressed to a particular destination IP (and
+typically port) and translate it to an internal address - they are usually
+defined to allow external hosts to connect to services on hosts with private IP
+addresses.
+
+A DNAT rule has the following form, and translates packets going to the
+`original_ip` (and `original_port`) to the `translated_ip` and
+`translated_port` values.
+
+```
+- rule_type: 'DNAT'
+  network_id: '12345678-1234-1234-1234-1234567890bb' # id of EdgeGateway external network
+  original_ip: "192.0.2.98" # Useable address on external network
+  original_port: "22"       # external port
+  translated_ip: "10.10.10.10"  # internal address to DNAT to
+  translated_port: "22"
 ```
 
-Nat:
-```ruby
-configuration = {
-  :NatService => {
-    :IsEnabled => true,
-    :nat_type => 'ipTranslation',
-    :Policy => 'allowTrafficIn',
-    :NatRule => [
-      {
-        :Description => 'a snat rule',
-        :RuleType => 'SNAT',
-        :IsEnabled => true,
-        :Id => '65538',
-        :GatewayNatRule => {
-          :Interface => {
-            :name => 'nft00001',
-            :href => 'https://vmware.api.net/api/admin/network/44265cc3-6d63-4ea9-ac72-4905b5aa6111'
-            },
-          :OriginalIp => "192.0.2.0",
-          :TranslatedIp => "203.0.113.10"
-        }
-      },
-      {
-        :Description => 'a dnat rule',
-        :RuleType => 'DNAT',
-        :IsEnabled => true,
-        :Id => '65539',
-        :GatewayNatRule =>
-        {
-          :Interface => {
-            :name => 'nft00001',
-            :href => 'https://vmware.api.net/api/admin/network/44265cc3-6d63-4ea9-ac72-4905b5aa6111'
-           },
-          :Protocol => 'tcp',
-          :OriginalIp => "203.0.113.10",
-          :OriginalPort => 22,
-          :TranslatedIp => "192.0.2.0",
-          :TranslatedPort => 22
-        },
-      }
-    ]
-  }
- }
+* `network_id` specifies the UUID of the external network that packets are
+  translated from.
+* `original_ip` is an IP address on the external network above.
+
+#### load_balancer_service
+
+The load balancer service comprises two sets of configurations: 'pools' and
+'virtual_servers'. These are coupled together to form a load balanced service:
+
+* A virtual_server provides the front-end of a load balancer - the port and
+  IP that clients connect to.
+* A pool is a collection of one or more back-end nodes (IP+port combination)
+  that traffic is balanced across.
+* Each virtual_server entry specifies a pool that serves requests destined to
+  it.
+* Multiple virtual_servers can specify the same pool (to run the same service
+  on different FQDNs, for example)
+
+A typical load balancer configuration (for one service) would look something like:
+
+```
+load_balancer_service:
+
+  pools:
+  - name: 'example-pool-1'
+    description: 'A pool balancing traffic across backend nodes on port 8080'
+    service:
+      http:
+        port: 8080
+    members:
+    - ip_address: 10.10.10.11
+    - ip_address: 10.10.10.12
+    - ip_address: 10.10.10.13
+
+  virtual_servers:
+  - name: 'example-virtual-server-1'
+    description: 'A virtual server connecting to example-pool-1'
+    ip_address: 192.0.2.10
+    network: '12345678-1234-1234-1234-123456789012' # id of external network
+    pool: 'example-pool-1' # must refer to a pool name detailed above
+    service_profiles:
+      http:  # protocol to balance, can be tcp/http/https.
+      port: '80'  # external port
 ```
 
-###Debug
+### Finding external network details from vcloud-walk
 
-Set environment variable DEBUG=true to see fog debug info.
+You can find the network UUID and external address allocations using [vCloud
+Walker](https://rubygems.org/gems/vcloud-walker):
+
+To do this, do:
+
+```
+export FOG_CREDENTIAL={crediental-tag-for-your-organization}
+vcloud-walk edgegateways > edges.out
+```
+
+`edges.out` will contain the complete configuration of all edge gateways in
+your organization. Find the edge gateway you are interested in by searching for
+its name, then look for a GatewayInterface section that has an InterfaceType of
+'uplink'. This should define:
+
+* a 'href' element in a Network section. The UUID at the end of this href is
+  what you need.
+* an IpRange section with a StartAddress and EndAddress -- these define the
+  addresses that you can use for services on this external network.
+
+You can use [jq](http://stedolan.github.io/jq/) to make this easier:
+```
+cat edges.out | jq '
+  .[] | select(.name == "NAME_OF_YOUR_EDGE_GATEWAY")
+      | .Configuration.GatewayInterfaces.GatewayInterface[]
+      | select(.InterfaceType == "uplink")
+      | ( .Network.href, .SubnetParticipation )
+      '
+```
+
+
+
+### Debug output
+
+Set environment variable `DEBUG=true` and/or `EXCON_DEBUG=true` to see Fog debug info.
+
+### References
+
+* [vCloud Director Edge Gateway documentation](http://pubs.vmware.com/vcd-51/topic/com.vmware.vcloud.admin.doc_51/GUID-ADE1DCAB-874F-45A9-9337-1E971DAC0F7D.html)
