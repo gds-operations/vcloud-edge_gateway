@@ -148,7 +148,7 @@ A DNAT rule has the following form, and translates packets going to the
 #### load_balancer_service
 
 The load balancer service comprises two sets of configurations: 'pools' and
-'virtual_servers'. These are coupled together to form a load balanced service:
+'virtual_servers'. These are coupled together to form load balanced services:
 
 * A virtual_server provides the front-end of a load balancer - the port and
   IP that clients connect to.
@@ -159,7 +159,8 @@ The load balancer service comprises two sets of configurations: 'pools' and
 * Multiple virtual_servers can specify the same pool (to run the same service
   on different FQDNs, for example)
 
-A typical load balancer configuration (for one service) would look something like:
+A typical load balancer configuration (for one service, mapping 192.0.2.0:80 to
+port 8080 on three servers) would look something like:
 
 ```
 load_balancer_service:
@@ -183,8 +184,52 @@ load_balancer_service:
     pool: 'example-pool-1' # must refer to a pool name detailed above
     service_profiles:
       http:  # protocol to balance, can be tcp/http/https.
-      port: '80'  # external port
+        port: '80'  # external port
 ```
+
+The load balancer service is quite basic, but supports the following:
+
+* Layer 7 balancing of HTTP traffic
+* Balancing of HTTPS traffic (though no decryption is possible, so this is
+  purely level-4 based)
+* Layer 4 balancing of arbitrary TCP traffic.
+* URI-based healthchecks of backend nodes
+* Several balancing algorithms, such as 'round robin', and 'least connections'
+* Ability to persist sessions to the same backend member node, via a variety of
+  means (eg HTTP cookie value, SSL session ID, source IP hash).
+
+Rather unusually, each virtual server and pool combination can handle traffic
+balancing for HTTP, HTTPS, and a single TCP port simultaneously. For example:
+
+```
+load_balancer_service:
+  pools:
+  - name: 'example-multi-protocol-pool-1'
+    description: 'A pool balancing HTTP, HTTPS, and SMTP traffic'
+    service:
+      http: {}
+      https: {}
+      tcp:
+        port: 25
+    members:
+    - ip_address: 10.10.10.14
+    - ip_address: 10.10.10.15
+  virtual_servers:
+  - name: 'example-multi-protocol-virtual-server-1'
+    description: 'A virtual server connecting to example-pool-1'
+    ip_address: 192.0.2.11
+    network: '12345678-1234-1234-1234-123456789012'
+    pool: 'example-multi-protocol-pool-1'
+    service_profiles:
+      http: {}
+      https: {}
+      tcp:
+        port: 25
+```
+
+The above is particularly useful for services that require balancing of HTTP
+and HTTPS traffic.
+
 
 ### Finding external network details from vcloud-walk
 
