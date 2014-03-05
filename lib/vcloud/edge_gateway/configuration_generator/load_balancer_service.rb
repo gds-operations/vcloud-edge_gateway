@@ -189,7 +189,7 @@ module Vcloud
           vcloud_pool_healthcheck_entry = {
             Mode: default_mode,
           }
-          vcloud_pool_healthcheck_entry[:Uri] = ''
+          vcloud_pool_healthcheck_entry[:Uri] = '/'
           vcloud_pool_healthcheck_entry[:HealthThreshold] = '2'
           vcloud_pool_healthcheck_entry[:UnhealthThreshold] = '3'
           vcloud_pool_healthcheck_entry[:Interval] = '5'
