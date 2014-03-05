@@ -129,6 +129,48 @@ module Vcloud
         expect(validator.valid?).to be_true
       end
 
+      it "should validate ok if an empty pool service section is provided" do
+        input = {
+          pools: [
+            {
+              name: 'pool entry 1',
+              service: {
+                http: {},
+              },
+              members: [
+                { ip_address: "192.2.0.40" },
+                { ip_address: "192.2.0.41" },
+              ]
+            },
+          ],
+        }
+        validator = ConfigValidator.validate(:base, input, Vcloud::Schema::LOAD_BALANCER_SERVICE)
+        expect(validator.errors).to eq([])
+        expect(validator.valid?).to be_true
+      end
+
+      it "should validate ok if an empty virtual_server service_profile section is provided" do
+        input = {
+          pools: [{
+            name: 'pool-1',
+            service: { http: {} },
+            members: [ { ip_address: '10.10.10.10' } ],
+          }],
+          virtual_servers: [
+            {
+              name: 'virtual_server entry 1',
+              ip_address: "192.2.0.40",
+              network: "TestNetwork",
+              service_profiles: { http: {} },
+              pool: "pool-1",
+            },
+          ],
+        }
+        validator = ConfigValidator.validate(:base, input, Vcloud::Schema::LOAD_BALANCER_SERVICE)
+        expect(validator.errors).to eq([])
+        expect(validator.valid?).to be_true
+      end
+
       it "should be ok if no pools are specified" do
         input = {
           virtual_servers: []

@@ -30,6 +30,7 @@ module Vcloud
     POOL_SERVICE_SECTION = {
       type: Hash,
       required: false,
+      allowed_empty: true,
       internals: {
         enabled: { type: 'boolean', required: false },
         port:    { type: 'string_or_number', required: false },
@@ -78,6 +79,7 @@ module Vcloud
     VIRTUAL_SERVER_SERVICE_PROFILE_ENTRY = {
       type: Hash,
       required: false,
+      allowed_empty: true,
       internals: {
         enabled: { type: 'boolean', required: false },
         port: { type: 'string_or_number', required: false },
