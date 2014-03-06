@@ -191,7 +191,7 @@ load_balancer_service:
         port: '80'  # external port
 ```
 
-The load balancer service is quite basic, but supports the following:
+The vCloud Director load balancer service is quite basic, but supports the following:
 
 * Layer 7 balancing of HTTP traffic
 * Balancing of HTTPS traffic (though no decryption is possible, so this is
@@ -202,7 +202,9 @@ The load balancer service is quite basic, but supports the following:
 * Ability to persist sessions to the same backend member node, via a variety of
   means (eg HTTP cookie value, SSL session ID, source IP hash).
 
-It is also worth noting what it *does not* support:
+`vcloud-configure-edge` supports all of the above features.
+
+It is also worth noting that the vCloud Director load balancer *does not support*:
 
 * In vCD 5.1, TCP and HTTPS layer-4 balancing are based on TCP port forwarding.
   There is no NAT in the mix, so the backend pools see the IP address/port of
@@ -276,7 +278,9 @@ Here we have:
   * HTTP service will 'GET /' from each node to check its health
   * HTTPS service will check 'SSL hello' response to confirm its health.
 
-Service entries are the most complex, but generally the defaults are ok.
+Service entries are the most complex, due to the available options on
+a per-service basis. The defaults we provide are suitable for most situations,
+but for more infomation see below.
 
 A more complete HTTP service entry looks like:
 
