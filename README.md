@@ -272,7 +272,7 @@ A more complete HTTP service entry looks like:
 service:
   http:
     port: 8080
-    algorithm: 'ROUND_ROBIN'  # can also IP_HASHbe 'LEAST_CONNECTED', 'IP_HASH', 'URI'
+    algorithm: 'ROUND_ROBIN'  # can also be 'LEAST_CONNECTED', 'IP_HASH', 'URI'
     health_check:
       port: 8081            # port to check health on, if not service port above.
       uri: /healthcheck     # for HTTP, the URI to check for 200/30* response
@@ -303,11 +303,42 @@ name: test-virtual_server-1
 description: Public facing side of test-pool-1
 pool: test-pool-1
 ip_address: 192.0.2.55  # front-end IP address, usually external
-network: 12345678-1234-1234-1234-1234567890aa # UUID of network that ip_address sits on
+network: 12345678-1234-1234-1234-1234567890aa # UUID of network containing ip_address
 service_profiles:
-  http: { port: 8080 }   # port defaults to 80
-  https: { port: 8443 }  # port defaults to 443
+  http: { port: 8080 } # override default port 80
+  https: { }  # port defaults to 443
 ```
+
+Limited session persistence configurations can be defined in the virtual_server
+service_profiles section, if it is required that traffic 'stick' to the backend
+member that it originally was destined for. The available persistence mechanisms
+change based on which service is being handled:
+
+For the 'http' service_profile, we can use Cookie based persistence:
+
+```
+  http:
+    port: 8080
+    persistence:
+      method: COOKIE
+      cookie_name: JSESSIONID # can be any cookie name string
+      cookie_method: APP      # can be one of INSERT, PREFIX, or APP
+```
+
+
+For the 'https' service_profile, we can use SSL Session ID based persistence:
+
+```
+  https:
+    port: 8443
+    persistence:
+      method: SSL_SESSION_ID
+```
+
+There is no persistence option for 'tcp' service_profiles.
+
+See [the vCloud Director Admin Guide](http://pubs.vmware.com/vcd-51/topic/com.vmware.vcloud.admin.doc_51/GUID-EC5EE5F9-1A2C-4609-9347-4C3143727704.html)
+for more details on configuring VirtualServer entries.
 
 ### Finding external network details from vcloud-walk
 
