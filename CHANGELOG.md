@@ -2,7 +2,7 @@
 
 Bugfixes:
 
-  - [#66941992] Default healthcheck Uri should be '/'
+  - Default healthcheck Uri is now '/', previously '' resulting in 'OPTIONS *' query ([#66941992])
 
 ## 0.2.1 (2014-02-27)
 
