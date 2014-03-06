@@ -158,6 +158,10 @@ The load balancer service comprises two sets of configurations: 'pools' and
   it.
 * Multiple virtual_servers can specify the same pool (to run the same service
   on different FQDNs, for example)
+* virtual_servers define any 'session persistence' information, if sessions
+  are required to stick to the same pool member.
+* pools define 'member healthchecks', and so are aware of the health of their
+  member nodes.
 
 A typical load balancer configuration (for one service, mapping 192.0.2.0:80 to
 port 8080 on three servers) would look something like:
@@ -197,6 +201,14 @@ The load balancer service is quite basic, but supports the following:
 * Several balancing algorithms, such as 'round robin', and 'least connections'
 * Ability to persist sessions to the same backend member node, via a variety of
   means (eg HTTP cookie value, SSL session ID, source IP hash).
+
+It is also worth noting what it *does not* support:
+
+* In vCD 5.1, TCP and HTTPS layer-4 balancing are based on TCP port forwarding.
+  There is no NAT in the mix, so the backend pools see the IP address/port of
+  the edge rather than the remote host.
+* There is no SSL offloading/decryption possible on the device, so traffic
+  inspection of HTTPS is not feasible.
 
 Rather unusually, each virtual server and pool combination can handle traffic
 balancing for HTTP, HTTPS, and a single TCP port simultaneously. For example:
