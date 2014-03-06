@@ -1,17 +1,6 @@
 module Vcloud
   module EdgeGateway
-    class NatConfigurationDiffer
-
-        def initialize local, remote
-          @local = local
-          @remote = remote
-          @stripped_local = nil
-          @stripped_remote = nil
-        end
-
-        def diff
-          ( stripped_local_config == stripped_remote_config ) ? [] : HashDiff.diff(stripped_local_config, stripped_remote_config)
-        end
+    class NatConfigurationDiffer < ConfigurationDiffer
 
         def stripped_local_config
           return @stripped_local unless @stripped_local.nil?
