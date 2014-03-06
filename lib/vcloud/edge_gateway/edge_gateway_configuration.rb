@@ -15,7 +15,7 @@ module Vcloud
 
         firewall_service_config = EdgeGateway::ConfigurationGenerator::FirewallService.new.generate_fog_config(@local_config[:firewall_service])
         unless firewall_service_config.nil?
-          differ = EdgeGateway::ConfigurationDiffer.new(firewall_service_config, @remote_config[:FirewallService])
+          differ = EdgeGateway::FirewallConfigurationDiffer.new(firewall_service_config, @remote_config[:FirewallService])
           unless differ.diff.empty?
             @config[:FirewallService] = firewall_service_config
             @update_required = true

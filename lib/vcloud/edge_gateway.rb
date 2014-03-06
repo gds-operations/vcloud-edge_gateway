@@ -19,6 +19,7 @@ require 'vcloud/edge_gateway/configuration_generator/nat_service'
 require 'vcloud/edge_gateway/configuration_generator/load_balancer_service'
 require 'vcloud/edge_gateway/configuration_differ'
 require 'vcloud/edge_gateway/nat_configuration_differ'
+require 'vcloud/edge_gateway/firewall_configuration_differ'
 require 'vcloud/edge_gateway/load_balancer_configuration_differ'
 require 'vcloud/edge_gateway/edge_gateway_configuration'
 
