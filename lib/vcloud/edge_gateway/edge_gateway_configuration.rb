@@ -28,7 +28,7 @@ module Vcloud
         ).generate_fog_config
 
         unless nat_service_config.nil?
-          differ = EdgeGateway::ConfigurationDiffer.new(nat_service_config, @remote_config[:NatService])
+          differ = EdgeGateway::NatConfigurationDiffer.new(nat_service_config, @remote_config[:NatService])
           unless differ.diff.empty?
             @config[:NatService] = nat_service_config
             @update_required = true
