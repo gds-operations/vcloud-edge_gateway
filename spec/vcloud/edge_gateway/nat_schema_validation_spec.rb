@@ -13,7 +13,7 @@ module Vcloud
           translated_ip: "10.10.20.20",
 
         }
-        validator = ConfigValidator.validate(:base, snat_rule, Vcloud::Schema::NAT_RULE)
+        validator = Vcloud::Core::ConfigValidator.validate(:base, snat_rule, Vcloud::Schema::NAT_RULE)
         expect(validator.valid?).to be_true
         expect(validator.errors).to be_empty
 
@@ -33,7 +33,7 @@ module Vcloud
         mandatory_fields.each do |mandatory_field|
           it "should error since mandatory field #{mandatory_field} is missing" do
             @snat_rule.delete(mandatory_field)
-            validator = ConfigValidator.validate(:base, @snat_rule, Vcloud::Schema::NAT_RULE)
+            validator = Vcloud::Core::ConfigValidator.validate(:base, @snat_rule, Vcloud::Schema::NAT_RULE)
             expect(validator.valid?).to be_false
             expect(validator.errors).to eq(["base: missing '#{mandatory_field}' parameter"])
           end
@@ -52,7 +52,7 @@ module Vcloud
           protocol: 'tcp'
 
         }
-        validator = ConfigValidator.validate(:base, snat_rule, Vcloud::Schema::NAT_RULE)
+        validator = Vcloud::Core::ConfigValidator.validate(:base, snat_rule, Vcloud::Schema::NAT_RULE)
         expect(validator.valid?).to be_true
         expect(validator.errors).to be_empty
       end
@@ -84,7 +84,7 @@ module Vcloud
             }
           ]
         }
-        validator = ConfigValidator.validate(:base, nat_service, Vcloud::Schema::NAT_SERVICE)
+        validator = Vcloud::Core::ConfigValidator.validate(:base, nat_service, Vcloud::Schema::NAT_SERVICE)
         expect(validator.valid?).to be_true
         expect(validator.errors).to be_empty
       end

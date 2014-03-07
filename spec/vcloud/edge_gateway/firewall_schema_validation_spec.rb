@@ -16,7 +16,7 @@ module Vcloud
           ]
 
         }
-        validator = ConfigValidator.validate(:base, config, Schema::FIREWALL_SERVICE)
+        validator = Vcloud::Core::ConfigValidator.validate(:base, config, Schema::FIREWALL_SERVICE)
         expect(validator.valid?).to be_false
         expect(validator.errors).to eq([
                                          "source_ip: 192.0 is not a valid IP address range. Valid values can be IP address, CIDR, IP range, 'Any','internal' and 'external'.",
@@ -37,7 +37,7 @@ module Vcloud
           ]
 
         }
-        validator = ConfigValidator.validate(:base, config, Schema::FIREWALL_SERVICE)
+        validator = Vcloud::Core::ConfigValidator.validate(:base, config, Schema::FIREWALL_SERVICE)
         expect(validator.valid?).to be_true
       end
     end
