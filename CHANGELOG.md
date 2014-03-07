@@ -2,13 +2,13 @@
 
 Bugfixes:
 
-  - Default healthcheck Uri is now '/', previously '' resulting in 'OPTIONS *' query ([#66941992])
+  - Default healthcheck URI is now '/'. Previous default caused incorrect 'OPTIONS *' query [#66941992]
 
 ## 0.2.1 (2014-02-27)
 
 Bugfixes:
 
-  - [#66591522] Firewall rules with 'protocol: any' broken
+  - Now handles firewall rules with 'protocol: any' correctly [#66591522]
 
 ## 0.2.0 (2014-02-21)
 
