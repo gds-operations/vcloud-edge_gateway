@@ -66,11 +66,8 @@ module Vcloud
 
         context "firewall config generation" do
 
-          test_cases = [
-
-            {
-              title: 'disabled firewall with a disabled rule',
-              input: {
+          it 'should have disabled firewall with a disabled rule' do
+            input = {
                 enabled: 'false',
                 policy: 'allow',
                 log_default_action: 'true',
@@ -89,8 +86,8 @@ module Vcloud
                     enable_logging: 'true',
                   }
                 ]
-              },
-              output: {
+            }
+            output = {
                 IsEnabled: 'false',
                 DefaultAction: "allow",
                 LogDefaultAction: 'true',
@@ -111,12 +108,13 @@ module Vcloud
                     EnableLogging: 'true',
                   }
                 ]
-              }
-            },
+            }
+            generated_config = FirewallService.new.generate_fog_config(input)
+            expect(generated_config).to eq(output)
+          end
 
-            {
-              title: 'id should be auto generated if not provided',
-              input: {
+          it 'id should be auto generated if not provided' do
+            input = {
                 firewall_rules: [
                   {
                     description: "rule 1",
@@ -131,8 +129,8 @@ module Vcloud
                     source_ip: "192.0.2.2",
                   }
                 ]
-              },
-              output: {
+            }
+            output = {
                 IsEnabled: 'true',
                 DefaultAction: "drop",
                 LogDefaultAction: 'false',
@@ -168,12 +166,13 @@ module Vcloud
                     EnableLogging: 'false',
                   }
                 ]
-              }
-            },
+            }
+            generated_config = FirewallService.new.generate_fog_config(input)
+            expect(generated_config).to eq(output)
+          end
 
-            {
-              title: 'should send port as -1 if destination/source_port_ranges are ranges',
-              input: {
+          it 'should send port as -1 if destination/source_port_ranges are ranges' do
+            input = {
                 firewall_rules: [
                   {
                     description: "rule 1",
@@ -183,8 +182,8 @@ module Vcloud
                     source_ip: "192.0.2.2",
                   }
                 ]
-              },
-              output: {
+            }
+            output = {
                 IsEnabled: 'true',
                 DefaultAction: "drop",
                 LogDefaultAction: 'false',
@@ -205,12 +204,13 @@ module Vcloud
                     EnableLogging: 'false',
                   }
                 ]
-              }
-            },
+            }
+            generated_config = FirewallService.new.generate_fog_config(input)
+            expect(generated_config).to eq(output)
+          end
 
-            {
-              title: 'should send port same as destination/source_port_range if destination/source_port_range are decimals and not ranges',
-              input: {
+          it 'should send port same as destination/source_port_range if destination/source_port_range are decimals and not ranges' do
+            input = {
                 firewall_rules: [
                   {
                     description: "rule 1",
@@ -220,8 +220,8 @@ module Vcloud
                     source_ip: "192.0.2.2",
                   }
                 ]
-              },
-              output: {
+            }
+            output = {
                 IsEnabled: 'true',
                 DefaultAction: "drop",
                 LogDefaultAction: 'false',
@@ -242,12 +242,13 @@ module Vcloud
                     EnableLogging: 'false',
                   }
                 ]
-              },
-            },
+            }
+            generated_config = FirewallService.new.generate_fog_config(input)
+            expect(generated_config).to eq(output)
+          end
 
-            {
-              title: 'should handle a rule specifiying "any" protocols',
-              input: {
+          it 'should handle a rule specifiying "any" protocols' do
+            input = {
                 firewall_rules: [
                   {
                     description: "allow any protocol",
@@ -256,8 +257,8 @@ module Vcloud
                     source_ip: "192.0.2.2",
                   }
                 ]
-              },
-              output: {
+            }
+            output = {
                 IsEnabled: 'true',
                 DefaultAction: "drop",
                 LogDefaultAction: 'false',
@@ -278,12 +279,13 @@ module Vcloud
                     EnableLogging: 'false',
                   }
                 ]
-              },
-            },
+            }
+            generated_config = FirewallService.new.generate_fog_config(input)
+            expect(generated_config).to eq(output)
+          end
 
-            {
-              title: 'output rule order should be same as the input rule order',
-              input: {
+          it 'output rule order should be same as the input rule order' do
+            input = {
                 firewall_rules: [
                   {
                     description: "rule 1",
@@ -316,8 +318,8 @@ module Vcloud
                     source_ip: "Any",
                   },
                 ],
-              },
-              output: {
+            }
+            output = {
                 IsEnabled: 'true',
                 DefaultAction: "drop",
                 LogDefaultAction: 'false',
@@ -398,17 +400,9 @@ module Vcloud
                     EnableLogging: 'false',
                   }
                 ]
-              }
             }
-
-          ]
-
-          test_cases.each do |test_case|
-            it "#{test_case[:title]}" do
-              generated_config = FirewallService.new.generate_fog_config test_case[:input]
-              expect(generated_config).to eq(test_case[:output])
-            end
-
+            generated_config = FirewallService.new.generate_fog_config(input)
+            expect(generated_config).to eq(output)
           end
 
         end
