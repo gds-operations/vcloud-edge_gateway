@@ -13,7 +13,7 @@
           HealthCheckPort: '80',
           HealthCheck:
             {
-              Mode: "HTTP", Uri: '', HealthThreshold: '1', UnhealthThreshold: '6', Interval: '20', Timeout: '25'
+              Mode: "HTTP", Uri: '/', HealthThreshold: '1', UnhealthThreshold: '6', Interval: '20', Timeout: '25'
             }
         },
         {
@@ -24,7 +24,7 @@
           HealthCheckPort: '',
           HealthCheck:
             {
-              Mode: "SSL", Uri: '', HealthThreshold: '2', UnhealthThreshold: '3', Interval: '5', Timeout: '15'
+              Mode: "SSL", Uri: '/', HealthThreshold: '2', UnhealthThreshold: '3', Interval: '5', Timeout: '15'
             }
         },
         {
@@ -35,7 +35,7 @@
           HealthCheckPort: '',
           HealthCheck:
             {
-              Mode: "TCP", Uri: '', HealthThreshold: '2', UnhealthThreshold: '3', Interval: '5', Timeout: '15'
+              Mode: "TCP", Uri: '/', HealthThreshold: '2', UnhealthThreshold: '3', Interval: '5', Timeout: '15'
             }
         }
       ],
