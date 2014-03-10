@@ -4,7 +4,7 @@ module Vcloud
   class EdgeGatewayServices
 
     def initialize
-      @config_loader = Vcloud::ConfigLoader.new
+      @config_loader = Vcloud::Core::ConfigLoader.new
     end
 
     def update(config_file = nil)

@@ -49,7 +49,7 @@ module Vcloud
       context "Check update is functional" do
 
         before(:all) do
-          local_config = ConfigLoader.new.load_config(
+          local_config = Core::ConfigLoader.new.load_config(
             @initial_nat_config_file, Vcloud::Schema::EDGE_GATEWAY_SERVICES
           )
           @local_vcloud_config  = EdgeGateway::ConfigurationGenerator::NatService.new(

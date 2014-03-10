@@ -44,7 +44,7 @@ module Vcloud
       context "Check update is functional" do
 
         before(:all) do
-          local_config = ConfigLoader.new.load_config(
+          local_config = Core::ConfigLoader.new.load_config(
             @initial_load_balancer_config_file,
             Vcloud::Schema::EDGE_GATEWAY_SERVICES
           )
