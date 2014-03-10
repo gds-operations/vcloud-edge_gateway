@@ -41,16 +41,6 @@ module Vcloud
         @firewall_service = {}
       end
 
-      context "Check input schema checking is working" do
-
-        it "should raise exception if input yaml does not match with schema" do
-          config_yaml = File.expand_path('data/incorrect_firewall_config.yaml', File.dirname(__FILE__))
-          expect(Vcloud::EdgeGateway.logger).to receive(:fatal)
-          expect { EdgeGatewayServices.new.update(config_yaml) }.to raise_error('Supplied configuration does not match supplied schema')
-        end
-
-      end
-
       context "Check update is functional" do
 
         before(:all) do
