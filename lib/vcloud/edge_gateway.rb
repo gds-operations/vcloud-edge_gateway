@@ -3,9 +3,6 @@ require 'vcloud/edge_gateway/version'
 require 'vcloud/core'
 require 'vcloud/fog'
 
-require 'vcloud/config_loader'
-require 'vcloud/config_validator'
-
 require 'vcloud/edge_gateway_services'
 
 require 'vcloud/schema/nat_service'

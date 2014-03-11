@@ -53,7 +53,7 @@ module Vcloud
 
       valid_tests.each do |test|
         it "#{test[:name]}" do
-          validator = ConfigValidator.validate(:base, test[:input],
+          validator = Vcloud::Core::ConfigValidator.validate(:base, test[:input],
               Vcloud::Schema::LOAD_BALANCER_POOL_ENTRY)
           expect(validator.errors).to eq([])
           expect(validator.valid?).to be_true
@@ -93,7 +93,7 @@ module Vcloud
 
       valid_tests.each do |test|
         it "#{test[:name]}" do
-          validator = ConfigValidator.validate(:base, test[:input],
+          validator = Vcloud::Core::ConfigValidator.validate(:base, test[:input],
               Vcloud::Schema::LOAD_BALANCER_VIRTUAL_SERVER_ENTRY)
           expect(validator.errors).to eq([])
           expect(validator.valid?).to be_true
@@ -124,7 +124,7 @@ module Vcloud
             },
           ],
         }
-        validator = ConfigValidator.validate(:base, input, Vcloud::Schema::LOAD_BALANCER_SERVICE)
+        validator = Vcloud::Core::ConfigValidator.validate(:base, input, Vcloud::Schema::LOAD_BALANCER_SERVICE)
         expect(validator.errors).to eq([])
         expect(validator.valid?).to be_true
       end
@@ -144,7 +144,7 @@ module Vcloud
             },
           ],
         }
-        validator = ConfigValidator.validate(:base, input, Vcloud::Schema::LOAD_BALANCER_SERVICE)
+        validator = Vcloud::Core::ConfigValidator.validate(:base, input, Vcloud::Schema::LOAD_BALANCER_SERVICE)
         expect(validator.errors).to eq([])
         expect(validator.valid?).to be_true
       end
@@ -166,7 +166,7 @@ module Vcloud
             },
           ],
         }
-        validator = ConfigValidator.validate(:base, input, Vcloud::Schema::LOAD_BALANCER_SERVICE)
+        validator = Vcloud::Core::ConfigValidator.validate(:base, input, Vcloud::Schema::LOAD_BALANCER_SERVICE)
         expect(validator.errors).to eq([])
         expect(validator.valid?).to be_true
       end
@@ -175,7 +175,7 @@ module Vcloud
         input = {
           virtual_servers: []
         }
-        validator = ConfigValidator.validate(:base, input, Vcloud::Schema::LOAD_BALANCER_SERVICE)
+        validator = Vcloud::Core::ConfigValidator.validate(:base, input, Vcloud::Schema::LOAD_BALANCER_SERVICE)
         expect(validator.valid?).to be_true
       end
 
@@ -183,7 +183,7 @@ module Vcloud
         input = {
           pools: []
         }
-        validator = ConfigValidator.validate(:base, input, Vcloud::Schema::LOAD_BALANCER_SERVICE)
+        validator = Vcloud::Core::ConfigValidator.validate(:base, input, Vcloud::Schema::LOAD_BALANCER_SERVICE)
         expect(validator.valid?).to be_true
       end
 
