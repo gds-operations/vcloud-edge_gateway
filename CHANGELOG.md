@@ -1,3 +1,9 @@
+## Current
+
+Features:
+
+  - Now uses the config loader and validator in vcloud-core rather than its own duplicate.
+
 ## 0.2.2 (2014-03-05)
 
 Bugfixes:
