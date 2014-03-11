@@ -41,20 +41,10 @@ module Vcloud
         @firewall_service = {}
       end
 
-      context "Check input schema checking is working" do
-
-        it "should raise exception if input yaml does not match with schema" do
-          config_yaml = File.expand_path('data/incorrect_firewall_config.yaml', File.dirname(__FILE__))
-          expect(Vcloud::EdgeGateway.logger).to receive(:fatal)
-          expect { EdgeGatewayServices.new.update(config_yaml) }.to raise_error('Supplied configuration does not match supplied schema')
-        end
-
-      end
-
       context "Check update is functional" do
 
         before(:all) do
-          local_config = ConfigLoader.new.load_config(@initial_firewall_config_file, Vcloud::Schema::EDGE_GATEWAY_SERVICES)
+          local_config = Core::ConfigLoader.new.load_config(@initial_firewall_config_file, Vcloud::Schema::EDGE_GATEWAY_SERVICES)
           @local_vcloud_config  = EdgeGateway::ConfigurationGenerator::FirewallService.new.generate_fog_config(local_config[:firewall_service])
         end
 
@@ -94,7 +84,7 @@ module Vcloud
         it "should highlight a difference if local firewall config has been updated" do
           input_config_file = generate_input_config_file('firewall_config_updated_rule.yaml.erb', edge_gateway_erb_input)
 
-          local_config = ConfigLoader.new.load_config(input_config_file, Vcloud::Schema::EDGE_GATEWAY_SERVICES)
+          local_config = Core::ConfigLoader.new.load_config(input_config_file, Vcloud::Schema::EDGE_GATEWAY_SERVICES)
           local_firewall_config = EdgeGateway::ConfigurationGenerator::FirewallService.new.generate_fog_config(local_config[:firewall_service])
 
           edge_gateway = Core::EdgeGateway.get_by_name local_config[:gateway]

@@ -1,8 +1,20 @@
+## Current
+
+Features:
+
+  - Now uses the config loader and validator in vcloud-core rather than its own duplicate.
+
+## 0.2.2 (2014-03-05)
+
+Bugfixes:
+
+  - Default healthcheck URI is now '/'. Previous default caused incorrect 'OPTIONS *' query [#66941992]
+
 ## 0.2.1 (2014-02-27)
 
 Bugfixes:
 
-  - [#66591522] Firewall rules with 'protocol: any' broken
+  - Now handles firewall rules with 'protocol: any' correctly [#66591522]
 
 ## 0.2.0 (2014-02-21)
 
