@@ -1,3 +1,12 @@
+# Example configuration file for defining NAT rules on the vshield-edge-gateway
+#
+# Note that applying this configuration file will replace the current SNAT/DNAT rules on the edge-gateway.
+#
+# Quick tips:
+# gateway: should contain the name of the edge gateway (human readable form, not the uiid)
+#
+# network_id: you can find the uuid for the vcloud network object using vcloud-walker
+#
 ---
 gateway: "My gateway name"
 nat_service:
@@ -34,7 +43,6 @@ nat_service:
     :translated_port: '443'
     :protocol: 'tcp'
 
-
   - :id: '65540'
     :enabled: true
     :rule_type: 'SNAT'
@@ -42,12 +50,9 @@ nat_service:
     :original_ip: '90.100.110.0/24'
     :translated_ip: '00.01.02.03'
 
-
   - :id: '65541'
     :enabled: true
     :rule_type: 'SNAT'
     :network_id: '00000000-1111-2222-3333-444444444444'
     :original_ip: '10.20.30.40/24'
     :translated_ip: '00.01.02.03'
-
-

@@ -93,6 +93,8 @@ Rule fields have the following behaviour
   * A CIDR range, eg `192.0.2.0/24`
   * A hyphened range, such as `192.0.2.50-192.0.2.60`
 
+
+
 #### nat_service
 
 The edge gateway NAT service offers simple stateful Source-NAT and
@@ -388,6 +390,9 @@ cat edges.out | jq '
       '
 ```
 
+### Full configuration examples
+
+You can find full configuration examples in the `examples` folder.
 
 
 ### Debug output
