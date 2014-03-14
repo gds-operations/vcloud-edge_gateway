@@ -12,15 +12,11 @@ module Vcloud
         end
 
         def stripped_local_config
-          return nil if @local.nil?
-          @stripped_local = strip_unused_field_from_config(@local)
-          @stripped_local
+          strip_unused_field_from_config(@local) unless @local.nil?
         end
 
         def stripped_remote_config
-          return nil if @remote.nil?
-          @stripped_remote = strip_unused_field_from_config(@remote)
-          @stripped_remote
+          strip_unused_field_from_config(@remote) unless @remote.nil?
         end
 
         def strip_unused_field_from_config(config)
