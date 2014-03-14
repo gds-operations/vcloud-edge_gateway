@@ -4,65 +4,55 @@ module Vcloud
   module EdgeGateway
     describe FirewallConfigurationDiffer do
 
-      specific_test_cases = [
-
-        {
-          title: 'should ignore Id parameters in FirewallRule sections, when showing additions',
-          src:    { FirewallRule: [
+      it 'should ignore Id parameters in FirewallRule sections, when showing additions' do
+        local = { FirewallRule: [
             { Id: '1', deeper: [ 1, 2, 3, 4, 5 ] },
             { Id: '2', deeper: [ 5, 6, 4, 3, 2 ] },
-          ]},
-          dest:   { FirewallRule: [
+          ]}
+        remote = { FirewallRule: [
             { Id: '1', deeper: [ 1, 1, 1, 1, 1 ] },
             { Id: '2', deeper: [ 1, 2, 3, 4, 5 ] },
             { Id: '3', deeper: [ 5, 6, 4, 3, 2 ] },
-          ]},
-          output: [
+          ]}
+        output = [
             ["+", "FirewallRule[0]", {:deeper=>[1, 1, 1, 1, 1]}]
           ]
-        },
+        differ = FirewallConfigurationDiffer.new(local, remote)
+        expect(differ.diff).to eq(output)
+      end
 
-        {
-          title: 'should still highlight a reordering despite ignoring Id',
-          src:    { FirewallRule: [
-            { Id: '1', deeper: [ 1, 1, 1, 1, 1 ] },
-            { Id: '2', deeper: [ 1, 2, 3, 4, 5 ] },
-            { Id: '3', deeper: [ 5, 6, 4, 3, 2 ] },
-          ]},
-          dest:   { FirewallRule: [
-            { Id: '1', deeper: [ 1, 2, 3, 4, 5 ] },
-            { Id: '2', deeper: [ 5, 6, 4, 3, 2 ] },
-            { Id: '3', deeper: [ 1, 1, 1, 1, 1 ] },
-          ]},
-          output: [
-            ["-", "FirewallRule[0]", {:deeper=>[1, 1, 1, 1, 1]}],
-            ["+", "FirewallRule[2]", {:deeper=>[1, 1, 1, 1, 1]}],
-          ]
-        },
+      it 'should still highlight a reordering despite ignoring Id' do
+        local = { FirewallRule: [
+          { Id: '1', deeper: [ 1, 1, 1, 1, 1 ] },
+          { Id: '2', deeper: [ 1, 2, 3, 4, 5 ] },
+          { Id: '3', deeper: [ 5, 6, 4, 3, 2 ] },
+        ]}
+        remote = { FirewallRule: [
+          { Id: '1', deeper: [ 1, 2, 3, 4, 5 ] },
+          { Id: '2', deeper: [ 5, 6, 4, 3, 2 ] },
+          { Id: '3', deeper: [ 1, 1, 1, 1, 1 ] },
+        ]}
+        output = [
+          ["-", "FirewallRule[0]", {:deeper=>[1, 1, 1, 1, 1]}],
+          ["+", "FirewallRule[2]", {:deeper=>[1, 1, 1, 1, 1]}],
+        ]
+        differ = FirewallConfigurationDiffer.new(local, remote)
+        expect(differ.diff).to eq(output)
+      end
 
-        {
-          title: 'should not ignore Id parameter outside of a FirewallRule (just in case)',
-          src:    {
-            FirewallRule: [ { Id: '1', deeper: [ 1, 1, 1, 1, 1 ] } ],
-            Id: 'outside of firewall rule'
-          },
-          dest:   {
-            FirewallRule: [ { Id: '1', deeper: [ 1, 1, 1, 1, 1 ] } ],
-          },
-          output: [
-            ["-", "Id", 'outside of firewall rule']
-          ]
-        },
-
-      ]
-
-      context "Specific FirewallConfigurationDiffer tests" do
-        specific_test_cases.each do |test_case|
-          it "#{test_case[:title]}" do
-            differ = FirewallConfigurationDiffer.new(test_case[:src], test_case[:dest])
-            expect(differ.diff).to eq(test_case[:output])
-          end
-        end
+      it 'should not ignore Id parameter outside of a FirewallRule (just in case)' do
+        local = {
+         FirewallRule: [ { Id: '1', deeper: [ 1, 1, 1, 1, 1 ] } ],
+         Id: 'outside of firewall rule'
+        }
+        remote = {
+         FirewallRule: [ { Id: '1', deeper: [ 1, 1, 1, 1, 1 ] } ],
+        }
+        output = [
+         ["-", "Id", 'outside of firewall rule']
+        ]
+        differ = FirewallConfigurationDiffer.new(local, remote)
+        expect(differ.diff).to eq(output)
       end
 
     end
