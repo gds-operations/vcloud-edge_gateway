@@ -5,7 +5,9 @@ module Vcloud
   module EdgeGateway
 
     describe ConfigurationDiffer do
-      it_behaves_like "a configuration differ"
+      it_behaves_like "a configuration differ" do
+        let(:config_differ) { ConfigurationDiffer }
+      end
     end
 
   end
