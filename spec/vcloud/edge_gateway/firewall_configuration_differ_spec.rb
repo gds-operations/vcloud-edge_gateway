@@ -1,8 +1,13 @@
 require 'spec_helper'
+require_relative 'configuration_differ_shared_examples.rb'
 
 module Vcloud
   module EdgeGateway
     describe FirewallConfigurationDiffer do
+
+      it_behaves_like "a configuration differ" do
+        let(:config_differ) { FirewallConfigurationDiffer }
+      end
 
       it 'should ignore Id parameters in FirewallRule sections, when showing additions' do
         local = { FirewallRule: [

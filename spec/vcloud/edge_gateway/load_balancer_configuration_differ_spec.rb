@@ -1,8 +1,13 @@
 require 'spec_helper'
+require_relative 'configuration_differ_shared_examples.rb'
 
 module Vcloud
   module EdgeGateway
     describe LoadBalancerConfigurationDiffer do
+
+      it_behaves_like "a configuration differ" do
+        let(:config_differ) { LoadBalancerConfigurationDiffer }
+      end
 
       it 'should ignore remote config having additional :Operational keys in :Pool entries' do
         local = { Pool: [

@@ -1,8 +1,13 @@
 require 'spec_helper'
+require_relative 'configuration_differ_shared_examples.rb'
 
 module Vcloud
   module EdgeGateway
     describe NatConfigurationDiffer do
+
+      it_behaves_like "a configuration differ" do
+        let(:config_differ) { NatConfigurationDiffer }
+      end
 
       it 'should ignore Id parameters in NatRule sections, when showing additions' do
         local = { NatRule: [
