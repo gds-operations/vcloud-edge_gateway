@@ -1,9 +1,9 @@
-# Example configuration file for defining FW rules on the vshield-edge-gateway
+# Example configuration file for defining Firewall rules on the vShield Edge Gateway
 #
-# Note that applying this configuration file will replace the current FW rules on the edge-gateway.
+# Note that applying this configuration file will replace the current FW rules on the vShield Edge Gateway.
 #
 # Quick tips:
-# gateway: should contain the name of the edge gateway (human readable form, not the uiid)
+# gateway: should contain the name of the edge gateway (human readable form, not the UUID)
 #
 ---
 gateway: "My gateway name"
@@ -28,7 +28,7 @@ firewall_service:
   - :id: '2'
     :enabled: true
     :match_on_translate: false
-    :description: 'allow access to stuff'
+    :description: 'allow_access_to_good_sunny_days'
     :policy: 'allow'
     :protocols: 'tcp'
     :destination_port_range: 'Any'
