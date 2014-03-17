@@ -1,0 +1,50 @@
+# Example configuration file for defining Firewall rules on the vShield Edge Gateway
+#
+# Note that applying this configuration file will replace the current FW rules on the vShield Edge Gateway.
+#
+# Quick tips:
+# gateway: should contain the name of the edge gateway (human readable form, not the UUID)
+#
+---
+gateway: "My gateway name"
+firewall_service:
+  enabled: true
+  policy: 'drop'
+  log_default_action: true
+  firewall_rules:
+
+  - :id: '1'
+    :enabled: true
+    :match_on_translate: false
+    :description: 'allow_ssh'
+    :policy: 'allow'
+    :protocols: 'tcp'
+    :destination_port_range: '22'
+    :destination_ip: '00.01.02.03'
+    :source_port_range: 'Any'
+    :source_ip: 'Any'
+    :enable_logging: true
+
+  - :id: '2'
+    :enabled: true
+    :match_on_translate: false
+    :description: 'allow_access_to_good_sunny_days'
+    :policy: 'allow'
+    :protocols: 'tcp'
+    :destination_port_range: 'Any'
+    :destination_ip: 'external'
+    :source_port_range: 'Any'
+    :source_ip: '12.18.0.0/24'
+    :enable_logging: true
+
+  - :id: '6'
+    :enabled: true
+    :match_on_translate: false
+    :description: 'network_to_internet_ICMP'
+    :policy: 'allow'
+    :protocols: "icmp"
+    :destination_port_range: 'Any'
+    :destination_ip: 'external'
+    :source_port_range: 'Any'
+    :source_ip: '12.16.0.0/24'
+    :enable_logging: true

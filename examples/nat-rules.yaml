@@ -1,0 +1,58 @@
+# Example configuration file for defining NAT rules on the vShield Edge Gateway
+#
+# Note that applying this configuration file will replace the current SNAT/DNAT rules on the vShield Edge Gateway.
+#
+# Quick tips:
+# gateway: should contain the name of the edge gateway (human readable form, not the UUID)
+#
+# network_id: you can find the UUID for the vcloud network object using vcloud-walker
+#
+---
+gateway: "My gateway name"
+nat_service:
+  enabled: true
+  nat_rules:
+
+  - :id: '65537'
+    :enabled: true
+    :rule_type: 'DNAT'
+    :network_id: '00000000-1111-2222-3333-444444444444'
+    :original_ip: '00.01.02.03'
+    :original_port: '22'
+    :translated_ip: '10.20.30.40'
+    :translated_port: '22'
+    :protocol: 'tcp'
+
+  - :id: '65538'
+    :enabled: true
+    :rule_type: 'DNAT'
+    :network_id: '00000000-1111-2222-3333-444444444444'
+    :original_ip: '00.01.02.03'
+    :original_port: '80'
+    :translated_ip: '10.20.30.40'
+    :translated_port: '80'
+    :protocol: 'tcp'
+
+  - :id: '65539'
+    :enabled: true
+    :rule_type: 'DNAT'
+    :network_id: '00000000-1111-2222-3333-444444444444'
+    :original_ip: '00.01.02.03'
+    :original_port: '443'
+    :translated_ip: '10.20.30.40'
+    :translated_port: '443'
+    :protocol: 'tcp'
+
+  - :id: '65540'
+    :enabled: true
+    :rule_type: 'SNAT'
+    :network_id: '00000000-1111-2222-3333-444444444444'
+    :original_ip: '90.100.110.0/24'
+    :translated_ip: '00.01.02.03'
+
+  - :id: '65541'
+    :enabled: true
+    :rule_type: 'SNAT'
+    :network_id: '00000000-1111-2222-3333-444444444444'
+    :original_ip: '10.20.30.40/24'
+    :translated_ip: '00.01.02.03'
