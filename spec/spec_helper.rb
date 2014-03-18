@@ -18,9 +18,9 @@ require 'vcloud/edge_gateway'
 SimpleCov.at_exit do
   SimpleCov.result.format!
   # do not change the coverage percentage, instead add more unit tests to fix coverage failures.
-  if SimpleCov.result.covered_percent < 60
+  if SimpleCov.result.covered_percent < 95
     print "ERROR::BAD_COVERAGE\n"
-    print "Coverage is less than acceptable limit(71%). Please add more tests to improve the coverage"
+    print "Coverage is less than acceptable limit(95%). Please add more tests to improve the coverage\n"
     exit(1)
   end
 end

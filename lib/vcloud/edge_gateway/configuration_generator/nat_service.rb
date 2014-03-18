@@ -19,16 +19,16 @@ module Vcloud
 
         def populate_nat_rules
           rules = @input_config[:nat_rules]
-            i = ID_RANGES::NAT_SERVICE[:min]
-            rules.collect do |rule|
-              new_rule = {}
-              new_rule[:Id] = rule.key?(:id) ? rule[:id] : i.to_s
-              new_rule[:IsEnabled] = rule.key?(:enabled) ? rule[:enabled].to_s : 'true'
-              new_rule[:RuleType] = rule[:rule_type]
-              gateway_nat_rule = populate_gateway_nat_rule(rule)
-              new_rule[:GatewayNatRule] = gateway_nat_rule
-              i += 1
-              new_rule
+          i = ID_RANGES::NAT_SERVICE[:min]
+          rules.collect do |rule|
+            new_rule = {}
+            new_rule[:Id] = rule.key?(:id) ? rule[:id] : i.to_s
+            new_rule[:IsEnabled] = rule.key?(:enabled) ? rule[:enabled].to_s : 'true'
+            new_rule[:RuleType] = rule[:rule_type]
+            gateway_nat_rule = populate_gateway_nat_rule(rule)
+            new_rule[:GatewayNatRule] = gateway_nat_rule
+            i += 1
+            new_rule
           end
         end
 

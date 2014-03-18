@@ -1,19 +1,9 @@
 module Vcloud
   module EdgeGateway
-    class LoadBalancerConfigurationDiffer
+    class LoadBalancerConfigurationDiffer < ConfigurationDiffer
 
-        def initialize local, remote
-          @local = local
-          @remote = remote
-        end
-
-        def diff
-          ( @local == stripped_remote_config ) ? [] : HashDiff.diff(@local, stripped_remote_config)
-        end
-
-        def stripped_remote_config
-          return nil if @remote.nil?
-          deep_cloned_remote_config = Marshal.load( Marshal.dump(@remote) )
+        def strip_fields_for_differ_to_ignore(config)
+          deep_cloned_remote_config = Marshal.load( Marshal.dump(config) )
           if deep_cloned_remote_config.key?(:Pool)
             deep_cloned_remote_config[:Pool].each do |pool_entry|
               pool_entry.delete(:Operational)
