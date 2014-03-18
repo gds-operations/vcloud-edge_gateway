@@ -12,14 +12,14 @@ module Vcloud
         end
 
         def stripped_local_config
-          strip_unused_field_from_config(@local) unless @local.nil?
+          strip_fields_for_differ_to_ignore(@local) unless @local.nil?
         end
 
         def stripped_remote_config
-          strip_unused_field_from_config(@remote) unless @remote.nil?
+          strip_fields_for_differ_to_ignore(@remote) unless @remote.nil?
         end
 
-        def strip_unused_field_from_config(config)
+        def strip_fields_for_differ_to_ignore(config)
           config
         end
 
