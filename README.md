@@ -161,7 +161,7 @@ The load balancer service comprises two sets of configurations: 'pools' and
 * Multiple virtual_servers can specify the same pool (to run the same service
   on different FQDNs, for example)
 * virtual_servers define any 'session persistence' information, if sessions
-  are required to stick to the same pool member. (This is not currently supported by this tool.)
+  are required to stick to the same pool member. (Session persistence is not currently supported by this tool.)
 * pools define 'member healthchecks', and so are aware of the health of their
   member nodes.
 
