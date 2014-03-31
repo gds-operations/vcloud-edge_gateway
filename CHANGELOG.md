@@ -3,6 +3,7 @@
 Features:
 
   - Now uses the config loader and validator in vcloud-core rather than its own duplicate.
+  - Require fog v1.21 to allow use of FOG_VCLOUD_TOKEN via ENV as an alternative to a .fog file
 
 ## 0.2.2 (2014-03-05)
 
