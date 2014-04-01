@@ -64,7 +64,7 @@ module Vcloud
         end
 
         it "should only make one EdgeGateway update task, to minimise EdgeGateway reload events" do
-          start_time = DateTime.now()
+          start_time = Time.now.getutc
           task_list_before_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
           EdgeGatewayServices.new.update(@initial_nat_config_file)
           task_list_after_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
