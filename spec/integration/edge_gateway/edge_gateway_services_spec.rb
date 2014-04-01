@@ -49,13 +49,6 @@ module Vcloud
 
       context "Check update is functional" do
 
-        before(:all) do
-          local_config = Core::ConfigLoader.new.load_config(
-            @initial_config_file,
-            Vcloud::Schema::EDGE_GATEWAY_SERVICES
-          )
-        end
-
         it "should be starting our tests from an empty EdgeGateway" do
           remote_vcloud_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration]
           expect(remote_vcloud_config[:FirewallService][:FirewallRule].empty?).to be_true
