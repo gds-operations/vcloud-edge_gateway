@@ -415,9 +415,11 @@ cat edges.out | jq '
 You can find full configuration examples in the `examples` folder.
 
 
-### Debug output
+## Debugging
 
-Set environment variable `DEBUG=true` and/or `EXCON_DEBUG=true` to see Fog debug info.
+`export EXCON_DEBUG=true` - this will print out the API requests and responses.
+
+`export DEBUG=true` - this will show you the stack trace when there is an exception instead of just the message.
 
 ### References
 
