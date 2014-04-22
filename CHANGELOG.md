@@ -1,5 +1,9 @@
 ## Current
 
+Bugfixes:
+
+  - Requires vCloud Core v0.0.12 which fixes issue with progress bar falling over when progress is not returned
+
 Features:
 
   - Now uses the config loader and validator in vcloud-core rather than its own duplicate.
