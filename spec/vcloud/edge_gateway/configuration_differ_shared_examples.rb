@@ -126,7 +126,7 @@ module Vcloud
         differ = config_differ.new(local, remote)
         expect(differ.diff).to eq(output)
       end
-   end
+    end
 
   end
 end
