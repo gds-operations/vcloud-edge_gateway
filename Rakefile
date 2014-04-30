@@ -10,7 +10,7 @@ RSpec::Core::RakeTask.new(:spec) do |task|
   task.pattern = FileList['spec/vcloud/**/*_spec.rb']
 end
 
-task :default => [:spec]
+task :default => [:rubocop, :spec]
 
 RSpec::Core::RakeTask.new('integration') do |t|
   t.pattern = FileList['spec/integration/**/*_spec.rb']
@@ -20,4 +20,9 @@ require "gem_publisher"
 task :publish_gem do |t|
   gem = GemPublisher.publish_if_updated("vcloud-edge_gateway.gemspec", :rubygems)
   puts "Published #{gem}" if gem
+end
+
+require 'rubocop/rake_task'
+Rubocop::RakeTask.new(:rubocop) do |task|
+  task.options = ['--lint']
 end
