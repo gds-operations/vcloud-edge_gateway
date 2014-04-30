@@ -15,13 +15,13 @@ module Vcloud
               load_balancer_input_config[:enabled].to_s : 'true'
           vcloud_pools = []
           vcloud_virtual_servers = []
-          if pools = load_balancer_input_config[:pools]
-            pools.each do |pool_input_entry|
+          if load_balancer_input_config[:pools]
+            load_balancer_input_config[:pools].each do |pool_input_entry|
               vcloud_pools << generate_pool_entry(pool_input_entry)
             end
           end
-          if virtual_servers = load_balancer_input_config[:virtual_servers]
-            virtual_servers.each do |virtual_server_input_entry|
+          if load_balancer_input_config[:virtual_servers]
+            load_balancer_input_config[:virtual_servers].each do |virtual_server_input_entry|
               vcloud_virtual_servers << generate_virtual_server_entry(virtual_server_input_entry)
             end
           end
@@ -174,9 +174,9 @@ module Vcloud
             vcloud_pool_service_port[:Port] =
               input_pool_service_port.key?(:port) ?
                 input_pool_service_port[:port].to_s : default_port(mode)
-            if health_check = input_pool_service_port[:health_check]
+            if input_pool_service_port[:health_check]
               vcloud_pool_service_port[:HealthCheckPort] =
-                health_check.key?(:port) ? health_check[:port].to_s : ''
+                input_pool_service_port[:health_check].fetch(:port, '').to_s
               vcloud_pool_service_port[:HealthCheck] =
                 generate_pool_healthcheck(mode, input_pool_service_port[:health_check])
             end
