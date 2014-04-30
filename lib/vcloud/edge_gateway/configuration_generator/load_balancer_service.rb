@@ -15,13 +15,13 @@ module Vcloud
               load_balancer_input_config[:enabled].to_s : 'true'
           vcloud_pools = []
           vcloud_virtual_servers = []
-          if pools = load_balancer_input_config[:pools]
-            pools.each do |pool_input_entry|
+          if load_balancer_input_config[:pools]
+            load_balancer_input_config[:pools].each do |pool_input_entry|
               vcloud_pools << generate_pool_entry(pool_input_entry)
             end
           end
-          if virtual_servers = load_balancer_input_config[:virtual_servers]
-            virtual_servers.each do |virtual_server_input_entry|
+          if load_balancer_input_config[:virtual_servers]
+            load_balancer_input_config[:virtual_servers].each do |virtual_server_input_entry|
               vcloud_virtual_servers << generate_virtual_server_entry(virtual_server_input_entry)
             end
           end
@@ -81,7 +81,7 @@ module Vcloud
             IsEnabled: 'false',
             Protocol: protocol.to_s.upcase,
             Port:     default_port(protocol),
-            Persistence: generate_virtual_server_persistence_section(protocol, nil)
+            Persistence: generate_virtual_server_persistence_section(nil)
           }
           if input_protocol_section
             vcloud_protocol_section[:IsEnabled] =
@@ -91,10 +91,7 @@ module Vcloud
               input_protocol_section.key?(:port) ?
                 input_protocol_section[:port].to_s : default_port(protocol)
             vcloud_protocol_section[:Persistence] =
-              generate_virtual_server_persistence_section(
-                protocol,
-                input_protocol_section[:persistence]
-              )
+              generate_virtual_server_persistence_section(input_protocol_section[:persistence])
           end
           vcloud_protocol_section
         end
@@ -104,7 +101,7 @@ module Vcloud
           default_port_for[protocol]
         end
 
-        def generate_virtual_server_persistence_section(protocol, input_persistence_section)
+        def generate_virtual_server_persistence_section(input_persistence_section)
           input_persistence_section = {} if input_persistence_section.nil?
           vcloud_persistence_section = { Method: '' }
           if input_persistence_section.key?(:method)
@@ -174,9 +171,9 @@ module Vcloud
             vcloud_pool_service_port[:Port] =
               input_pool_service_port.key?(:port) ?
                 input_pool_service_port[:port].to_s : default_port(mode)
-            if health_check = input_pool_service_port[:health_check]
+            if input_pool_service_port[:health_check]
               vcloud_pool_service_port[:HealthCheckPort] =
-                health_check.key?(:port) ? health_check[:port].to_s : ''
+                input_pool_service_port[:health_check].fetch(:port, '').to_s
               vcloud_pool_service_port[:HealthCheck] =
                 generate_pool_healthcheck(mode, input_pool_service_port[:health_check])
             end

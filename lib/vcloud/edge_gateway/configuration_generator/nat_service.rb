@@ -33,11 +33,11 @@ module Vcloud
         end
 
         def populate_gateway_nat_rule(rule)
-          raise "Must supply a :network_id parameter" unless net_id = rule[:network_id]
+          raise "Must supply a :network_id parameter" unless rule[:network_id]
           edge_gw_interface = @edge_gateway_interfaces.find do |interface|
-            interface.network_id == net_id
+            interface.network_id == rule[:network_id]
           end
-          raise "unable to find gateway network interface with id #{net_id}" unless edge_gw_interface
+          raise "unable to find gateway network interface with id #{rule[:network_id]}" unless edge_gw_interface
           gateway_nat_rule = {}
           gateway_nat_rule[:Interface] = populate_nat_interface(edge_gw_interface)
           gateway_nat_rule[:OriginalIp] = rule[:original_ip]
