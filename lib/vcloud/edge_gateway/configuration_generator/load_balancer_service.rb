@@ -81,7 +81,7 @@ module Vcloud
             IsEnabled: 'false',
             Protocol: protocol.to_s.upcase,
             Port:     default_port(protocol),
-            Persistence: generate_virtual_server_persistence_section(protocol, nil)
+            Persistence: generate_virtual_server_persistence_section(nil)
           }
           if input_protocol_section
             vcloud_protocol_section[:IsEnabled] =
@@ -91,10 +91,7 @@ module Vcloud
               input_protocol_section.key?(:port) ?
                 input_protocol_section[:port].to_s : default_port(protocol)
             vcloud_protocol_section[:Persistence] =
-              generate_virtual_server_persistence_section(
-                protocol,
-                input_protocol_section[:persistence]
-              )
+              generate_virtual_server_persistence_section(input_protocol_section[:persistence])
           end
           vcloud_protocol_section
         end
@@ -104,7 +101,7 @@ module Vcloud
           default_port_for[protocol]
         end
 
-        def generate_virtual_server_persistence_section(protocol, input_persistence_section)
+        def generate_virtual_server_persistence_section(input_persistence_section)
           input_persistence_section = {} if input_persistence_section.nil?
           vcloud_persistence_section = { Method: '' }
           if input_persistence_section.key?(:method)
