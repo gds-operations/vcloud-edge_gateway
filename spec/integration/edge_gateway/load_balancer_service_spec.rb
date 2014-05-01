@@ -3,25 +3,8 @@ require 'spec_helper'
 module Vcloud
   describe EdgeGatewayServices do
 
-    required_env = {
-      'VCLOUD_EDGE_GATEWAY' => 'to name of VSE',
-      'VCLOUD_PROVIDER_NETWORK_ID' => 'to ID of VSE external network',
-      'VCLOUD_PROVIDER_NETWORK_IP' => 'to an available IP on VSE external network',
-      'VCLOUD_NETWORK1_ID' => 'to the ID of a VSE internal network',
-      'VCLOUD_NETWORK1_NAME' => 'to the name of the VSE internal network',
-      'VCLOUD_NETWORK1_IP' => 'to an ID on the VSE internal network',
-    }
-
-    error = false
-    required_env.each do |var,message|
-      unless ENV[var]
-        puts "Must set #{var} #{message}" unless ENV[var]
-        error = true
-      end
-    end
-    Kernel.exit(2) if error
-
     before(:all) do
+      IntegrationHelper.verify_env_vars
       @edge_name = ENV['VCLOUD_EDGE_GATEWAY']
       @ext_net_id = ENV['VCLOUD_PROVIDER_NETWORK_ID']
       @ext_net_ip = ENV['VCLOUD_PROVIDER_NETWORK_IP']
