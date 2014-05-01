@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 1.9.2'
 
   s.add_runtime_dependency 'fog', '>= 1.21.0'
-  s.add_runtime_dependency 'vcloud-core', '>= 0.0.12'
+  s.add_runtime_dependency 'vcloud-core', '~> 0.0.12'
   s.add_runtime_dependency 'hashdiff'
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec', '~> 2.14.1'
