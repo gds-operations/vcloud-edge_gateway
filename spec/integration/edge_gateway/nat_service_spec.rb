@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'tempfile'
 
 module Vcloud
   describe EdgeGatewayServices do
@@ -19,13 +20,8 @@ module Vcloud
 
       before(:all) do
         reset_edge_gateway
-        @initial_nat_config_file = generate_input_config_file(
-          'nat_config.yaml.erb', {
-              edge_gateway_name: @edge_name,
-              network_id: @ext_net_id,
-              original_ip: @ext_net_ip,
-            }
-          )
+        @vars_config_file = generate_vars_file(edge_gateway_vars_hash)
+        @initial_nat_config_file = IntegrationHelper.fixture_file('nat_config.yaml.mustache')
         @edge_gateway = Vcloud::Core::EdgeGateway.get_by_name(@edge_name)
       end
 
@@ -33,7 +29,9 @@ module Vcloud
 
         before(:all) do
           local_config = Core::ConfigLoader.new.load_config(
-            @initial_nat_config_file, Vcloud::Schema::EDGE_GATEWAY_SERVICES
+            @initial_nat_config_file,
+            Vcloud::Schema::EDGE_GATEWAY_SERVICES,
+            @vars_config_file
           )
           @local_vcloud_config  = EdgeGateway::ConfigurationGenerator::NatService.new(
             local_config[:nat_service],
@@ -49,7 +47,7 @@ module Vcloud
         it "should only make one EdgeGateway update task, to minimise EdgeGateway reload events" do
           start_time = Time.now.getutc
           task_list_before_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
-          EdgeGatewayServices.new.update(@initial_nat_config_file)
+          EdgeGatewayServices.new.update(@initial_nat_config_file, @vars_config_file)
           task_list_after_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
           expect(task_list_after_update.size - task_list_before_update.size).to be(1)
         end
@@ -74,7 +72,7 @@ module Vcloud
 
         it "and then should not configure the firewall service if updated again with the same configuration (idempotency)" do
           expect(Vcloud::Core.logger).to receive(:info).with('EdgeGatewayServices.update: Configuration is already up to date. Skipping.')
-          EdgeGatewayServices.new.update(@initial_nat_config_file)
+          EdgeGatewayServices.new.update(@initial_nat_config_file, @vars_config_file)
         end
 
       end
@@ -114,13 +112,16 @@ module Vcloud
       context "ensure hairpin NAT rules are specifiable" do
 
         it "and then should configure hairpin NATting with orgVdcNetwork" do
-          input_config_file = generate_input_config_file('hairpin_nat_config.yaml.erb', {
+          vars_file = generate_vars_file({
             edge_gateway_name: @edge_name,
             org_vdc_network_id: @int_net_id,
             original_ip: @int_net_ip,
           })
 
-          EdgeGatewayServices.new.update(input_config_file)
+          EdgeGatewayServices.new.update(
+            IntegrationHelper.fixture_file('hairpin_nat_config.yaml.mustache'),
+            vars_file
+          )
 
           edge_gateway = Vcloud::Core::EdgeGateway.get_by_name(@edge_name)
           nat_service = edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration][:NatService]
@@ -140,13 +141,18 @@ module Vcloud
 
         it "should raise error if network provided in rule does not exist" do
           random_network_id = SecureRandom.uuid
-          input_config_file = generate_input_config_file('nat_config.yaml.erb', {
+          vars_file = generate_vars_file({
             edge_gateway_name: @edge_name,
             network_id: random_network_id,
             original_ip: @int_net_ip,
           })
-          expect{EdgeGatewayServices.new.update(input_config_file)}.
-            to raise_error("unable to find gateway network interface with id #{random_network_id}")
+
+          expect {
+            EdgeGatewayServices.new.update(
+              IntegrationHelper.fixture_file('nat_config.yaml.mustache'),
+              vars_file
+            )
+          }.to raise_error("unable to find gateway network interface with id #{random_network_id}")
         end
       end
 
@@ -156,7 +162,9 @@ module Vcloud
       end
 
       def remove_temp_config_files
-        FileUtils.rm(@files_to_delete)
+        @files_to_delete.each { |f|
+          f.unlink
+        }
       end
 
       def reset_edge_gateway
@@ -166,18 +174,20 @@ module Vcloud
         })
       end
 
-      def generate_input_config_file(data_file, erb_input)
-        config_erb = File.expand_path("data/#{data_file}", File.dirname(__FILE__))
-        output_file = ErbHelper.convert_erb_template_to_yaml(erb_input, config_erb)
-        @files_to_delete << output_file
-        output_file
+      def generate_vars_file(vars_hash)
+        file = Tempfile.new('vars_file')
+        file.write(vars_hash.to_yaml)
+        file.close
+        @files_to_delete << file
+
+        file.path
       end
 
-      def edge_gateway_erb_input
+      def edge_gateway_vars_hash
         {
           :edge_gateway_name => @edge_name,
-          :edge_gateway_ext_network_id => @ext_net_id,
-          :edge_gateway_ext_network_ip => @ext_net_ip,
+          :network_id => @ext_net_id,
+          :original_ip => @ext_net_ip,
         }
       end
 
