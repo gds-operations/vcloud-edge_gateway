@@ -1,5 +1,5 @@
 ---
-gateway: <%= edge_gateway_name %>
+gateway: {{ edge_gateway_name }}
 load_balancer_service:
   enabled: true
   pools:
@@ -16,8 +16,8 @@ load_balancer_service:
   virtual_servers:
   - name: 'integration-test-vs-1'
     description: 'A virtual server'
-    ip_address: <%= edge_gateway_ext_network_ip %>
-    network: <%= edge_gateway_ext_network_id %>
+    ip_address: {{ edge_gateway_ext_network_ip }}
+    network: {{ edge_gateway_ext_network_id }}
     pool: 'integration-test-pool-1'
     service_profiles:
       http:
