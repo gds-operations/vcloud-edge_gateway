@@ -90,7 +90,7 @@ module Vcloud
         end
 
         it "and then should not configure the firewall service if updated again with the same configuration (idempotency)" do
-          expect(Vcloud::EdgeGateway.logger).to receive(:info).with('EdgeGatewayServices.update: Configuration is already up to date. Skipping.')
+          expect(Vcloud::Core.logger).to receive(:info).with('EdgeGatewayServices.update: Configuration is already up to date. Skipping.')
           EdgeGatewayServices.new.update(@initial_nat_config_file)
         end
 
