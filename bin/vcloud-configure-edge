@@ -11,7 +11,7 @@ class App
     Vcloud::EdgeGatewayServices.new.update(config_file)
   end
 
-  arg :resource
+  arg :config_file
 
   description '
   vcloud-edge_gateway allows you to configure an EdgeGateway with an input file
