@@ -20,13 +20,3 @@ require 'vcloud/edge_gateway/firewall_configuration_differ'
 require 'vcloud/edge_gateway/load_balancer_configuration_differ'
 require 'vcloud/edge_gateway/edge_gateway_configuration'
 
-
-module Vcloud
-  module EdgeGateway
-
-    def self.logger
-      @logger ||=Logger.new(STDOUT)
-    end
-
-  end
-end
