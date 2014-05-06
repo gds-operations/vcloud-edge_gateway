@@ -1,27 +1,11 @@
 require 'spec_helper'
+require 'tempfile'
 
 module Vcloud
   describe EdgeGatewayServices do
 
-    required_env = {
-      'VCLOUD_EDGE_GATEWAY' => 'to name of VSE',
-      'VCLOUD_PROVIDER_NETWORK_ID' => 'to ID of VSE external network',
-      'VCLOUD_PROVIDER_NETWORK_IP' => 'to an available IP on VSE external network',
-      'VCLOUD_NETWORK1_ID' => 'to the ID of a VSE internal network',
-      'VCLOUD_NETWORK1_NAME' => 'to the name of the VSE internal network',
-      'VCLOUD_NETWORK1_IP' => 'to an ID on the VSE internal network',
-    }
-
-    error = false
-    required_env.each do |var,message|
-      unless ENV[var]
-        puts "Must set #{var} #{message}" unless ENV[var]
-        error = true
-      end
-    end
-    Kernel.exit(2) if error
-
     before(:all) do
+      IntegrationHelper.verify_env_vars
       @edge_name = ENV['VCLOUD_EDGE_GATEWAY']
       @ext_net_id = ENV['VCLOUD_PROVIDER_NETWORK_ID']
       @ext_net_ip = ENV['VCLOUD_PROVIDER_NETWORK_IP']
@@ -36,7 +20,8 @@ module Vcloud
 
       before(:all) do
         reset_edge_gateway
-        @initial_firewall_config_file = generate_input_config_file('firewall_config.yaml.erb', edge_gateway_erb_input)
+        @vars_config_file = generate_vars_file(edge_gateway_vars_hash)
+        @initial_firewall_config_file = IntegrationHelper.fixture_file('firewall_config.yaml.mustache')
         @edge_gateway = Vcloud::Core::EdgeGateway.get_by_name(@edge_name)
         @firewall_service = {}
       end
@@ -44,7 +29,11 @@ module Vcloud
       context "Check update is functional" do
 
         before(:all) do
-          local_config = Core::ConfigLoader.new.load_config(@initial_firewall_config_file, Vcloud::Schema::EDGE_GATEWAY_SERVICES)
+          local_config = Core::ConfigLoader.new.load_config(
+            @initial_firewall_config_file,
+            Vcloud::Schema::EDGE_GATEWAY_SERVICES,
+            @vars_config_file
+          )
           @local_vcloud_config  = EdgeGateway::ConfigurationGenerator::FirewallService.new.generate_fog_config(local_config[:firewall_service])
         end
 
@@ -55,7 +44,7 @@ module Vcloud
 
         it "should only need to make one call to Core::EdgeGateway.update_configuration" do
           expect_any_instance_of(Core::EdgeGateway).to receive(:update_configuration).exactly(1).times.and_call_original
-          EdgeGatewayServices.new.update(@initial_firewall_config_file)
+          EdgeGatewayServices.new.update(@initial_firewall_config_file, @vars_config_file)
         end
 
         it "should have configured at least one firewall rule" do
@@ -71,7 +60,7 @@ module Vcloud
 
         it "and then should not configure the firewall service if updated again with the same configuration (idempotency)" do
           expect(Vcloud::Core.logger).to receive(:info).with('EdgeGatewayServices.update: Configuration is already up to date. Skipping.')
-          EdgeGatewayServices.new.update(@initial_firewall_config_file)
+          EdgeGatewayServices.new.update(@initial_firewall_config_file, @vars_config_file)
         end
 
         it "ConfigurationDiffer should return empty if local and remote firewall configs match" do
@@ -82,9 +71,11 @@ module Vcloud
         end
 
         it "should highlight a difference if local firewall config has been updated" do
-          input_config_file = generate_input_config_file('firewall_config_updated_rule.yaml.erb', edge_gateway_erb_input)
-
-          local_config = Core::ConfigLoader.new.load_config(input_config_file, Vcloud::Schema::EDGE_GATEWAY_SERVICES)
+          local_config = Core::ConfigLoader.new.load_config(
+            IntegrationHelper.fixture_file('firewall_config_updated_rule.yaml.mustache'),
+            Vcloud::Schema::EDGE_GATEWAY_SERVICES,
+            @vars_config_file
+          )
           local_firewall_config = EdgeGateway::ConfigurationGenerator::FirewallService.new.generate_fog_config(local_config[:firewall_service])
 
           edge_gateway = Core::EdgeGateway.get_by_name local_config[:gateway]
@@ -141,8 +132,10 @@ module Vcloud
       context "Specific FirewallService update tests" do
 
         it "should have the same rule order as the input rule order" do
-          input_config_file = generate_input_config_file('firewall_rule_order_test.yaml.erb', edge_gateway_erb_input)
-          EdgeGatewayServices.new.update(input_config_file)
+          EdgeGatewayServices.new.update(
+            IntegrationHelper.fixture_file('firewall_rule_order_test.yaml.mustache'),
+            @vars_config_file
+          )
           remote_rules = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration][:FirewallService][:FirewallRule]
           remote_descriptions_list = remote_rules.map {|rule| rule[:Description]}
           expect(remote_descriptions_list).
@@ -157,10 +150,11 @@ module Vcloud
 
       end
 
-
       after(:all) do
         reset_edge_gateway unless ENV['VCLOUD_NO_RESET_VSE_AFTER']
-        FileUtils.rm(@files_to_delete)
+        @files_to_delete.each { |f|
+          f.unlink
+        }
       end
 
       def reset_edge_gateway
@@ -170,14 +164,16 @@ module Vcloud
         })
       end
 
-      def generate_input_config_file(data_file, erb_input)
-        config_erb = File.expand_path("data/#{data_file}", File.dirname(__FILE__))
-        output_file = ErbHelper.convert_erb_template_to_yaml(erb_input, config_erb)
-        @files_to_delete << output_file
-        output_file
+      def generate_vars_file(vars_hash)
+        file = Tempfile.new('vars_file')
+        file.write(vars_hash.to_yaml)
+        file.close
+        @files_to_delete << file
+
+        file.path
       end
 
-      def edge_gateway_erb_input
+      def edge_gateway_vars_hash
         {
           :edge_gateway_name => @edge_name,
           :edge_gateway_ext_network_id => @ext_net_id,

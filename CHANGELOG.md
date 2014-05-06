@@ -1,3 +1,11 @@
+## Current (unreleased)
+
+Features:
+
+  - Allow config files to be rendered from [Mustache](http://mustache.github.io/)
+    templates so that common configs can be re-used across environments with
+    differences represented as variables.
+
 ## 0.3.0 (2014-05-01)
 
 Features:

@@ -7,8 +7,8 @@ module Vcloud
       @config_loader = Vcloud::Core::ConfigLoader.new
     end
 
-    def update(config_file = nil)
-      local_config = @config_loader.load_config(config_file, Vcloud::Schema::EDGE_GATEWAY_SERVICES)
+    def update(config_file = nil, vars_file = nil)
+      local_config = @config_loader.load_config(config_file, Vcloud::Schema::EDGE_GATEWAY_SERVICES, vars_file)
 
       edge_gateway = Core::EdgeGateway.get_by_name local_config[:gateway]
       remote_config = edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration]
