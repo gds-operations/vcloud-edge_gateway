@@ -167,7 +167,7 @@ module Vcloud
 
       def get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(timestamp)
         vcloud_time = timestamp.strftime('%FT%T.000Z')
-        q = QueryRunner.new
+        q = Vcloud::Core::QueryRunner.new
         q.run('task',
           :filter =>
             "name==networkConfigureEdgeGatewayServices;objectName==#{@edge_name};startDate=ge=#{vcloud_time}",
