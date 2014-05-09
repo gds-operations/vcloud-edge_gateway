@@ -25,6 +25,11 @@ To configure an Edge Gateway:
 
     $ vcloud-configure-edge input.yaml
 
+To use [mustache](http://mustache.github.io) templates so that rulesets can
+be re-used between environments:
+
+    $ vcloud-configure-edge input.yaml.mustache vars.yaml
+
 ## Credentials
 
 vCloud Edge Gateway is based around [fog](http://fog.io/). To use it you'll need to give it
