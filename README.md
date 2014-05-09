@@ -410,6 +410,16 @@ If you want to be sure you are pinning to 5.1, or use 5.5, you can set the API v
 
 `export DEBUG=true` - this will show you the stack trace when there is an exception instead of just the message.
 
+## Testing
+
+Run the default suite of tests (e.g. lint, unit, features):
+
+    bundle exec rake
+
+Run the integration tests (slower and requires a real environment):
+
+    bundle exec rake integration
+
 ### References
 
 * [vCloud Director Edge Gateway documentation](http://pubs.vmware.com/vcd-51/topic/com.vmware.vcloud.admin.doc_51/GUID-ADE1DCAB-874F-45A9-9337-1E971DAC0F7D.html)
