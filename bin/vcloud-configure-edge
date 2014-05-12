@@ -7,18 +7,20 @@ class App
   include Methadone::Main
   include Methadone::CLILogging
 
-  main do |config_file, template_vars_file|
-    Vcloud::EdgeGatewayServices.new.update(config_file, template_vars_file)
+  main do |config_file|
+    if options['template-vars']
+      Vcloud::EdgeGatewayServices.new.update(config_file, options['template-vars'])
+    else
+      Vcloud::EdgeGatewayServices.new.update(config_file)
+    end
   end
 
   arg :config_file
-  arg :template_vars_file, :optional
+  on('--template-vars FILE', 'Enable templating with variables from this file')
 
   description '
-  vcloud-edge_gateway allows you to configure an EdgeGateway with an input file
-
-  An optional `template_vars_file` argument can be passed to render your
-  `config_file` as a Mustache template.
+  vcloud-edge_gateway allows you to configure an EdgeGateway with an input
+  file which may optionally be a Mustache template.
 
   See https://github.com/alphagov/vcloud-edge_gateway for more info'
 

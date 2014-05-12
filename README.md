@@ -28,7 +28,7 @@ To configure an Edge Gateway:
 To use [mustache](http://mustache.github.io) templates so that rulesets can
 be re-used between environments:
 
-    $ vcloud-configure-edge input.yaml.mustache vars.yaml
+    $ vcloud-configure-edge --template-vars vars.yaml input.yaml.mustache
 
 ## Credentials
 
