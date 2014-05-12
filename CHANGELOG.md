@@ -1,4 +1,4 @@
-## Current (unreleased)
+## 0.4.0 (2014-05-12)
 
 Features:
 
