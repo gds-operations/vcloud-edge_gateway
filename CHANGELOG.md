@@ -1,3 +1,9 @@
+## Current (unreleased)
+
+Bugfixes:
+
+  - Don't set a load balancer healthcheck URI for healthchecks using protocols other than HTTP
+
 ## 0.4.0 (2014-05-12)
 
 Features:

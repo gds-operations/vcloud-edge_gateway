@@ -10,7 +10,7 @@
     :HealthCheckPort: '8081'
     :HealthCheck:
       :Mode: TCP
-      :Uri: '/'
+      :Uri: ''
       :HealthThreshold: '2'
       :UnhealthThreshold: '3'
       :Interval: '5'
@@ -22,7 +22,7 @@
     :HealthCheckPort: '443'
     :HealthCheck:
       :Mode: TCP
-      :Uri: '/'
+      :Uri: ''
       :HealthThreshold: '2'
       :UnhealthThreshold: '3'
       :Interval: '5'
@@ -34,7 +34,7 @@
     :HealthCheckPort: ''
     :HealthCheck:
       :Mode: TCP
-      :Uri: '/'
+      :Uri: ''
       :HealthThreshold: '2'
       :UnhealthThreshold: '3'
       :Interval: '5'

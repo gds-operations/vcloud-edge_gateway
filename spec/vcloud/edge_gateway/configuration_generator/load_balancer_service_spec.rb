@@ -141,7 +141,7 @@ module Vcloud
                   :HealthCheckPort=>"",
                   :HealthCheck=>{
                     :Mode=>"SSL",
-                    :Uri=>"/",
+                    :Uri=>"",
                     :HealthThreshold=>"2",
                     :UnhealthThreshold=>"3",
                     :Interval=>"5",
@@ -156,7 +156,7 @@ module Vcloud
                   :HealthCheckPort=>"",
                   :HealthCheck=>{
                     :Mode=>"TCP",
-                    :Uri=>"/",
+                    :Uri=>"",
                     :HealthThreshold=>"2",
                     :UnhealthThreshold=>"3",
                     :Interval=>"5",
@@ -194,6 +194,42 @@ module Vcloud
             expect(generated_config).to eq(expected_output)
           end
 
+          it "should set the healthcheck URI to '/' by default" do
+            input = read_data_file('load_balancer_http-input.yaml')
+            expect(input[:pools][0][:service][:http][:health_check][:protocol]).to eq('HTTP')
+            expect(input[:pools][0][:service][:http][:health_check].key?(:uri)).to be(false)
+
+            generated_config = LoadBalancerService.new(@edge_gw_interface_list).
+              generate_fog_config input
+
+            expect(generated_config[:Pool][0][:ServicePort][0][:IsEnabled]).to eq('true')
+            expect(generated_config[:Pool][0][:ServicePort][0][:HealthCheck][:Mode]).to eq('HTTP')
+            expect(generated_config[:Pool][0][:ServicePort][0][:HealthCheck][:Uri]).to eq('/')
+          end
+
+          it "should set the healthchech URI to '' by default for a TCP healthcheck" do
+            input = read_data_file('load_balancer_http-tcp-healthcheck-input.yaml')
+            expect(input[:pools][0][:service][:http][:health_check][:protocol]).to eq('TCP')
+            expect(input[:pools][0][:service][:http][:health_check].key?(:uri)).to be(false)
+
+            generated_config = LoadBalancerService.new(@edge_gw_interface_list).
+              generate_fog_config input
+
+            expect(generated_config[:Pool][0][:ServicePort][0][:IsEnabled]).to eq('true')
+            expect(generated_config[:Pool][0][:ServicePort][0][:HealthCheck][:Mode]).to eq('TCP')
+            expect(generated_config[:Pool][0][:ServicePort][0][:HealthCheck][:Uri]).to eq('')
+          end
+
+          it 'should raise an exception if I define a healthcheck URI on a TCP healthcheck' do
+            input = read_data_file('load_balancer_http-tcp-healthcheck-with-uri-input.yaml')
+            expect(input[:pools][0][:service][:http][:health_check][:uri]).to eq('/notsupported')
+            expect(input[:pools][0][:service][:http][:health_check][:protocol]).to eq('TCP')
+
+            expect {
+              LoadBalancerService.new(@edge_gw_interface_list).generate_fog_config input
+            }.to raise_error "vCloud Director does not support healthcheck URI on protocols other than HTTP"
+          end
+
         end
 
         context "When configuring HTTPS load balancer" do
@@ -206,12 +242,34 @@ module Vcloud
             expect(generated_config).to eq(expected_output)
           end
 
+          it "should set the healthcheck URI to '' by default" do
+            input = read_data_file('load_balancer_https-input.yaml')
+            expect(input[:pools][0][:service][:https].key?(:health_check)).to be(false)
+
+            generated_config = LoadBalancerService.new(@edge_gw_interface_list).
+              generate_fog_config input
+
+            expect(generated_config[:Pool][0][:ServicePort][1][:IsEnabled]).to eq('true')
+            expect(generated_config[:Pool][0][:ServicePort][1][:HealthCheck][:Mode]).to eq('SSL')
+            expect(generated_config[:Pool][0][:ServicePort][1][:HealthCheck][:Uri]).to eq('')
+          end
+
+          it 'should raise an exception if I define a healthcheck URI on a HTTPS healthcheck' do
+            input = read_data_file('load_balancer_https-healthcheck-uri-input.yaml')
+            expect(input[:pools][0][:service][:https][:health_check][:uri]).to eq('/notsupported')
+            expect(input[:pools][0][:service][:https][:health_check].key?(:protocol)).to be(false)
+
+            expect {
+              LoadBalancerService.new(@edge_gw_interface_list).generate_fog_config input
+            }.to raise_error "vCloud Director does not support healthcheck URI on protocols other than HTTP"
+          end
+
         end
 
         context "When configuring complex mixed protocol load balancer" do
 
           it 'should expand out input config into Fog expected input' do
-            input            = read_data_file('load_balancer_mixed_complex-input.yaml')
+            input = read_data_file('load_balancer_mixed_complex-input.yaml')
             expected_output  = read_data_file('load_balancer_mixed_complex-output.yaml')
             generated_config = LoadBalancerService.new(@edge_gw_interface_list).
               generate_fog_config input

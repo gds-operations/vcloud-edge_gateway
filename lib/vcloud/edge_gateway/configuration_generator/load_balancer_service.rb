@@ -184,7 +184,7 @@ module Vcloud
         def generate_pool_healthcheck(protocol, input_pool_healthcheck_entry = nil)
           vcloud_pool_healthcheck_entry = {}
           vcloud_pool_healthcheck_entry[:Mode] = ( protocol == :https ) ? 'SSL' : protocol.to_s.upcase
-          vcloud_pool_healthcheck_entry[:Uri] = '/'
+          vcloud_pool_healthcheck_entry[:Uri] = ( protocol == :http ) ? '/' : ''
           vcloud_pool_healthcheck_entry[:HealthThreshold] = '2'
           vcloud_pool_healthcheck_entry[:UnhealthThreshold] = '3'
           vcloud_pool_healthcheck_entry[:Interval] = '5'
@@ -194,8 +194,14 @@ module Vcloud
             if input_pool_healthcheck_entry.key?(:protocol)
               vcloud_pool_healthcheck_entry[:Mode] = input_pool_healthcheck_entry[:protocol]
             end
-            if input_pool_healthcheck_entry.key?(:uri) and protocol == :http
-              vcloud_pool_healthcheck_entry[:Uri]  = input_pool_healthcheck_entry[:uri]
+            if input_pool_healthcheck_entry.key?(:uri)
+              if vcloud_pool_healthcheck_entry[:Mode] == 'HTTP'
+                vcloud_pool_healthcheck_entry[:Uri] = input_pool_healthcheck_entry[:uri]
+              else
+                raise "vCloud Director does not support healthcheck URI on protocols other than HTTP"
+              end
+            elsif vcloud_pool_healthcheck_entry[:Mode] != 'HTTP'
+                vcloud_pool_healthcheck_entry[:Uri] = ''
             end
             if input_pool_healthcheck_entry.key?(:health_threshold)
               vcloud_pool_healthcheck_entry[:HealthThreshold] =
