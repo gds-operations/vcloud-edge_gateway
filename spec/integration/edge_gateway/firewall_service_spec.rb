@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'tempfile'
 
 module Vcloud
-  describe EdgeGatewayServices do
+  describe EdgeGateway::Configure do
 
     before(:all) do
       IntegrationHelper.verify_env_vars
@@ -16,7 +16,7 @@ module Vcloud
       @files_to_delete = []
     end
 
-    context "Test FirewallService specifics of EdgeGatewayServices" do
+    context "Test FirewallService specifics" do
 
       before(:all) do
         reset_edge_gateway
@@ -44,7 +44,7 @@ module Vcloud
 
         it "should only need to make one call to Core::EdgeGateway.update_configuration" do
           expect_any_instance_of(Core::EdgeGateway).to receive(:update_configuration).exactly(1).times.and_call_original
-          EdgeGatewayServices.new.update(@initial_firewall_config_file, @vars_config_file)
+          EdgeGateway::Configure.new.update(@initial_firewall_config_file, @vars_config_file)
         end
 
         it "should have configured at least one firewall rule" do
@@ -59,8 +59,8 @@ module Vcloud
         end
 
         it "and then should not configure the firewall service if updated again with the same configuration (idempotency)" do
-          expect(Vcloud::Core.logger).to receive(:info).with('EdgeGatewayServices.update: Configuration is already up to date. Skipping.')
-          EdgeGatewayServices.new.update(@initial_firewall_config_file, @vars_config_file)
+          expect(Vcloud::Core.logger).to receive(:info).with('EdgeGateway::Configure.update: Configuration is already up to date. Skipping.')
+          EdgeGateway::Configure.new.update(@initial_firewall_config_file, @vars_config_file)
         end
 
         it "ConfigurationDiffer should return empty if local and remote firewall configs match" do
@@ -132,7 +132,7 @@ module Vcloud
       context "Specific FirewallService update tests" do
 
         it "should have the same rule order as the input rule order" do
-          EdgeGatewayServices.new.update(
+          EdgeGateway::Configure.new.update(
             IntegrationHelper.fixture_file('firewall_rule_order_test.yaml.mustache'),
             @vars_config_file
           )

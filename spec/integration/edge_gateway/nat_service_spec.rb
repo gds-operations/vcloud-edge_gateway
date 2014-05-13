@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'tempfile'
 
 module Vcloud
-  describe EdgeGatewayServices do
+  describe EdgeGateway::Configure do
 
     before(:all) do
       IntegrationHelper.verify_env_vars
@@ -16,7 +16,7 @@ module Vcloud
       @files_to_delete = []
     end
 
-    context "Test NatService specifics of EdgeGatewayServices" do
+    context "Test NatService specifics" do
 
       before(:all) do
         reset_edge_gateway
@@ -47,7 +47,7 @@ module Vcloud
         it "should only make one EdgeGateway update task, to minimise EdgeGateway reload events" do
           start_time = Time.now.getutc
           task_list_before_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
-          EdgeGatewayServices.new.update(@initial_nat_config_file, @vars_config_file)
+          EdgeGateway::Configure.new.update(@initial_nat_config_file, @vars_config_file)
           task_list_after_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
           expect(task_list_after_update.size - task_list_before_update.size).to be(1)
         end
@@ -71,8 +71,8 @@ module Vcloud
         end
 
         it "and then should not configure the firewall service if updated again with the same configuration (idempotency)" do
-          expect(Vcloud::Core.logger).to receive(:info).with('EdgeGatewayServices.update: Configuration is already up to date. Skipping.')
-          EdgeGatewayServices.new.update(@initial_nat_config_file, @vars_config_file)
+          expect(Vcloud::Core.logger).to receive(:info).with('EdgeGateway::Configure.update: Configuration is already up to date. Skipping.')
+          EdgeGateway::Configure.new.update(@initial_nat_config_file, @vars_config_file)
         end
 
       end
@@ -118,7 +118,7 @@ module Vcloud
             original_ip: @int_net_ip,
           })
 
-          EdgeGatewayServices.new.update(
+          EdgeGateway::Configure.new.update(
             IntegrationHelper.fixture_file('hairpin_nat_config.yaml.mustache'),
             vars_file
           )
@@ -148,7 +148,7 @@ module Vcloud
           })
 
           expect {
-            EdgeGatewayServices.new.update(
+            EdgeGateway::Configure.new.update(
               IntegrationHelper.fixture_file('nat_config.yaml.mustache'),
               vars_file
             )
