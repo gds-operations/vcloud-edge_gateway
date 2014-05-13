@@ -44,7 +44,7 @@ module Vcloud
 
         it "should only need to make one call to Core::EdgeGateway.update_configuration" do
           expect_any_instance_of(Core::EdgeGateway).to receive(:update_configuration).exactly(1).times.and_call_original
-          EdgeGateway::Configure.new.update(@initial_firewall_config_file, @vars_config_file)
+          EdgeGateway::Configure.new(@initial_firewall_config_file, @vars_config_file).update
         end
 
         it "should have configured at least one firewall rule" do
@@ -60,7 +60,7 @@ module Vcloud
 
         it "and then should not configure the firewall service if updated again with the same configuration (idempotency)" do
           expect(Vcloud::Core.logger).to receive(:info).with('EdgeGateway::Configure.update: Configuration is already up to date. Skipping.')
-          EdgeGateway::Configure.new.update(@initial_firewall_config_file, @vars_config_file)
+          EdgeGateway::Configure.new(@initial_firewall_config_file, @vars_config_file).update
         end
 
         it "ConfigurationDiffer should return empty if local and remote firewall configs match" do
@@ -132,10 +132,10 @@ module Vcloud
       context "Specific FirewallService update tests" do
 
         it "should have the same rule order as the input rule order" do
-          EdgeGateway::Configure.new.update(
+          EdgeGateway::Configure.new(
             IntegrationHelper.fixture_file('firewall_rule_order_test.yaml.mustache'),
             @vars_config_file
-          )
+          ).update
           remote_rules = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration][:FirewallService][:FirewallRule]
           remote_descriptions_list = remote_rules.map {|rule| rule[:Description]}
           expect(remote_descriptions_list).

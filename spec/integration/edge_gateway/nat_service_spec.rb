@@ -47,7 +47,7 @@ module Vcloud
         it "should only make one EdgeGateway update task, to minimise EdgeGateway reload events" do
           start_time = Time.now.getutc
           task_list_before_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
-          EdgeGateway::Configure.new.update(@initial_nat_config_file, @vars_config_file)
+          EdgeGateway::Configure.new(@initial_nat_config_file, @vars_config_file).update
           task_list_after_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
           expect(task_list_after_update.size - task_list_before_update.size).to be(1)
         end
@@ -72,7 +72,7 @@ module Vcloud
 
         it "and then should not configure the firewall service if updated again with the same configuration (idempotency)" do
           expect(Vcloud::Core.logger).to receive(:info).with('EdgeGateway::Configure.update: Configuration is already up to date. Skipping.')
-          EdgeGateway::Configure.new.update(@initial_nat_config_file, @vars_config_file)
+          EdgeGateway::Configure.new(@initial_nat_config_file, @vars_config_file).update
         end
 
       end
@@ -118,10 +118,10 @@ module Vcloud
             original_ip: @int_net_ip,
           })
 
-          EdgeGateway::Configure.new.update(
+          EdgeGateway::Configure.new(
             IntegrationHelper.fixture_file('hairpin_nat_config.yaml.mustache'),
             vars_file
-          )
+          ).update
 
           edge_gateway = Vcloud::Core::EdgeGateway.get_by_name(@edge_name)
           nat_service = edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration][:NatService]
@@ -148,10 +148,10 @@ module Vcloud
           })
 
           expect {
-            EdgeGateway::Configure.new.update(
+            EdgeGateway::Configure.new(
               IntegrationHelper.fixture_file('nat_config.yaml.mustache'),
               vars_file
-            )
+            ).update
           }.to raise_error("unable to find gateway network interface with id #{random_network_id}")
         end
       end
