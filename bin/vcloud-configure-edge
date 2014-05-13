@@ -9,9 +9,9 @@ class App
 
   main do |config_file|
     if options['template-vars']
-      Vcloud::EdgeGatewayServices.new.update(config_file, options['template-vars'])
+      Vcloud::EdgeGateway::Configure.new.update(config_file, options['template-vars'])
     else
-      Vcloud::EdgeGatewayServices.new.update(config_file)
+      Vcloud::EdgeGateway::Configure.new.update(config_file)
     end
   end
 

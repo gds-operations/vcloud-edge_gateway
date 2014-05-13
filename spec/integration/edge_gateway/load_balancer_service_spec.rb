@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'tempfile'
 
 module Vcloud
-  describe EdgeGatewayServices do
+  describe EdgeGateway::Configure do
 
     before(:all) do
       IntegrationHelper.verify_env_vars
@@ -16,7 +16,7 @@ module Vcloud
       @files_to_delete = []
     end
 
-    context "Test LoadBalancerService specifics of EdgeGatewayServices" do
+    context "Test LoadBalancerService specifics" do
 
       before(:all) do
         reset_edge_gateway
@@ -30,7 +30,7 @@ module Vcloud
         before(:all) do
           local_config = Core::ConfigLoader.new.load_config(
             @initial_load_balancer_config_file,
-            Vcloud::Schema::EDGE_GATEWAY_SERVICES,
+            Vcloud::EdgeGateway::Schema::EDGE_GATEWAY_SERVICES,
             @vars_config_file
           )
           @local_vcloud_config  = EdgeGateway::ConfigurationGenerator::LoadBalancerService.new(
@@ -48,7 +48,7 @@ module Vcloud
         it "should only make one EdgeGateway update task, to minimise EdgeGateway reload events" do
           start_time = Time.now.getutc
           task_list_before_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
-          EdgeGatewayServices.new.update(@initial_load_balancer_config_file, @vars_config_file)
+          EdgeGateway::Configure.new.update(@initial_load_balancer_config_file, @vars_config_file)
           task_list_after_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
           expect(task_list_after_update.size - task_list_before_update.size).to be(1)
         end
@@ -89,8 +89,8 @@ module Vcloud
 
         it "should not then configure the LoadBalancerService if updated again with the same configuration" do
           expect(Vcloud::Core.logger).
-            to receive(:info).with('EdgeGatewayServices.update: Configuration is already up to date. Skipping.')
-          EdgeGatewayServices.new.update(@initial_load_balancer_config_file, @vars_config_file)
+            to receive(:info).with('EdgeGateway::Configure.update: Configuration is already up to date. Skipping.')
+          EdgeGateway::Configure.new.update(@initial_load_balancer_config_file, @vars_config_file)
         end
 
       end
@@ -99,7 +99,7 @@ module Vcloud
 
         it "should be able to configure with no pools and virtual_servers" do
           config_file = IntegrationHelper.fixture_file('load_balancer_empty.yaml.mustache')
-          EdgeGatewayServices.new.update(config_file, @vars_config_file)
+          EdgeGateway::Configure.new.update(config_file, @vars_config_file)
           edge_config = @edge_gateway.vcloud_attributes[:Configuration]
           remote_vcloud_config = edge_config[:EdgeGatewayServiceConfiguration][:LoadBalancerService]
           expect(remote_vcloud_config[:Pool].size).to be == 0
@@ -108,7 +108,7 @@ module Vcloud
 
         it "should be able to configure with a single Pool and no VirtualServers" do
           config_file = IntegrationHelper.fixture_file('load_balancer_single_pool.yaml.mustache')
-          EdgeGatewayServices.new.update(config_file, @vars_config_file)
+          EdgeGateway::Configure.new.update(config_file, @vars_config_file)
           edge_config = @edge_gateway.vcloud_attributes[:Configuration]
           remote_vcloud_config = edge_config[:EdgeGatewayServiceConfiguration][:LoadBalancerService]
           expect(remote_vcloud_config[:Pool].size).to be == 1
@@ -116,13 +116,13 @@ module Vcloud
 
         it "should raise an error when trying configure with a single VirtualServer, and no pool mentioned" do
           config_file = IntegrationHelper.fixture_file('load_balancer_single_virtual_server_missing_pool.yaml.mustache')
-          expect { EdgeGatewayServices.new.update(config_file, @vars_config_file) }.
+          expect { EdgeGateway::Configure.new.update(config_file, @vars_config_file) }.
             to raise_error('Supplied configuration does not match supplied schema')
         end
 
         it "should raise an error when trying configure with a single VirtualServer, with an unconfigured pool" do
           config_file = IntegrationHelper.fixture_file('load_balancer_single_virtual_server_invalid_pool.yaml.mustache')
-          expect { EdgeGatewayServices.new.update(config_file, @vars_config_file) }.
+          expect { EdgeGateway::Configure.new.update(config_file, @vars_config_file) }.
             to raise_error(
               'Load balancer virtual server integration-test-vs-1 does not have a valid backing pool.'
             )
