@@ -77,13 +77,61 @@ module Vcloud
         }
       }
 
-      VIRTUAL_SERVER_SERVICE_PROFILE_ENTRY = {
+      VIRTUAL_SERVER_SERVICE_PROFILE_TCP_ENTRY = {
         type: Hash,
         required: false,
         allowed_empty: true,
         internals: {
           enabled: { type: 'boolean', required: false },
           port: { type: 'string_or_number', required: false },
+        }
+      }
+
+      VIRTUAL_SERVER_SERVICE_PROFILE_HTTPS_ENTRY = {
+        type: Hash,
+        required: false,
+        allowed_empty: true,
+        internals: {
+          enabled: { type: 'boolean', required: false },
+          port: { type: 'string_or_number', required: false },
+          persistence: {
+            type: 'hash',
+            required: false,
+            internals: {
+              method: {
+                type: 'enum',
+                required: false,
+                acceptable_values: [ 'SSL_SESSION_ID' ],
+              },
+            },
+          },
+        }
+      }
+
+      VIRTUAL_SERVER_SERVICE_PROFILE_HTTP_ENTRY = {
+        type: Hash,
+        required: false,
+        allowed_empty: true,
+        internals: {
+          enabled: { type: 'boolean', required: false },
+          port: { type: 'string_or_number', required: false },
+          persistence: {
+            type: 'hash',
+            required: false,
+            internals: {
+              method: {
+                type: 'enum',
+                required: false,
+                acceptable_values: [ 'COOKIE' ],
+              },
+              cookie_name: { type: 'string', required: true },
+              cookie_mode: {
+                type: 'enum',
+                required: true,
+                acceptable_values: [ 'APP', 'PREFIX', 'INSERT' ]
+              },
+            },
+          },
         }
       }
 
@@ -101,9 +149,9 @@ module Vcloud
             type: 'hash',
             required: false,
             internals: {
-              http:  VIRTUAL_SERVER_SERVICE_PROFILE_ENTRY,
-              https: VIRTUAL_SERVER_SERVICE_PROFILE_ENTRY,
-              tcp:   VIRTUAL_SERVER_SERVICE_PROFILE_ENTRY,
+              http:  VIRTUAL_SERVER_SERVICE_PROFILE_HTTP_ENTRY,
+              https: VIRTUAL_SERVER_SERVICE_PROFILE_HTTPS_ENTRY,
+              tcp:   VIRTUAL_SERVER_SERVICE_PROFILE_TCP_ENTRY,
             },
           },
         }

@@ -100,6 +100,81 @@ module Vcloud
         end
       end
 
+      it "validates a virtual_server entry with a COOKIE http persistence method" do
+        input = {
+          name: 'virtual server with COOKIE persistence',
+          ip_address: "192.2.0.40",
+          network: "TestNetwork",
+          pool: "TestPool",
+          logging: true,
+          service_profiles: {
+             http: {
+               enabled: true,
+               port: 8080,
+               persistence: {
+                 method: 'COOKIE',
+                 cookie_name: 'JSESSIONID',
+                 cookie_mode: 'APP',
+               },
+             },
+          }
+        }
+        validator = Vcloud::Core::ConfigValidator.validate(:base, input,
+          Vcloud::EdgeGateway::Schema::LOAD_BALANCER_VIRTUAL_SERVER_ENTRY)
+        expect(validator.errors).to eq([])
+        expect(validator.valid?).to be_true
+      end
+
+      it "does not validate a virtual_server entry with a COOKIE http " +
+           "persistence method, when no cookie_name or cookie_mode is specified" do
+        input = {
+          name: 'virtual server with COOKIE persistence',
+          ip_address: "192.2.0.40",
+          network: "TestNetwork",
+          pool: "TestPool",
+          logging: true,
+          service_profiles: {
+             http: {
+               enabled: true,
+               port: 8080,
+               persistence: {
+                 method: 'COOKIE',
+               },
+             },
+          }
+        }
+        validator = Vcloud::Core::ConfigValidator.validate(:base, input,
+          Vcloud::EdgeGateway::Schema::LOAD_BALANCER_VIRTUAL_SERVER_ENTRY)
+        expect(validator.errors).to eq([
+          "persistence: missing 'cookie_name' parameter",
+          "persistence: missing 'cookie_mode' parameter",
+        ])
+        expect(validator.valid?).to be_false
+      end
+
+      it "validates a virtual_server entry with a SSL_SESSION_ID https persistence method" do
+        input = {
+          name: 'virtual server with SSL_SESSION_ID persistence',
+          ip_address: "192.2.0.40",
+          network: "TestNetwork",
+          pool: "TestPool",
+          logging: true,
+          service_profiles: {
+             https: {
+               enabled: true,
+               port: 8080,
+               persistence: {
+                 method: 'SSL_SESSION_ID',
+               },
+             },
+          }
+        }
+        validator = Vcloud::Core::ConfigValidator.validate(:base, input,
+          Vcloud::EdgeGateway::Schema::LOAD_BALANCER_VIRTUAL_SERVER_ENTRY)
+        expect(validator.errors).to eq([])
+        expect(validator.valid?).to be_true
+      end
+
     end
 
     context "check complete load balancer sections" do
