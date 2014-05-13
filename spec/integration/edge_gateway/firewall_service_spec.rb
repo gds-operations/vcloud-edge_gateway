@@ -31,7 +31,7 @@ module Vcloud
         before(:all) do
           local_config = Core::ConfigLoader.new.load_config(
             @initial_firewall_config_file,
-            Vcloud::Schema::EDGE_GATEWAY_SERVICES,
+            Vcloud::EdgeGateway::Schema::EDGE_GATEWAY_SERVICES,
             @vars_config_file
           )
           @local_vcloud_config  = EdgeGateway::ConfigurationGenerator::FirewallService.new.generate_fog_config(local_config[:firewall_service])
@@ -73,7 +73,7 @@ module Vcloud
         it "should highlight a difference if local firewall config has been updated" do
           local_config = Core::ConfigLoader.new.load_config(
             IntegrationHelper.fixture_file('firewall_config_updated_rule.yaml.mustache'),
-            Vcloud::Schema::EDGE_GATEWAY_SERVICES,
+            Vcloud::EdgeGateway::Schema::EDGE_GATEWAY_SERVICES,
             @vars_config_file
           )
           local_firewall_config = EdgeGateway::ConfigurationGenerator::FirewallService.new.generate_fog_config(local_config[:firewall_service])

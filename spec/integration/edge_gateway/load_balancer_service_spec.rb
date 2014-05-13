@@ -30,7 +30,7 @@ module Vcloud
         before(:all) do
           local_config = Core::ConfigLoader.new.load_config(
             @initial_load_balancer_config_file,
-            Vcloud::Schema::EDGE_GATEWAY_SERVICES,
+            Vcloud::EdgeGateway::Schema::EDGE_GATEWAY_SERVICES,
             @vars_config_file
           )
           @local_vcloud_config  = EdgeGateway::ConfigurationGenerator::LoadBalancerService.new(
