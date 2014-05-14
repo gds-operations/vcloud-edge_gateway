@@ -175,6 +175,47 @@ module Vcloud
         expect(validator.valid?).to be_true
       end
 
+      it "validates a virtual_server entry with a tcp service_profile" do
+        input = {
+          name: 'virtual server with tcp service_profile',
+          ip_address: "192.2.0.40",
+          network: "TestNetwork",
+          pool: "TestPool",
+          logging: true,
+          service_profiles: {
+             tcp: {
+               enabled: true,
+               port: 7777,
+             },
+          }
+        }
+        validator = Vcloud::Core::ConfigValidator.validate(:base, input,
+          Vcloud::EdgeGateway::Schema::LOAD_BALANCER_VIRTUAL_SERVER_ENTRY)
+        expect(validator.errors).to eq([])
+        expect(validator.valid?).to be_true
+      end
+
+      it "does not validate a virtual_server tcp service_profile with a persistence section" do
+        input = {
+          name: 'BOGUS virtual server with tcp service profile persistence section',
+          ip_address: "192.2.0.40",
+          network: "TestNetwork",
+          pool: "TestPool",
+          logging: true,
+          service_profiles: {
+             tcp: {
+               enabled: true,
+               port: 7777,
+               persistence: {},
+             },
+          }
+        }
+        validator = Vcloud::Core::ConfigValidator.validate(:base, input,
+          Vcloud::EdgeGateway::Schema::LOAD_BALANCER_VIRTUAL_SERVER_ENTRY)
+        expect(validator.errors).to eq(["tcp: parameter 'persistence' is invalid"])
+        expect(validator.valid?).to be_false
+      end
+
     end
 
     context "check complete load balancer sections" do
