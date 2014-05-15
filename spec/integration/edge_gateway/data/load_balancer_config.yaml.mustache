@@ -22,3 +22,7 @@ load_balancer_service:
     service_profiles:
       http:
         port: 8080
+        persistence:
+          method: COOKIE
+          cookie_name: JSESSIONID
+          cookie_mode: APP

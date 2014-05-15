@@ -360,6 +360,34 @@ service_profiles:
   https: { }  # port defaults to 443
 ```
 
+Limited session persistence configurations can be defined in the virtual_server
+service_profiles section, if it is required that traffic 'stick' to the backend
+member that it originally was destined for. The available persistence mechanisms
+change based on which service is being handled:
+
+For the 'http' service_profile, we can use Cookie based persistence:
+
+```
+  http:
+    port: 8080
+    persistence:
+      method: COOKIE
+      cookie_name: JSESSIONID # can be any cookie name string
+      cookie_method: APP      # can be one of INSERT, PREFIX, or APP
+```
+
+
+For the 'https' service_profile, we can use SSL Session ID based persistence:
+
+```
+  https:
+    port: 8443
+    persistence:
+      method: SSL_SESSION_ID
+```
+
+There is no persistence option for 'tcp' service_profiles.
+
 See [the vCloud Director Admin Guide](http://pubs.vmware.com/vcd-51/topic/com.vmware.vcloud.admin.doc_51/GUID-EC5EE5F9-1A2C-4609-9347-4C3143727704.html)
 for more details on configuring VirtualServer entries.
 
