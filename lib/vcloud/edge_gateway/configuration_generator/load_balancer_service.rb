@@ -168,9 +168,9 @@ module Vcloud
             if input_pool_service_port.key?(:algorithm)
               vcloud_pool_service_port[:Algorithm] = input_pool_service_port[:algorithm]
             end
-            vcloud_pool_service_port[:Port] =
-              input_pool_service_port.key?(:port) ?
-                input_pool_service_port[:port].to_s : default_port(mode)
+            if input_pool_service_port.key?(:port)
+              vcloud_pool_service_port[:Port] = input_pool_service_port[:port].to_s
+            end
             if input_pool_service_port[:health_check]
               vcloud_pool_service_port[:HealthCheckPort] =
                 input_pool_service_port[:health_check].fetch(:port, '').to_s
