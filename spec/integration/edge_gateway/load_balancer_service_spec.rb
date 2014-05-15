@@ -48,7 +48,7 @@ module Vcloud
         it "should only make one EdgeGateway update task, to minimise EdgeGateway reload events" do
           start_time = Time.now.getutc
           task_list_before_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
-          EdgeGateway::Configure.new.update(@initial_load_balancer_config_file, @vars_config_file)
+          EdgeGateway::Configure.new(@initial_load_balancer_config_file, @vars_config_file).update
           task_list_after_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
           expect(task_list_after_update.size - task_list_before_update.size).to be(1)
         end
@@ -90,7 +90,7 @@ module Vcloud
         it "should not then configure the LoadBalancerService if updated again with the same configuration" do
           expect(Vcloud::Core.logger).
             to receive(:info).with('EdgeGateway::Configure.update: Configuration is already up to date. Skipping.')
-          EdgeGateway::Configure.new.update(@initial_load_balancer_config_file, @vars_config_file)
+          EdgeGateway::Configure.new(@initial_load_balancer_config_file, @vars_config_file).update
         end
 
       end
@@ -99,7 +99,7 @@ module Vcloud
 
         it "should be able to configure with no pools and virtual_servers" do
           config_file = IntegrationHelper.fixture_file('load_balancer_empty.yaml.mustache')
-          EdgeGateway::Configure.new.update(config_file, @vars_config_file)
+          EdgeGateway::Configure.new(config_file, @vars_config_file).update
           edge_config = @edge_gateway.vcloud_attributes[:Configuration]
           remote_vcloud_config = edge_config[:EdgeGatewayServiceConfiguration][:LoadBalancerService]
           expect(remote_vcloud_config[:Pool].size).to be == 0
@@ -108,7 +108,7 @@ module Vcloud
 
         it "should be able to configure with a single Pool and no VirtualServers" do
           config_file = IntegrationHelper.fixture_file('load_balancer_single_pool.yaml.mustache')
-          EdgeGateway::Configure.new.update(config_file, @vars_config_file)
+          EdgeGateway::Configure.new(config_file, @vars_config_file).update
           edge_config = @edge_gateway.vcloud_attributes[:Configuration]
           remote_vcloud_config = edge_config[:EdgeGatewayServiceConfiguration][:LoadBalancerService]
           expect(remote_vcloud_config[:Pool].size).to be == 1
@@ -116,13 +116,13 @@ module Vcloud
 
         it "should raise an error when trying configure with a single VirtualServer, and no pool mentioned" do
           config_file = IntegrationHelper.fixture_file('load_balancer_single_virtual_server_missing_pool.yaml.mustache')
-          expect { EdgeGateway::Configure.new.update(config_file, @vars_config_file) }.
+          expect { EdgeGateway::Configure.new(config_file, @vars_config_file).update }.
             to raise_error('Supplied configuration does not match supplied schema')
         end
 
         it "should raise an error when trying configure with a single VirtualServer, with an unconfigured pool" do
           config_file = IntegrationHelper.fixture_file('load_balancer_single_virtual_server_invalid_pool.yaml.mustache')
-          expect { EdgeGateway::Configure.new.update(config_file, @vars_config_file) }.
+          expect { EdgeGateway::Configure.new(config_file, @vars_config_file).update }.
             to raise_error(
               'Load balancer virtual server integration-test-vs-1 does not have a valid backing pool.'
             )
