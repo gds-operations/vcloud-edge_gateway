@@ -168,9 +168,9 @@ module Vcloud
             if input_pool_service_port.key?(:algorithm)
               vcloud_pool_service_port[:Algorithm] = input_pool_service_port[:algorithm]
             end
-            vcloud_pool_service_port[:Port] =
-              input_pool_service_port.key?(:port) ?
-                input_pool_service_port[:port].to_s : default_port(mode)
+            if input_pool_service_port.key?(:port)
+              vcloud_pool_service_port[:Port] = input_pool_service_port[:port].to_s
+            end
             if input_pool_service_port[:health_check]
               vcloud_pool_service_port[:HealthCheckPort] =
                 input_pool_service_port[:health_check].fetch(:port, '').to_s
@@ -182,11 +182,9 @@ module Vcloud
         end
 
         def generate_pool_healthcheck(protocol, input_pool_healthcheck_entry = nil)
-          default_mode = ( protocol == :https ) ? 'SSL' : protocol.to_s.upcase
-          vcloud_pool_healthcheck_entry = {
-            Mode: default_mode,
-          }
-          vcloud_pool_healthcheck_entry[:Uri] = '/'
+          vcloud_pool_healthcheck_entry = {}
+          vcloud_pool_healthcheck_entry[:Mode] = ( protocol == :https ) ? 'SSL' : protocol.to_s.upcase
+          vcloud_pool_healthcheck_entry[:Uri] = ( protocol == :http ) ? '/' : ''
           vcloud_pool_healthcheck_entry[:HealthThreshold] = '2'
           vcloud_pool_healthcheck_entry[:UnhealthThreshold] = '3'
           vcloud_pool_healthcheck_entry[:Interval] = '5'
@@ -196,8 +194,14 @@ module Vcloud
             if input_pool_healthcheck_entry.key?(:protocol)
               vcloud_pool_healthcheck_entry[:Mode] = input_pool_healthcheck_entry[:protocol]
             end
-            if input_pool_healthcheck_entry.key?(:uri) and protocol == :http
-              vcloud_pool_healthcheck_entry[:Uri]  = input_pool_healthcheck_entry[:uri]
+            if input_pool_healthcheck_entry.key?(:uri)
+              if vcloud_pool_healthcheck_entry[:Mode] == 'HTTP'
+                vcloud_pool_healthcheck_entry[:Uri] = input_pool_healthcheck_entry[:uri]
+              else
+                raise "vCloud Director does not support healthcheck URI on protocols other than HTTP"
+              end
+            elsif vcloud_pool_healthcheck_entry[:Mode] != 'HTTP'
+                vcloud_pool_healthcheck_entry[:Uri] = ''
             end
             if input_pool_healthcheck_entry.key?(:health_threshold)
               vcloud_pool_healthcheck_entry[:HealthThreshold] =

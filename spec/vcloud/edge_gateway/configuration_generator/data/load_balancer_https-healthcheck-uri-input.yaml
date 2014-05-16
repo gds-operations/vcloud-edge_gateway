@@ -1,0 +1,42 @@
+{
+  enabled: 'true', #opt
+  pools: [
+    {
+      name: 'test-pool-1',
+      description: 'Our Pool description',
+      service: {
+        https: {
+          algorithm: 'IP_HASH',
+          port: 443,
+          protocol: 'HTTPS',
+          health_check: {
+            uri: '/notsupported',
+          }
+        }
+      },
+      members: [
+        { ip_address: '10.10.10.10', },
+        { ip_address: '10.10.10.11', },
+      ],
+
+    }
+  ],
+  virtual_servers: [
+    {
+      name: 'test-vs-1',
+      description: 'Our VirtualServer description',
+      ip_address: '192.2.0.88',
+      network: '12345678-1234-1234-1234-123456789012',
+      pool: 'test-pool-1',
+      service_profiles: {
+        https: {
+          enabled: true,
+          port: '443',
+          persistence: {
+            method: 'SSL_SESSION_ID'
+          }
+        },
+      },
+    }
+  ]
+}

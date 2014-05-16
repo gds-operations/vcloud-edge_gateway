@@ -659,7 +659,7 @@ module Vcloud
               :HealthCheckPort=>"",
               :HealthCheck=>{
                 :Mode=>"SSL",
-                :Uri=>"/",
+                :Uri=>"",
                 :HealthThreshold=>"2",
                 :UnhealthThreshold=>"3",
                 :Interval=>"5",
@@ -673,7 +673,7 @@ module Vcloud
               :HealthCheckPort=>"",
               :HealthCheck=>{
                 :Mode=>"TCP",
-                :Uri=>"/",
+                :Uri=>"",
                 :HealthThreshold=>"2",
                 :UnhealthThreshold=>"3",
                 :Interval=>"5",
@@ -844,7 +844,7 @@ module Vcloud
               :HealthCheckPort=>"",
               :HealthCheck=>{
                 :Mode=>"SSL",
-                :Uri=>"/",
+                :Uri=>"",
                 :HealthThreshold=>"2",
                 :UnhealthThreshold=>"3",
                 :Interval=>"5",
@@ -858,7 +858,7 @@ module Vcloud
               :HealthCheckPort=>"",
               :HealthCheck=>{
                 :Mode=>"TCP",
-                :Uri=>"/",
+                :Uri=>"",
                 :HealthThreshold=>"2",
                 :UnhealthThreshold=>"3",
                 :Interval=>"5",
@@ -1030,7 +1030,7 @@ module Vcloud
               :HealthCheckPort=>"",
               :HealthCheck=>{
                 :Mode=>"SSL",
-                :Uri=>"/",
+                :Uri=>"",
                 :HealthThreshold=>"2",
                 :UnhealthThreshold=>"3",
                 :Interval=>"5",
@@ -1044,7 +1044,7 @@ module Vcloud
               :HealthCheckPort=>"",
               :HealthCheck=>{
                 :Mode=>"TCP",
-                :Uri=>"/",
+                :Uri=>"",
                 :HealthThreshold=>"2",
                 :UnhealthThreshold=>"3",
                 :Interval=>"5",
