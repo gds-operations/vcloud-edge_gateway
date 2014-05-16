@@ -202,9 +202,10 @@ module Vcloud
             generated_config = LoadBalancerService.new(@edge_gw_interface_list).
               generate_fog_config input
 
-            expect(generated_config[:Pool][0][:ServicePort][0][:IsEnabled]).to eq('true')
-            expect(generated_config[:Pool][0][:ServicePort][0][:HealthCheck][:Mode]).to eq('HTTP')
-            expect(generated_config[:Pool][0][:ServicePort][0][:HealthCheck][:Uri]).to eq('/')
+            http_pool_service_port = generated_config[:Pool][0][:ServicePort][0]
+            expect(http_pool_service_port[:IsEnabled]).to eq('true')
+            expect(http_pool_service_port[:HealthCheck][:Mode]).to eq('HTTP')
+            expect(http_pool_service_port[:HealthCheck][:Uri]).to eq('/')
           end
 
           it "should set the healthchech URI to '' by default for a TCP healthcheck" do
@@ -215,9 +216,10 @@ module Vcloud
             generated_config = LoadBalancerService.new(@edge_gw_interface_list).
               generate_fog_config input
 
-            expect(generated_config[:Pool][0][:ServicePort][0][:IsEnabled]).to eq('true')
-            expect(generated_config[:Pool][0][:ServicePort][0][:HealthCheck][:Mode]).to eq('TCP')
-            expect(generated_config[:Pool][0][:ServicePort][0][:HealthCheck][:Uri]).to eq('')
+            http_pool_service_port = generated_config[:Pool][0][:ServicePort][0]
+            expect(http_pool_service_port[:IsEnabled]).to eq('true')
+            expect(http_pool_service_port[:HealthCheck][:Mode]).to eq('TCP')
+            expect(http_pool_service_port[:HealthCheck][:Uri]).to eq('')
           end
 
           it 'should raise an exception if I define a healthcheck URI on a TCP healthcheck' do
@@ -249,9 +251,10 @@ module Vcloud
             generated_config = LoadBalancerService.new(@edge_gw_interface_list).
               generate_fog_config input
 
-            expect(generated_config[:Pool][0][:ServicePort][1][:IsEnabled]).to eq('true')
-            expect(generated_config[:Pool][0][:ServicePort][1][:HealthCheck][:Mode]).to eq('SSL')
-            expect(generated_config[:Pool][0][:ServicePort][1][:HealthCheck][:Uri]).to eq('')
+            https_pool_service_port = generated_config[:Pool][0][:ServicePort][1]
+            expect(https_pool_service_port[:IsEnabled]).to eq('true')
+            expect(https_pool_service_port[:HealthCheck][:Mode]).to eq('SSL')
+            expect(https_pool_service_port[:HealthCheck][:Uri]).to eq('')
           end
 
           it 'should raise an exception if I define a healthcheck URI on a HTTPS healthcheck' do
