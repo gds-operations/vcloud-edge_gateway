@@ -16,10 +16,13 @@ module Vcloud
       def generate_new_config(local_config, remote_config, edge_gateway_interfaces)
         new_config = { }
 
-        firewall_service_config = EdgeGateway::ConfigurationGenerator::FirewallService.new.generate_fog_config(local_config[:firewall_service])
+        firewall_service_config =
+          EdgeGateway::ConfigurationGenerator::FirewallService.new.
+            generate_fog_config(local_config[:firewall_service])
 
         unless firewall_service_config.nil?
-          differ = EdgeGateway::FirewallConfigurationDiffer.new(firewall_service_config, remote_config[:FirewallService])
+          differ = EdgeGateway::FirewallConfigurationDiffer.
+            new(firewall_service_config, remote_config[:FirewallService])
           unless differ.diff.empty?
             new_config[:FirewallService] = firewall_service_config
           end
