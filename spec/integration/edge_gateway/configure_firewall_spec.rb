@@ -152,7 +152,6 @@ module Vcloud
       end
 
       after(:all) do
-        reset_edge_gateway unless ENV['VCLOUD_NO_RESET_VSE_AFTER']
         @files_to_delete.each { |f|
           f.unlink
         }
