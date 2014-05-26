@@ -1,0 +1,8 @@
+default:
+  network_1:
+  network_1_id:
+  network_1_ip:
+  edge_gateway:
+  provider_network:
+  provider_network_id:
+  provider_network_ip:

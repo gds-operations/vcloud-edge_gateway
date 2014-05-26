@@ -5,14 +5,15 @@ module Vcloud
   describe EdgeGateway::Configure do
 
     before(:all) do
-      IntegrationHelper.verify_env_vars
-      @edge_name = ENV['VCLOUD_EDGE_GATEWAY']
-      @ext_net_id = ENV['VCLOUD_PROVIDER_NETWORK_ID']
-      @ext_net_ip = ENV['VCLOUD_PROVIDER_NETWORK_IP']
-      @ext_net_name = ENV['VCLOUD_PROVIDER_NETWORK_NAME']
-      @int_net_id = ENV['VCLOUD_NETWORK1_ID']
-      @int_net_ip = ENV['VCLOUD_NETWORK1_IP']
-      @int_net_name = ENV['VCLOUD_NETWORK1_NAME']
+      config_file = File.join(File.dirname(__FILE__), "../vcloud_tools_testing_config.yaml")
+      @test_data = Vcloud::Tools::Tester::TestParameters.new(config_file)
+      @edge_name = @test_data.edge_gateway
+      @ext_net_id = @test_data.provider_network_id
+      @ext_net_ip = @test_data.provider_network_ip
+      @ext_net_name = @test_data.provider_network
+      @int_net_id = @test_data.network_1_id
+      @int_net_ip = @test_data.network_1_ip
+      @int_net_name = @test_data.network_1
       @files_to_delete = []
     end
 

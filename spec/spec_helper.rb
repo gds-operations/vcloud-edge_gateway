@@ -13,6 +13,7 @@ SimpleCov.start 'gem'
 
 require 'bundler/setup'
 require 'vcloud/edge_gateway'
+require 'vcloud/tools/tester'
 
 
 SimpleCov.at_exit do
