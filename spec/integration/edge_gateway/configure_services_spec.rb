@@ -80,13 +80,7 @@ module Vcloud
       end
 
       after(:all) do
-        remove_temp_config_files
-      end
-
-      def remove_temp_config_files
-        @files_to_delete.each { |f|
-          f.unlink
-        }
+        IntegrationHelper.remove_temp_config_files(@files_to_delete)
       end
 
       def reset_edge_gateway
