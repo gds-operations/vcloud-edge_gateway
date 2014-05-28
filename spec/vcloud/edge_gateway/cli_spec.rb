@@ -58,6 +58,17 @@ describe Vcloud::EdgeGateway::Cli do
       end
     end
 
+    context "when given --validate and config file" do
+      let(:args) { %w{--validate config.yaml} }
+
+      it "should pass single argument and exit normally" do
+        expect(Vcloud::EdgeGateway::Configure).to receive(:new).
+          with('config.yaml').and_return(mock_configure)
+        expect(mock_configure).not_to receive(:update)
+        expect(subject.exitstatus).to eq(0)
+      end
+    end
+
     context "when asked to display version" do
       let(:args) { %w{--version} }
 

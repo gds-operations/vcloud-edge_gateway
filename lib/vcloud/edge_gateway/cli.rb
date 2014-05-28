@@ -8,6 +8,7 @@ module Vcloud
         @config_file = nil
         @options = {
           :template_vars => nil,
+          :validate_only => false,
         }
 
         parse(argv_array)
@@ -19,7 +20,10 @@ module Vcloud
           config_args << @options[:template_vars]
         end
 
-        Vcloud::EdgeGateway::Configure.new(*config_args).update
+        vse = Vcloud::EdgeGateway::Configure.new(*config_args)
+        unless @options.fetch(:validate_only)
+          vse.update
+        end
       end
 
       private
@@ -40,6 +44,10 @@ See https://github.com/alphagov/vcloud-edge_gateway for more info
 
           opts.on("--template-vars FILE", "Enable templating with variables from this file") do |f|
             @options[:template_vars] = f
+          end
+
+          opts.on("--validate", "Validate config_file against schema and exit") do
+            @options[:validate_only] = true
           end
 
           opts.on("-h", "--help", "Print usage and exit") do
