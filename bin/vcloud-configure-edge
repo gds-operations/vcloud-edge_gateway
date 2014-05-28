@@ -1,31 +1,5 @@
 #!/usr/bin/env ruby
 
-require 'methadone'
 require 'vcloud/edge_gateway'
 
-class App
-  include Methadone::Main
-  include Methadone::CLILogging
-
-  main do |config_file|
-    if options['template-vars']
-      vse = Vcloud::EdgeGateway::Configure.new(config_file, options['template-vars'])
-    else
-      vse = Vcloud::EdgeGateway::Configure.new(config_file)
-    end
-    vse.update
-  end
-
-  arg :config_file
-  on('--template-vars FILE', 'Enable templating with variables from this file')
-
-  description '
-  vcloud-edge_gateway allows you to configure an EdgeGateway with an input
-  file which may optionally be a Mustache template.
-
-  See https://github.com/alphagov/vcloud-edge_gateway for more info'
-
-  version Vcloud::EdgeGateway::VERSION
-
-  go!
-end
+Vcloud::EdgeGateway::Bin.new(ARGV).run

@@ -8,6 +8,7 @@ require 'vcloud/edge_gateway/schema/firewall_service'
 require 'vcloud/edge_gateway/schema/load_balancer_service'
 require 'vcloud/edge_gateway/schema/edge_gateway'
 
+require 'vcloud/edge_gateway/bin'
 require 'vcloud/edge_gateway/configure'
 require 'vcloud/edge_gateway/configuration_generator/id_ranges'
 require 'vcloud/edge_gateway/configuration_generator/firewall_service'
