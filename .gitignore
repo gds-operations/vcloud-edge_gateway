@@ -11,6 +11,7 @@ replace_variables.sh
 /pkg/
 vendor/
 coverage/
+spec/integration/vcloud_tools_testing_config.yaml
 results.html
 fog_integration_test.config
 .idea

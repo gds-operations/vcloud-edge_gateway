@@ -16,6 +16,7 @@ end
 
 require 'bundler/setup'
 require 'vcloud/edge_gateway'
+require 'vcloud/tools/tester'
 
 
 if ENV['COVERAGE']

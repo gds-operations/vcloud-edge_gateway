@@ -5,14 +5,8 @@ module Vcloud
   describe EdgeGateway::Configure do
 
     before(:all) do
-      IntegrationHelper.verify_env_vars
-      @edge_name = ENV['VCLOUD_EDGE_GATEWAY']
-      @ext_net_id = ENV['VCLOUD_PROVIDER_NETWORK_ID']
-      @ext_net_ip = ENV['VCLOUD_PROVIDER_NETWORK_IP']
-      @ext_net_name = ENV['VCLOUD_PROVIDER_NETWORK_NAME']
-      @int_net_id = ENV['VCLOUD_NETWORK1_ID']
-      @int_net_ip = ENV['VCLOUD_NETWORK1_IP']
-      @int_net_name = ENV['VCLOUD_NETWORK1_NAME']
+      config_file = File.join(File.dirname(__FILE__), "../vcloud_tools_testing_config.yaml")
+      @test_data = Vcloud::Tools::Tester::TestParameters.new(config_file)
       @files_to_delete = []
     end
 
@@ -22,7 +16,7 @@ module Vcloud
         reset_edge_gateway
         @vars_config_file = generate_vars_file(edge_gateway_vars_hash)
         @initial_firewall_config_file = IntegrationHelper.fixture_file('firewall_config.yaml.mustache')
-        @edge_gateway = Vcloud::Core::EdgeGateway.get_by_name(@edge_name)
+        @edge_gateway = Vcloud::Core::EdgeGateway.get_by_name(@test_data.edge_gateway)
         @firewall_service = {}
       end
 
@@ -151,14 +145,11 @@ module Vcloud
       end
 
       after(:all) do
-        reset_edge_gateway unless ENV['VCLOUD_NO_RESET_VSE_AFTER']
-        @files_to_delete.each { |f|
-          f.unlink
-        }
+        IntegrationHelper.remove_temp_config_files(@files_to_delete)
       end
 
       def reset_edge_gateway
-        edge_gateway = Core::EdgeGateway.get_by_name @edge_name
+        edge_gateway = Core::EdgeGateway.get_by_name @test_data.edge_gateway
         edge_gateway.update_configuration({
           FirewallService: {IsEnabled: false, FirewallRule: []},
         })
@@ -175,9 +166,9 @@ module Vcloud
 
       def edge_gateway_vars_hash
         {
-          :edge_gateway_name => @edge_name,
-          :edge_gateway_ext_network_id => @ext_net_id,
-          :edge_gateway_ext_network_ip => @ext_net_ip,
+          :edge_gateway_name => @test_data.edge_gateway,
+          :edge_gateway_ext_network_id => @test_data.provider_network_id,
+          :edge_gateway_ext_network_ip => @test_data.provider_network_ip,
         }
       end
 

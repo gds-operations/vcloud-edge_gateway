@@ -5,14 +5,8 @@ module Vcloud
   describe EdgeGateway::Configure do
 
     before(:all) do
-      IntegrationHelper.verify_env_vars
-      @edge_name = ENV['VCLOUD_EDGE_GATEWAY']
-      @ext_net_id = ENV['VCLOUD_PROVIDER_NETWORK_ID']
-      @ext_net_ip = ENV['VCLOUD_PROVIDER_NETWORK_IP']
-      @ext_net_name = ENV['VCLOUD_PROVIDER_NETWORK_NAME']
-      @int_net_id = ENV['VCLOUD_NETWORK1_ID']
-      @int_net_ip = ENV['VCLOUD_NETWORK1_IP']
-      @int_net_name = ENV['VCLOUD_NETWORK1_NAME']
+      config_file = File.join(File.dirname(__FILE__), "../vcloud_tools_testing_config.yaml")
+      @test_data = Vcloud::Tools::Tester::TestParameters.new(config_file)
       @files_to_delete = []
     end
 
@@ -22,7 +16,7 @@ module Vcloud
         reset_edge_gateway
         @vars_config_file = generate_vars_file(edge_gateway_vars_hash)
         @initial_nat_config_file = IntegrationHelper.fixture_file('nat_config.yaml.mustache')
-        @edge_gateway = Vcloud::Core::EdgeGateway.get_by_name(@edge_name)
+        @edge_gateway = Vcloud::Core::EdgeGateway.get_by_name(@test_data.edge_gateway)
       end
 
       context "Check update is functional" do
@@ -88,8 +82,8 @@ module Vcloud
           expect(dnat_rule[:RuleType]).to eq('DNAT')
           expect(dnat_rule[:Id]).to eq('65537')
           expect(dnat_rule[:IsEnabled]).to eq('true')
-          expect(dnat_rule[:GatewayNatRule][:Interface][:href]).to include(@ext_net_id)
-          expect(dnat_rule[:GatewayNatRule][:OriginalIp]).to eq(@ext_net_ip)
+          expect(dnat_rule[:GatewayNatRule][:Interface][:href]).to include(@test_data.provider_network_id)
+          expect(dnat_rule[:GatewayNatRule][:OriginalIp]).to eq(@test_data.provider_network_ip)
           expect(dnat_rule[:GatewayNatRule][:OriginalPort]).to eq('3412')
           expect(dnat_rule[:GatewayNatRule][:TranslatedIp]).to eq('10.10.1.2-10.10.1.3')
           expect(dnat_rule[:GatewayNatRule][:TranslatedPort]).to eq('3412')
@@ -102,9 +96,9 @@ module Vcloud
           expect(snat_rule[:RuleType]).to eq('SNAT')
           expect(snat_rule[:Id]).to eq('65538')
           expect(snat_rule[:IsEnabled]).to eq('true')
-          expect(snat_rule[:GatewayNatRule][:Interface][:href]).to include(@ext_net_id)
+          expect(snat_rule[:GatewayNatRule][:Interface][:href]).to include(@test_data.provider_network_id)
           expect(snat_rule[:GatewayNatRule][:OriginalIp]).to eq('10.10.1.2-10.10.1.3')
-          expect(snat_rule[:GatewayNatRule][:TranslatedIp]).to eq(@ext_net_ip)
+          expect(snat_rule[:GatewayNatRule][:TranslatedIp]).to eq(@test_data.provider_network_ip)
         end
 
       end
@@ -113,9 +107,9 @@ module Vcloud
 
         it "and then should configure hairpin NATting with orgVdcNetwork" do
           vars_file = generate_vars_file({
-            edge_gateway_name: @edge_name,
-            org_vdc_network_id: @int_net_id,
-            original_ip: @int_net_ip,
+            edge_gateway_name: @test_data.edge_gateway,
+            org_vdc_network_id: @test_data.network_1_id,
+            original_ip: @test_data.network_1_ip,
           })
 
           EdgeGateway::Configure.new(
@@ -123,7 +117,7 @@ module Vcloud
             vars_file
           ).update
 
-          edge_gateway = Vcloud::Core::EdgeGateway.get_by_name(@edge_name)
+          edge_gateway = Vcloud::Core::EdgeGateway.get_by_name(@test_data.edge_gateway)
           nat_service = edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration][:NatService]
           expected_rule = nat_service[:NatRule].first
           expect(expected_rule).not_to be_nil
@@ -131,8 +125,8 @@ module Vcloud
           expect(expected_rule[:Id]).to eq('65537')
           expect(expected_rule[:RuleType]).to eq('DNAT')
           expect(expected_rule[:IsEnabled]).to eq('true')
-          expect(expected_rule[:GatewayNatRule][:Interface][:name]).to eq(@int_net_name)
-          expect(expected_rule[:GatewayNatRule][:OriginalIp]).to eq(@int_net_ip)
+          expect(expected_rule[:GatewayNatRule][:Interface][:name]).to eq(@test_data.network_1)
+          expect(expected_rule[:GatewayNatRule][:OriginalIp]).to eq(@test_data.network_1_ip)
           expect(expected_rule[:GatewayNatRule][:OriginalPort]).to eq('3412')
           expect(expected_rule[:GatewayNatRule][:TranslatedIp]).to eq('10.10.1.2')
           expect(expected_rule[:GatewayNatRule][:TranslatedPort]).to eq('3412')
@@ -142,9 +136,9 @@ module Vcloud
         it "should raise error if network provided in rule does not exist" do
           random_network_id = SecureRandom.uuid
           vars_file = generate_vars_file({
-            edge_gateway_name: @edge_name,
+            edge_gateway_name: @test_data.edge_gateway,
             network_id: random_network_id,
-            original_ip: @int_net_ip,
+            original_ip: @test_data.network_1_ip,
           })
 
           expect {
@@ -157,18 +151,11 @@ module Vcloud
       end
 
       after(:all) do
-        reset_edge_gateway unless ENV['VCLOUD_NO_RESET_VSE_AFTER']
-        remove_temp_config_files
-      end
-
-      def remove_temp_config_files
-        @files_to_delete.each { |f|
-          f.unlink
-        }
+        IntegrationHelper.remove_temp_config_files(@files_to_delete)
       end
 
       def reset_edge_gateway
-        edge_gateway = Core::EdgeGateway.get_by_name @edge_name
+        edge_gateway = Core::EdgeGateway.get_by_name @test_data.edge_gateway
         edge_gateway.update_configuration({
           NatService: {:IsEnabled => "true", :NatRule => []},
         })
@@ -185,9 +172,9 @@ module Vcloud
 
       def edge_gateway_vars_hash
         {
-          :edge_gateway_name => @edge_name,
-          :network_id => @ext_net_id,
-          :original_ip => @ext_net_ip,
+          :edge_gateway_name => @test_data.edge_gateway,
+          :network_id => @test_data.provider_network_id,
+          :original_ip => @test_data.provider_network_ip,
         }
       end
 
@@ -195,7 +182,7 @@ module Vcloud
         vcloud_time = timestamp.strftime('%FT%T.000Z')
         q = Vcloud::Core::QueryRunner.new
         q.run('task',
-          :filter => "name==networkConfigureEdgeGatewayServices;objectName==#{@edge_name};startDate=ge=#{vcloud_time}",
+          :filter => "name==networkConfigureEdgeGatewayServices;objectName==#{@test_data.edge_gateway};startDate=ge=#{vcloud_time}",
           :sortDesc => 'startDate',
         )
       end
