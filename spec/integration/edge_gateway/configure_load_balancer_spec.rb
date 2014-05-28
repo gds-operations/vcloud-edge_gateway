@@ -7,13 +7,6 @@ module Vcloud
     before(:all) do
       config_file = File.join(File.dirname(__FILE__), "../vcloud_tools_testing_config.yaml")
       @test_data = Vcloud::Tools::Tester::TestParameters.new(config_file)
-      @edge_name = @test_data.edge_gateway
-      @ext_net_id = @test_data.provider_network_id
-      @ext_net_ip = @test_data.provider_network_ip
-      @ext_net_name = @test_data.provider_network
-      @int_net_id = @test_data.network_1_id
-      @int_net_ip = @test_data.network_1_ip
-      @int_net_name = @test_data.network_1
       @files_to_delete = []
     end
 
@@ -23,7 +16,7 @@ module Vcloud
         reset_edge_gateway
         @vars_config_file = generate_vars_file(edge_gateway_vars_hash)
         @initial_load_balancer_config_file = IntegrationHelper.fixture_file('load_balancer_config.yaml.mustache')
-        @edge_gateway = Vcloud::Core::EdgeGateway.get_by_name(@edge_name)
+        @edge_gateway = Vcloud::Core::EdgeGateway.get_by_name(@test_data.edge_gateway)
       end
 
       context "Check update is functional" do
@@ -136,7 +129,7 @@ module Vcloud
       end
 
       def reset_edge_gateway
-        edge_gateway = Core::EdgeGateway.get_by_name @edge_name
+        edge_gateway = Core::EdgeGateway.get_by_name @test_data.edge_gateway
         edge_gateway.update_configuration({
           LoadBalancerService: {
             IsEnabled: "false",
@@ -157,9 +150,9 @@ module Vcloud
 
       def edge_gateway_vars_hash
         {
-          :edge_gateway_name => @edge_name,
-          :edge_gateway_ext_network_id => @ext_net_id,
-          :edge_gateway_ext_network_ip => @ext_net_ip,
+          :edge_gateway_name => @test_data.edge_gateway,
+          :edge_gateway_ext_network_id => @test_data.provider_network_id,
+          :edge_gateway_ext_network_ip => @test_data.provider_network_ip,
         }
       end
 
@@ -168,7 +161,7 @@ module Vcloud
         q = Vcloud::Core::QueryRunner.new
         q.run('task',
           :filter =>
-            "name==networkConfigureEdgeGatewayServices;objectName==#{@edge_name};startDate=ge=#{vcloud_time}",
+            "name==networkConfigureEdgeGatewayServices;objectName==#{@test_data.edge_gateway};startDate=ge=#{vcloud_time}",
           :sortDesc => 'startDate',
         )
       end
