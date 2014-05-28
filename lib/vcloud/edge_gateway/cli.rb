@@ -2,7 +2,7 @@ require 'optparse'
 
 module Vcloud
   module EdgeGateway
-    class Bin
+    class Cli
       def initialize(argv_array)
         @usage_text = nil
         @config_file = nil

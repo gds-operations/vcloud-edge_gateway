@@ -2,4 +2,4 @@
 
 require 'vcloud/edge_gateway'
 
-Vcloud::EdgeGateway::Bin.new(ARGV).run
+Vcloud::EdgeGateway::Cli.new(ARGV).run

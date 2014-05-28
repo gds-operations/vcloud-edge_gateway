@@ -11,7 +11,7 @@ class CommandRun
     $stderr = err
 
     begin
-      Vcloud::EdgeGateway::Bin.new(args).run
+      Vcloud::EdgeGateway::Cli.new(args).run
       @exitstatus = 0
     rescue SystemExit => e
       # Capture exit(n) value.
@@ -29,7 +29,7 @@ class CommandRun
   end
 end
 
-describe Vcloud::EdgeGateway::Bin do
+describe Vcloud::EdgeGateway::Cli do
   subject { CommandRun.new(args) }
   let(:mock_configure) {
     double(:configure, :update => true)
