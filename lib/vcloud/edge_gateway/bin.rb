@@ -42,6 +42,11 @@ See https://github.com/alphagov/vcloud-edge_gateway for more info
             @options[:template_vars] = f
           end
 
+          opts.on("-h", "--help", "Print usage and exit") do
+            $stderr.puts opts
+            exit
+          end
+
           opts.on("--version", "Display version and exit") do
             puts Vcloud::EdgeGateway::VERSION
             exit
@@ -60,8 +65,8 @@ See https://github.com/alphagov/vcloud-edge_gateway for more info
       end
 
       def exit_error_usage(error)
-        puts "#{$0}: #{error}"
-        puts @usage_text
+        $stderr.puts "#{$0}: #{error}"
+        $stderr.puts @usage_text
         exit 2
       end
     end

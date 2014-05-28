@@ -79,7 +79,7 @@ describe Vcloud::EdgeGateway::Bin do
       end
 
       it "should print usage and exit normally" do
-        expect(subject.stdout).to match(/\AUsage: \S+ \[options\] config_file\n/)
+        expect(subject.stderr).to match(/\AUsage: \S+ \[options\] config_file\n/)
         expect(subject.exitstatus).to eq(0)
       end
     end
@@ -92,7 +92,7 @@ describe Vcloud::EdgeGateway::Bin do
       end
 
       it "should print error message and usage" do
-        expect(subject.stdout).to match(/\A\S+: #{error}\nUsage: \S+/)
+        expect(subject.stderr).to match(/\A\S+: #{error}\nUsage: \S+/)
       end
 
       it "should exit abnormally for incorrect usage" do
