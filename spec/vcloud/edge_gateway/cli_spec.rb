@@ -16,9 +16,6 @@ class CommandRun
     rescue SystemExit => e
       # Capture exit(n) value.
       @exitstatus = e.status
-    rescue
-      # Uncaught exception which would normally exit 1.
-      @exitstatus = 1
     end
 
     @stdout = out.string.strip
