@@ -423,9 +423,14 @@ cat edges.out | jq '
       '
 ```
 
-### Full configuration examples
+### Full configuration examples and schemas
 
-You can find full configuration examples in the `examples` folder.
+Full configuration examples are in the [`examples/`][examples] folder.
+
+Configuration schemas are in [`lib/vcloud/edge_gateway/schema/`][schema].
+
+[examples]: /examples
+[schema]: /lib/vcloud/edge_gateway/schema
 
 ## The vCloud API
 
