@@ -1,5 +1,3 @@
-require 'hashdiff'
-
 module Vcloud
   module EdgeGateway
     class Configure
