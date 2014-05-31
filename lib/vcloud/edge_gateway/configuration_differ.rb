@@ -1,3 +1,5 @@
+require 'hashdiff'
+
 module Vcloud
   module EdgeGateway
     class ConfigurationDiffer
@@ -25,5 +27,4 @@ module Vcloud
 
     end
   end
-
 end
