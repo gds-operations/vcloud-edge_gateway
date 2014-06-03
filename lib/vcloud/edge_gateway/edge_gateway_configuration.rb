@@ -21,8 +21,10 @@ module Vcloud
             generate_fog_config(local_config[:firewall_service])
 
         unless firewall_service_config.nil?
-          differ = EdgeGateway::FirewallConfigurationDiffer.
-            new(firewall_service_config, remote_config[:FirewallService])
+          differ = EdgeGateway::FirewallConfigurationDiffer.new(
+            remote_config[:FirewallService],
+            firewall_service_config
+          )
           unless differ.diff.empty?
             new_config[:FirewallService] = firewall_service_config
           end
@@ -34,7 +36,10 @@ module Vcloud
         ).generate_fog_config
 
         unless nat_service_config.nil?
-          differ = EdgeGateway::NatConfigurationDiffer.new(nat_service_config, remote_config[:NatService])
+          differ = EdgeGateway::NatConfigurationDiffer.new(
+            remote_config[:NatService],
+            nat_service_config
+          )
           unless differ.diff.empty?
             new_config[:NatService] = nat_service_config
           end
@@ -47,9 +52,9 @@ module Vcloud
 
         unless load_balancer_service_config.nil?
           differ = EdgeGateway::LoadBalancerConfigurationDiffer.new(
-                     load_balancer_service_config,
-                     remote_config[:LoadBalancerService]
-                   )
+            remote_config[:LoadBalancerService],
+            load_balancer_service_config
+          )
           unless differ.diff.empty?
             new_config[:LoadBalancerService] = load_balancer_service_config
           end
