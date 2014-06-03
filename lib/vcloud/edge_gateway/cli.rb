@@ -12,7 +12,7 @@ module Vcloud
         @config_file = nil
         @options = {
           :template_vars => nil,
-          :colour => true,
+          :colour => STDOUT.tty?,
         }
 
         parse(argv_array)
@@ -51,7 +51,7 @@ See https://github.com/alphagov/vcloud-edge_gateway for more info
             @options[:template_vars] = f
           end
 
-          opts.on("--[no-]colour", "Enable/disable colour output. Defaults to on") do |c|
+          opts.on("--[no-]colour", "Enable/disable colour output. Defaults to on unless output is redirected") do |c|
             @options[:colour] = c
           end
 

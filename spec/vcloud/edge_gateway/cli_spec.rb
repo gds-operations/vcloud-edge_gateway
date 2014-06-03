@@ -136,16 +136,40 @@ describe Vcloud::EdgeGateway::Cli do
         })
       }
 
-      context "when colour argument is not specified" do
-        let(:args) { %w{config.yaml} }
+      context "STDOUT is not redirected" do
+        before(:each) {
+          STDOUT.stub(:tty?).and_return(true)
+        }
 
-        it_behaves_like "diff with colour output"
+        context "when colour argument is not specified" do
+          let(:args) { %w{config.yaml} }
+
+          it_behaves_like "diff with colour output"
+        end
+
+        context "when given --no-colour" do
+          let(:args) { %w{--no-colour config.yaml} }
+
+          it_behaves_like "diff without colour output"
+        end
       end
 
-      context "when given --no-colour" do
-        let(:args) { %w{--no-colour config.yaml} }
+      context "STDOUT is redirected" do
+        before(:each) {
+          STDOUT.stub(:tty?).and_return(false)
+        }
 
-        it_behaves_like "diff without colour output"
+        context "when colour argument is not specified" do
+          let(:args) { %w{config.yaml} }
+
+          it_behaves_like "diff without colour output"
+        end
+
+        context "when given --colour" do
+          let(:args) { %w{--colour config.yaml} }
+
+          it_behaves_like "diff with colour output"
+        end
       end
     end
   end
