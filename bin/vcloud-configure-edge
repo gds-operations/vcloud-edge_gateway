@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
-require 'vcloud/edge_gateway'
-
-Vcloud::EdgeGateway::Cli.new(ARGV).run
+$stderr.puts <<-EOS
+'vcloud-configure-edge' has now been renamed to 'vcloud-edge-configure'. Please use:
+  vcloud-edge-configure
+EOS
