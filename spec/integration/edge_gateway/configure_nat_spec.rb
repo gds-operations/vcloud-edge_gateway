@@ -41,8 +41,11 @@ module Vcloud
         it "should only make one EdgeGateway update task, to minimise EdgeGateway reload events" do
           start_time = Time.now.getutc
           task_list_before_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
-          EdgeGateway::Configure.new(@initial_nat_config_file, @vars_config_file).update
+          diff = EdgeGateway::Configure.new(@initial_nat_config_file, @vars_config_file).update
           task_list_after_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
+
+          expect(diff.keys).to eq([:NatService])
+          expect(diff[:NatService]).to have_at_least(1).items
           expect(task_list_after_update.size - task_list_before_update.size).to be(1)
         end
 
@@ -57,16 +60,11 @@ module Vcloud
             to eq(@local_vcloud_config[:NatRule].size)
         end
 
-        it "ConfigurationDiffer should return empty if local and remote nat configs match" do
-          remote_vcloud_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration][:NatService]
-          differ = EdgeGateway::ConfigurationDiffer.new(@local_vcloud_config, remote_vcloud_config)
-          diff_output = differ.diff
-          expect(diff_output).to eq([])
-        end
-
         it "and then should not configure the firewall service if updated again with the same configuration (idempotency)" do
           expect(Vcloud::Core.logger).to receive(:info).with('EdgeGateway::Configure.update: Configuration is already up to date. Skipping.')
-          EdgeGateway::Configure.new(@initial_nat_config_file, @vars_config_file).update
+          diff = EdgeGateway::Configure.new(@initial_nat_config_file, @vars_config_file).update
+
+          expect(diff).to eq({})
         end
 
       end
@@ -112,10 +110,13 @@ module Vcloud
             original_ip: @test_data.network_1_ip,
           })
 
-          EdgeGateway::Configure.new(
+          diff = EdgeGateway::Configure.new(
             IntegrationHelper.fixture_file('hairpin_nat_config.yaml.mustache'),
             vars_file
           ).update
+
+          expect(diff.keys).to eq([:NatService])
+          expect(diff[:NatService]).to have_at_least(1).items
 
           edge_gateway = Vcloud::Core::EdgeGateway.get_by_name(@test_data.edge_gateway)
           nat_service = edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration][:NatService]

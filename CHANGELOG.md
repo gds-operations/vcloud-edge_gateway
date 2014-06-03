@@ -12,7 +12,7 @@ Features:
 API changes:
 
   - Vcloud::EdgeGateway::Configure returns a hash, keyed by service name, of
-    HashDiff#diff arrays.
+    HashDiff#diff arrays. It will be empty if there are no differences.
 
 ## 0.5.0 (2014-05-15)
 

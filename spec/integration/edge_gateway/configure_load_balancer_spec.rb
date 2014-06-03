@@ -42,8 +42,11 @@ module Vcloud
         it "should only make one EdgeGateway update task, to minimise EdgeGateway reload events" do
           start_time = Time.now.getutc
           task_list_before_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
-          EdgeGateway::Configure.new(@initial_load_balancer_config_file, @vars_config_file).update
+          diff = EdgeGateway::Configure.new(@initial_load_balancer_config_file, @vars_config_file).update
           task_list_after_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
+
+          expect(diff.keys).to eq([:LoadBalancerService])
+          expect(diff[:LoadBalancerService]).to have_at_least(1).items
           expect(task_list_after_update.size - task_list_before_update.size).to be(1)
         end
 
@@ -73,18 +76,12 @@ module Vcloud
             to eq(@local_vcloud_config[:VirtualServer].size)
         end
 
-        it "ConfigurationDiffer should return empty if local and remote LoadBalancer configs match" do
-          edge_service_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration]
-          remote_vcloud_config = edge_service_config[:LoadBalancerService]
-          differ = EdgeGateway::LoadBalancerConfigurationDiffer.new(@local_vcloud_config, remote_vcloud_config)
-          diff_output = differ.diff
-          expect(diff_output).to eq([])
-        end
-
         it "should not then configure the LoadBalancerService if updated again with the same configuration" do
-          expect(Vcloud::Core.logger).
-            to receive(:info).with('EdgeGateway::Configure.update: Configuration is already up to date. Skipping.')
-          EdgeGateway::Configure.new(@initial_load_balancer_config_file, @vars_config_file).update
+          expect(Vcloud::Core.logger).to receive(:info).
+            with('EdgeGateway::Configure.update: Configuration is already up to date. Skipping.')
+          diff = EdgeGateway::Configure.new(@initial_load_balancer_config_file, @vars_config_file).update
+
+          expect(diff).to eq({})
         end
 
       end
@@ -93,18 +90,24 @@ module Vcloud
 
         it "should be able to configure with no pools and virtual_servers" do
           config_file = IntegrationHelper.fixture_file('load_balancer_empty.yaml.mustache')
-          EdgeGateway::Configure.new(config_file, @vars_config_file).update
+          diff = EdgeGateway::Configure.new(config_file, @vars_config_file).update
           edge_config = @edge_gateway.vcloud_attributes[:Configuration]
           remote_vcloud_config = edge_config[:EdgeGatewayServiceConfiguration][:LoadBalancerService]
+
+          expect(diff.keys).to eq([:LoadBalancerService])
+          expect(diff[:LoadBalancerService]).to have_at_least(1).items
           expect(remote_vcloud_config[:Pool].size).to be == 0
           expect(remote_vcloud_config[:VirtualServer].size).to be == 0
         end
 
         it "should be able to configure with a single Pool and no VirtualServers" do
           config_file = IntegrationHelper.fixture_file('load_balancer_single_pool.yaml.mustache')
-          EdgeGateway::Configure.new(config_file, @vars_config_file).update
+          diff = EdgeGateway::Configure.new(config_file, @vars_config_file).update
           edge_config = @edge_gateway.vcloud_attributes[:Configuration]
           remote_vcloud_config = edge_config[:EdgeGatewayServiceConfiguration][:LoadBalancerService]
+
+          expect(diff.keys).to eq([:LoadBalancerService])
+          expect(diff[:LoadBalancerService]).to have_at_least(1).items
           expect(remote_vcloud_config[:Pool].size).to be == 1
         end
 

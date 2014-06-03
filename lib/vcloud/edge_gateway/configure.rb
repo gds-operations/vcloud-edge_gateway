@@ -23,6 +23,8 @@ module Vcloud
         else
           Vcloud::Core.logger.info("EdgeGateway::Configure.update: Configuration is already up to date. Skipping.")
         end
+
+        proposed_config.diff
       end
 
     end
