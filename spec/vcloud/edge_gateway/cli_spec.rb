@@ -28,11 +28,12 @@ end
 
 describe Vcloud::EdgeGateway::Cli do
   subject { CommandRun.new(args) }
-  let(:mock_configure) {
-    double(:configure, :update => true)
-  }
 
   describe "normal usage" do
+    let(:mock_configure) {
+      double(:configure, :update => {})
+    }
+
     context "when given a single config file" do
       let(:args) { %w{config.yaml} }
 
@@ -78,6 +79,75 @@ describe Vcloud::EdgeGateway::Cli do
       it "should print usage and exit normally" do
         expect(subject.stderr).to match(/\AUsage: \S+ \[options\] config_file\n/)
         expect(subject.exitstatus).to eq(0)
+      end
+    end
+  end
+
+  describe "diff output" do
+    context "when diff is empty" do
+      let(:mock_configure) {
+        double(:configure, :update => {})
+      }
+
+      context "when given config (colour doesn't matter)" do
+        let(:args) { %w{config.yaml} }
+
+        it "should not output anything" do
+          expect(Vcloud::EdgeGateway::Configure).to receive(:new).
+            with('config.yaml').and_return(mock_configure)
+          expect(subject.stdout).to eq("")
+          expect(subject.exitstatus).to eq(0)
+        end
+      end
+    end
+
+    context "when diff contains two services with three types of changes" do
+      let(:mock_configure) {
+        double(:configure, :update => {
+          :FirewallService => [
+            ["-", "IsEnabled", "true"],
+            ["+", "LogDefaultAction", "false"],
+          ],
+          :NatService => [
+            ["~", "IsEnabled", "true", "false"],
+          ],
+        })
+      }
+
+      context "when colour argument is not specified" do
+        let(:args) { %w{config.yaml} }
+        let(:expected_stdout) { <<-EOS.chomp
+\033[31m- FirewallService.IsEnabled: true\033[0m
+\033[32m+ FirewallService.LogDefaultAction: false\033[0m
+\033[31m- NatService.IsEnabled: true\033[0m
+\033[32m+ NatService.IsEnabled: false\033[0m
+          EOS
+        }
+
+        it "should output diff in colour" do
+          expect(Vcloud::EdgeGateway::Configure).to receive(:new).
+            with('config.yaml').and_return(mock_configure)
+          expect(subject.stdout).to eq(expected_stdout)
+          expect(subject.exitstatus).to eq(0)
+        end
+      end
+
+      context "when given --no-colour" do
+        let(:args) { %w{--no-colour config.yaml} }
+        let(:expected_stdout) { <<-EOS.chomp
+- FirewallService.IsEnabled: true
++ FirewallService.LogDefaultAction: false
+- NatService.IsEnabled: true
++ NatService.IsEnabled: false
+          EOS
+        }
+
+        it "should output diff not in colour" do
+          expect(Vcloud::EdgeGateway::Configure).to receive(:new).
+            with('config.yaml').and_return(mock_configure)
+          expect(subject.stdout).to eq(expected_stdout)
+          expect(subject.exitstatus).to eq(0)
+        end
       end
     end
   end

@@ -2,6 +2,7 @@
 
 Features:
 
+  - `vcloud-configure-edge` now prints diff output. Colour is optional.
   - `vcloud-configure-edge --version` now only returns the version string
     and no usage information.
   - A side effect of changes to the executable means that exceptions from
