@@ -4,3 +4,5 @@ $stderr.puts <<-EOS
 'vcloud-configure-edge' has now been renamed to 'vcloud-edge-configure'. Please use:
   vcloud-edge-configure
 EOS
+
+exit 1
