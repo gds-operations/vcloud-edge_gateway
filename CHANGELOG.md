@@ -9,6 +9,11 @@ Features:
     being returned by the CLI, which we'll retain for now until we refine
     the error messages.
 
+API changes:
+
+  - Vcloud::EdgeGateway::Configure returns a hash, keyed by service name, of
+    HashDiff#diff arrays.
+
 ## 0.5.0 (2014-05-15)
 
 Bugfixes:

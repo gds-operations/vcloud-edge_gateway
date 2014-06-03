@@ -83,6 +83,14 @@ module Vcloud
           expect(proposed_load_balancer_config).to eq(expected_load_balancer_config)
         end
 
+        it "proposed diff contains changes for all services" do
+          diff = @proposed_config.diff
+          expect(diff.keys).to eq([:FirewallService, :NatService, :LoadBalancerService])
+          expect(diff[:FirewallService]).to     have_at_least(1).items
+          expect(diff[:NatService]).to          have_at_least(1).items
+          expect(diff[:LoadBalancerService]).to have_at_least(1).items
+        end
+
       end
 
       context "firewall config has changed and nat has not, load_balancer absent" do
@@ -119,6 +127,12 @@ module Vcloud
 
         it "proposed config does not contain load_balancer config" do
           expect(@proposed_config.config.key?(:LoadBalancerService)).to be(false)
+        end
+
+        it "proposed diff contains changes for firewall service" do
+          diff = @proposed_config.diff
+          expect(diff.keys).to eq([:FirewallService])
+          expect(diff[:FirewallService]).to have_at_least(1).items
         end
 
       end
@@ -159,6 +173,12 @@ module Vcloud
           expect(@proposed_config.config.key?(:LoadBalancerService)).to be(false)
         end
 
+        it "proposed diff contains changes for firewall service" do
+          diff = @proposed_config.diff
+          expect(diff.keys).to eq([:FirewallService])
+          expect(diff[:FirewallService]).to have_at_least(1).items
+        end
+
       end
 
       context "load_balancer config has changed and firewall & nat have not" do
@@ -197,6 +217,12 @@ module Vcloud
 
         it "proposed config does not contain firewall config" do
           expect(@proposed_config.config.key?(:FirewallService)).to be(false)
+        end
+
+        it "proposed diff contains changes for load balancer service" do
+          diff = @proposed_config.diff
+          expect(diff.keys).to eq([:LoadBalancerService])
+          expect(diff[:LoadBalancerService]).to have_at_least(1).items
         end
 
       end
@@ -240,6 +266,13 @@ module Vcloud
           expect(proposed_firewall_config).to eq(expected_firewall_config)
         end
 
+        it "proposed diff contains changes for firewall and load balancer services" do
+          diff = @proposed_config.diff
+          expect(diff.keys).to eq([:FirewallService, :LoadBalancerService])
+          expect(diff[:FirewallService]).to     have_at_least(1).items
+          expect(diff[:LoadBalancerService]).to have_at_least(1).items
+        end
+
       end
 
 
@@ -279,6 +312,12 @@ module Vcloud
           expect(@proposed_config.config.key?(:FirewallService)).to be(false)
         end
 
+        it "proposed diff contains changes for load balancer service" do
+          diff = @proposed_config.diff
+          expect(diff.keys).to eq([:LoadBalancerService])
+          expect(diff[:LoadBalancerService]).to have_at_least(1).items
+        end
+
       end
 
       context "all configs are present but haven't changed" do
@@ -310,6 +349,10 @@ module Vcloud
           expect(@proposed_config.config.empty?).to be(true)
         end
 
+        it "proposed diff contains no changes" do
+          expect(@proposed_config.diff).to eq({})
+        end
+
       end
 
       context "firewall config has not changed and nat & load_balancer config is absent" do
@@ -339,6 +382,10 @@ module Vcloud
           expect(@proposed_config.config.empty?).to be(true)
         end
 
+        it "proposed diff contains no changes" do
+          expect(@proposed_config.diff).to eq({})
+        end
+
       end
 
       context "no service config is present" do
@@ -365,6 +412,10 @@ module Vcloud
 
         it "there is no proposed config" do
           expect(@proposed_config.config.empty?).to be(true)
+        end
+
+        it "proposed diff contains no changes" do
+          expect(@proposed_config.diff).to eq({})
         end
 
       end
@@ -404,6 +455,12 @@ module Vcloud
           expect(@proposed_config.config.key?(:FirewallService)).to be(false)
         end
 
+        it "proposed diff contains changes for nat service" do
+          diff = @proposed_config.diff
+          expect(diff.keys).to eq([:NatService])
+          expect(diff[:NatService]).to have_at_least(1).items
+        end
+
       end
 
       context "there is no remote FirewallService config, but we are trying to update it" do
@@ -439,6 +496,12 @@ module Vcloud
 
         it "proposed config does not contain nat config" do
           expect(@proposed_config.config.key?(:NatService)).to be(false)
+        end
+
+        it "proposed diff contains changes for firewall service" do
+          diff = @proposed_config.diff
+          expect(diff.keys).to eq([:FirewallService])
+          expect(diff[:FirewallService]).to have_at_least(1).items
         end
 
       end
@@ -478,6 +541,12 @@ module Vcloud
           expect(@proposed_config.config.key?(:FirewallService)).to be(false)
         end
 
+        it "proposed diff contains changes for nat service" do
+          diff = @proposed_config.diff
+          expect(diff.keys).to eq([:NatService])
+          expect(diff[:NatService]).to have_at_least(1).items
+        end
+
       end
 
       context "there is no remote LoadBalancer config, but we are trying to update it" do
@@ -513,6 +582,12 @@ module Vcloud
 
         it "proposed config does not contain firewall config" do
           expect(@proposed_config.config.key?(:FirewallService)).to be(false)
+        end
+
+        it "proposed diff contains changes for load balancer service" do
+          diff = @proposed_config.diff
+          expect(diff.keys).to eq([:LoadBalancerService])
+          expect(diff[:LoadBalancerService]).to have_at_least(1).items
         end
 
       end
