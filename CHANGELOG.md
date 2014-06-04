@@ -1,4 +1,4 @@
-## 0.6.0 (UNRELEASED)
+## 1.0.0 (2014-06-04)
 
 Features:
 
@@ -22,7 +22,7 @@ API changes:
 
 Bugfixes:
 
-    - The `vcloud-configure-edge` command has been renamed to `vcloud-edge-configure`.
+  - The `vcloud-configure-edge` command has been renamed to `vcloud-edge-configure`.
 
 ## 0.5.0 (2014-05-15)
 
