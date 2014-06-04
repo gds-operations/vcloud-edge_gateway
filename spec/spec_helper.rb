@@ -18,6 +18,11 @@ require 'bundler/setup'
 require 'vcloud/edge_gateway'
 require 'vcloud/tools/tester'
 
+RSpec.configure do |config|
+  config.expect_with :rspec do |c|
+    c.syntax = :expect
+  end
+end
 
 if ENV['COVERAGE']
   SimpleCov.at_exit do
