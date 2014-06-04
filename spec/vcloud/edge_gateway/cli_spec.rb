@@ -37,10 +37,10 @@ describe Vcloud::EdgeGateway::Cli do
     context "when given a single config file" do
       let(:args) { %w{config.yaml} }
 
-      it "should pass single argument and exit normally" do
+      it "should pass single argument, call update without any args, and exit normally" do
         expect(Vcloud::EdgeGateway::Configure).to receive(:new).
           with('config.yaml').and_return(mock_configure)
-        expect(mock_configure).to receive(:update)
+        expect(mock_configure).to receive(:update).with(no_args)
         expect(subject.exitstatus).to eq(0)
       end
     end
@@ -52,6 +52,17 @@ describe Vcloud::EdgeGateway::Cli do
         expect(Vcloud::EdgeGateway::Configure).to receive(:new).
           with('config.yaml', 'vars.yaml').and_return(mock_configure)
         expect(mock_configure).to receive(:update)
+        expect(subject.exitstatus).to eq(0)
+      end
+    end
+
+    context "when given --dry-run and config file" do
+      let(:args) { %w{--dry-run config.yaml} }
+
+      it "should call update(true) and exit normally" do
+        expect(Vcloud::EdgeGateway::Configure).to receive(:new).
+          with('config.yaml').and_return(mock_configure)
+        expect(mock_configure).to receive(:update).with(true)
         expect(subject.exitstatus).to eq(0)
       end
     end

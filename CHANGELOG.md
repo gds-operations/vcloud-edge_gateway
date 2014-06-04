@@ -4,6 +4,8 @@ Features:
 
   - `vcloud-configure-edge` now prints diff output. Colour is optional.
     Defaults to off when STDOUT is redirected.
+  - `vcloud-configure-edge --dry-run` new argument to print the diff without
+    modifying the remote edge gateway.
   - `vcloud-configure-edge --version` now only returns the version string
     and no usage information.
   - A side effect of changes to the executable means that exceptions from

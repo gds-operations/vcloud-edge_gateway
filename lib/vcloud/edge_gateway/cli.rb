@@ -13,6 +13,7 @@ module Vcloud
         @options = {
           :template_vars => nil,
           :colour => STDOUT.tty?,
+          :dry_run => nil,
         }
 
         parse(argv_array)
@@ -24,7 +25,13 @@ module Vcloud
           config_args << @options[:template_vars]
         end
 
-        diff = Vcloud::EdgeGateway::Configure.new(*config_args).update
+        update_args = []
+        if @options[:dry_run]
+          update_args << @options[:dry_run]
+        end
+
+        conf = Vcloud::EdgeGateway::Configure.new(*config_args)
+        diff = conf.update(*update_args)
         puts render_diff(diff)
       end
 
@@ -46,6 +53,10 @@ See https://github.com/alphagov/vcloud-edge_gateway for more info
 
           opts.separator ""
           opts.separator "Options:"
+
+          opts.on("--dry-run", "Don't apply configuration changes") do
+            @options[:dry_run] = true
+          end
 
           opts.on("--template-vars FILE", "Enable templating with variables from this file") do |f|
             @options[:template_vars] = f
