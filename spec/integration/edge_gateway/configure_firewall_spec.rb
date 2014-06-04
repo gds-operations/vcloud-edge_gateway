@@ -38,7 +38,10 @@ module Vcloud
 
         it "should only need to make one call to Core::EdgeGateway.update_configuration" do
           expect_any_instance_of(Core::EdgeGateway).to receive(:update_configuration).exactly(1).times.and_call_original
-          EdgeGateway::Configure.new(@initial_firewall_config_file, @vars_config_file).update
+          diff = EdgeGateway::Configure.new(@initial_firewall_config_file, @vars_config_file).update
+
+          expect(diff.keys).to eq([:FirewallService])
+          expect(diff[:FirewallService]).to have_at_least(1).items
         end
 
         it "should have configured at least one firewall rule" do
@@ -54,32 +57,9 @@ module Vcloud
 
         it "and then should not configure the firewall service if updated again with the same configuration (idempotency)" do
           expect(Vcloud::Core.logger).to receive(:info).with('EdgeGateway::Configure.update: Configuration is already up to date. Skipping.')
-          EdgeGateway::Configure.new(@initial_firewall_config_file, @vars_config_file).update
-        end
+          diff = EdgeGateway::Configure.new(@initial_firewall_config_file, @vars_config_file).update
 
-        it "ConfigurationDiffer should return empty if local and remote firewall configs match" do
-          remote_vcloud_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration][:FirewallService]
-          differ = EdgeGateway::ConfigurationDiffer.new(@local_vcloud_config, remote_vcloud_config)
-          diff_output = differ.diff
-          expect(diff_output).to eq([])
-        end
-
-        it "should highlight a difference if local firewall config has been updated" do
-          local_config = Core::ConfigLoader.new.load_config(
-            IntegrationHelper.fixture_file('firewall_config_updated_rule.yaml.mustache'),
-            Vcloud::EdgeGateway::Schema::EDGE_GATEWAY_SERVICES,
-            @vars_config_file
-          )
-          local_firewall_config = EdgeGateway::ConfigurationGenerator::FirewallService.new.generate_fog_config(local_config[:firewall_service])
-
-          edge_gateway = Core::EdgeGateway.get_by_name local_config[:gateway]
-          remote_config = edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration]
-          remote_firewall_config = remote_config[:FirewallService]
-
-          differ = EdgeGateway::ConfigurationDiffer.new(local_firewall_config, remote_firewall_config)
-          diff_output = differ.diff
-
-          expect(diff_output.empty?).to be_false
+          expect(diff).to eq({})
         end
 
       end

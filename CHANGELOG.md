@@ -2,12 +2,23 @@
 
 Features:
 
+  - `vcloud-configure-edge` now prints diff output. Colour is optional.
+    Defaults to off when STDOUT is redirected.
+  - `vcloud-configure-edge --dry-run` new argument to print the diff without
+    modifying the remote edge gateway.
   - `vcloud-configure-edge --version` now only returns the version string
     and no usage information.
   - A side effect of changes to the executable means that exceptions from
     Vcloud::EdgeGateway and Vcloud::Core will now result in a stacktrace
     being returned by the CLI, which we'll retain for now until we refine
     the error messages.
+
+API changes:
+
+  - Vcloud::EdgeGateway::Configure returns a hash, keyed by service name, of
+    HashDiff#diff arrays. It will be empty if there are no differences.
+  - Vcloud::EdgeGateway::Configure#update takes a `dry_run` argument which
+    defaults to false. When set to true it won't update the remote Edge GW.
 
 ## 0.5.0 (2014-05-15)
 

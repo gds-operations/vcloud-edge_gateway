@@ -28,18 +28,19 @@ end
 
 describe Vcloud::EdgeGateway::Cli do
   subject { CommandRun.new(args) }
-  let(:mock_configure) {
-    double(:configure, :update => true)
-  }
 
   describe "normal usage" do
+    let(:mock_configure) {
+      double(:configure, :update => {})
+    }
+
     context "when given a single config file" do
       let(:args) { %w{config.yaml} }
 
-      it "should pass single argument and exit normally" do
+      it "should pass single argument, call update without any args, and exit normally" do
         expect(Vcloud::EdgeGateway::Configure).to receive(:new).
           with('config.yaml').and_return(mock_configure)
-        expect(mock_configure).to receive(:update)
+        expect(mock_configure).to receive(:update).with(no_args)
         expect(subject.exitstatus).to eq(0)
       end
     end
@@ -51,6 +52,17 @@ describe Vcloud::EdgeGateway::Cli do
         expect(Vcloud::EdgeGateway::Configure).to receive(:new).
           with('config.yaml', 'vars.yaml').and_return(mock_configure)
         expect(mock_configure).to receive(:update)
+        expect(subject.exitstatus).to eq(0)
+      end
+    end
+
+    context "when given --dry-run and config file" do
+      let(:args) { %w{--dry-run config.yaml} }
+
+      it "should call update(true) and exit normally" do
+        expect(Vcloud::EdgeGateway::Configure).to receive(:new).
+          with('config.yaml').and_return(mock_configure)
+        expect(mock_configure).to receive(:update).with(true)
         expect(subject.exitstatus).to eq(0)
       end
     end
@@ -78,6 +90,97 @@ describe Vcloud::EdgeGateway::Cli do
       it "should print usage and exit normally" do
         expect(subject.stderr).to match(/\AUsage: \S+ \[options\] config_file\n/)
         expect(subject.exitstatus).to eq(0)
+      end
+    end
+  end
+
+  describe "diff output" do
+    shared_examples "diff with stdout contents" do |expected_stdout|
+      it "should output diff to stdout" do
+        expect(Vcloud::EdgeGateway::Configure).to receive(:new).
+          with('config.yaml').and_return(mock_configure)
+        expect(subject.stdout).to eq(expected_stdout.chomp)
+        expect(subject.exitstatus).to eq(0)
+      end
+    end
+
+    context "when diff is empty" do
+      let(:mock_configure) {
+        double(:configure, :update => {})
+      }
+
+      context "when given config (colour doesn't matter)" do
+        let(:args) { %w{config.yaml} }
+
+        it_behaves_like "diff with stdout contents", ""
+      end
+    end
+
+    context "when diff contains two services with three types of changes" do
+      shared_examples "diff with colour output" do
+        include_examples "diff with stdout contents", <<-EOS.chomp
+\033[31m- FirewallService.IsEnabled: true\033[0m
+\033[32m+ FirewallService.LogDefaultAction: false\033[0m
+\033[31m- NatService.IsEnabled: true\033[0m
+\033[32m+ NatService.IsEnabled: false\033[0m
+        EOS
+      end
+
+      shared_examples "diff without colour output" do
+        include_examples "diff with stdout contents", <<-EOS.chomp
+- FirewallService.IsEnabled: true
++ FirewallService.LogDefaultAction: false
+- NatService.IsEnabled: true
++ NatService.IsEnabled: false
+        EOS
+      end
+
+      let(:mock_configure) {
+        double(:configure, :update => {
+          :FirewallService => [
+            ["-", "IsEnabled", "true"],
+            ["+", "LogDefaultAction", "false"],
+          ],
+          :NatService => [
+            ["~", "IsEnabled", "true", "false"],
+          ],
+        })
+      }
+
+      context "STDOUT is not redirected" do
+        before(:each) {
+          STDOUT.stub(:tty?).and_return(true)
+        }
+
+        context "when colour argument is not specified" do
+          let(:args) { %w{config.yaml} }
+
+          it_behaves_like "diff with colour output"
+        end
+
+        context "when given --no-colour" do
+          let(:args) { %w{--no-colour config.yaml} }
+
+          it_behaves_like "diff without colour output"
+        end
+      end
+
+      context "STDOUT is redirected" do
+        before(:each) {
+          STDOUT.stub(:tty?).and_return(false)
+        }
+
+        context "when colour argument is not specified" do
+          let(:args) { %w{config.yaml} }
+
+          it_behaves_like "diff without colour output"
+        end
+
+        context "when given --colour" do
+          let(:args) { %w{--colour config.yaml} }
+
+          it_behaves_like "diff with colour output"
+        end
       end
     end
   end

@@ -33,8 +33,12 @@ module Vcloud
         it "should only create one edgeGateway update task when updating the configuration" do
           start_time = Time.now.getutc
           task_list_before_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
-          EdgeGateway::Configure.new(@initial_config_file, @vars_config_file).update
+          diff = EdgeGateway::Configure.new(@initial_config_file, @vars_config_file).update
           task_list_after_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
+
+          expect(diff.keys).to eq([:FirewallService, :NatService])
+          expect(diff[:FirewallService]).to have_at_least(1).items
+          expect(diff[:NatService]).to      have_at_least(1).items
           expect(task_list_after_update.size - task_list_before_update.size).to be(1)
         end
 
@@ -49,24 +53,31 @@ module Vcloud
         it "should not update the EdgeGateway again if the config hasn't changed" do
           start_time = Time.now.getutc
           task_list_before_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
-          EdgeGateway::Configure.new(@initial_config_file, @vars_config_file).update
+          diff = EdgeGateway::Configure.new(@initial_config_file, @vars_config_file).update
           task_list_after_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
+
+          expect(diff).to eq({})
           expect(task_list_after_update.size - task_list_before_update.size).to be(0)
         end
 
         it "should only create one additional edgeGateway update task when adding the LoadBalancer config" do
           start_time = Time.now.getutc
           task_list_before_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
-          EdgeGateway::Configure.new(@adding_load_balancer_config_file, @vars_config_file).update
+          diff = EdgeGateway::Configure.new(@adding_load_balancer_config_file, @vars_config_file).update
           task_list_after_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
+
+          expect(diff.keys).to eq([:LoadBalancerService])
+          expect(diff[:LoadBalancerService]).to have_at_least(1).items
           expect(task_list_after_update.size - task_list_before_update.size).to be(1)
         end
 
         it "should not update the EdgeGateway again if we reapply the 'adding load balancer' config" do
           start_time = Time.now.getutc
           task_list_before_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
-          EdgeGateway::Configure.new(@adding_load_balancer_config_file, @vars_config_file).update
+          diff = EdgeGateway::Configure.new(@adding_load_balancer_config_file, @vars_config_file).update
           task_list_after_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
+
+          expect(diff).to eq({})
           expect(task_list_after_update.size - task_list_before_update.size).to be(0)
         end
 
