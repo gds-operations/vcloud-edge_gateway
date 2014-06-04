@@ -2,12 +2,12 @@ module Vcloud
   module EdgeGateway
     class Configure
 
-      def initialize(config_file = nil, vars_file = nil)
+      def initialize(config_file=nil, vars_file=nil)
         config_loader = Vcloud::Core::ConfigLoader.new
         @local_config = config_loader.load_config(config_file, Vcloud::EdgeGateway::Schema::EDGE_GATEWAY_SERVICES, vars_file)
       end
 
-      def update
+      def update(dry_run=false)
         edge_gateway = Vcloud::Core::EdgeGateway.get_by_name @local_config[:gateway]
         remote_config = edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration]
         edge_gateway_interface_list = edge_gateway.interfaces
@@ -19,7 +19,11 @@ module Vcloud
         )
 
         if proposed_config.update_required?
-          edge_gateway.update_configuration proposed_config.config
+          if dry_run
+            Vcloud::Core.logger.info("EdgeGateway::Configure.update: Dry run. Skipping.")
+          else
+            edge_gateway.update_configuration proposed_config.config
+          end
         else
           Vcloud::Core.logger.info("EdgeGateway::Configure.update: Configuration is already up to date. Skipping.")
         end

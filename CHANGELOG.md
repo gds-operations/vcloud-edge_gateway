@@ -15,6 +15,8 @@ API changes:
 
   - Vcloud::EdgeGateway::Configure returns a hash, keyed by service name, of
     HashDiff#diff arrays. It will be empty if there are no differences.
+  - Vcloud::EdgeGateway::Configure#update takes a `dry_run` argument which
+    defaults to false. When set to true it won't update the remote Edge GW.
 
 ## 0.5.0 (2014-05-15)
 
