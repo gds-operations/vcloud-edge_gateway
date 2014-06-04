@@ -1,8 +1,4 @@
 #!/usr/bin/env ruby
 
-$stderr.puts <<-EOS
-'vcloud-configure-edge' has now been renamed to 'vcloud-edge-configure'. Please use:
-  vcloud-edge-configure
-EOS
-
+$stderr.puts "This command has been renamed. Please use: vcloud-edge-configure"
 exit 1
