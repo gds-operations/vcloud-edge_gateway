@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
 
-require 'vcloud/edge_gateway'
-
-Vcloud::EdgeGateway::Cli.new(ARGV).run
+$stderr.puts "This command has been renamed. Please use: vcloud-edge-configure"
+exit 1

@@ -23,12 +23,12 @@ Or install it yourself as:
 
 To configure an Edge Gateway:
 
-    $ vcloud-configure-edge input.yaml
+    $ vcloud-edge-configure input.yaml
 
 To use [mustache](http://mustache.github.io) templates so that rulesets can
 be re-used between environments:
 
-    $ vcloud-configure-edge --template-vars vars.yaml input.yaml.mustache
+    $ vcloud-edge-configure --template-vars vars.yaml input.yaml.mustache
 
 ## Credentials
 
@@ -60,7 +60,7 @@ credentials that allow it to talk to a vCloud Director environment.
 
         FOG_CREDENTIAL=test_credentials \
             FOG_VCLOUD_TOKEN=AAAABBBBBCCCCCCDDDDDDEEEEEEFFFFF= \
-            vcloud-configure-edge input.yaml
+            vcloud-edge-configure input.yaml
 
   You may find it easier to export one or both of the values as environment variables.
 
@@ -71,7 +71,7 @@ credentials that allow it to talk to a vCloud Director environment.
 ### Configure edge gateway services
 
 You can configure the following services on an existing edgegateway using
-`vcloud-configure-edge`.
+`vcloud-edge-configure`.
 
 - firewall_service
 - nat_service
@@ -80,7 +80,7 @@ You can configure the following services on an existing edgegateway using
 NB: DHCP and VPN Services are not yet supported by the Fog platform underneath.
 Support for these is being considered.
 
-The `vcloud-configure-edge` tool takes an input YAML file describing one
+The `vcloud-edge-configure` tool takes an input YAML file describing one
 or more of these services and updates the edge gateway configuration to match,
 obeying the following rules:
 
@@ -237,7 +237,7 @@ The vCloud Director load balancer service is quite basic, but supports the follo
 * Ability to persist sessions to the same backend member node, via a variety of
   means (eg HTTP cookie value, SSL session ID, source IP hash).
 
-`vcloud-configure-edge` supports all of the above features.
+`vcloud-edge-configure` supports all of the above features.
 
 It is also worth noting that the vCloud Director load balancer *does not support*:
 
