@@ -48,7 +48,7 @@ file which may optionally be a Mustache template.
 It will always output a diff of the changes between the remote config and
 your local config.
 
-See https://github.com/alphagov/vcloud-edge_gateway for more info
+See https://github.com/gds-operations/vcloud-edge_gateway for more info
           EOS
 
           opts.separator ""

@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.email       = ['anna.shipman@digital.cabinet-office.gov.uk']
   s.summary     = 'Tool to configure a VMware vCloud Edge Gateway'
   s.description = 'Tool to configure a VMware vCloud Edge Gateway. Uses vcloud-core.'
-  s.homepage    = 'http://github.com/alphagov/vcloud-edge_gateway'
+  s.homepage    = 'http://github.com/gds-operations/vcloud-edge_gateway'
   s.license     = 'MIT'
 
   s.files         = `git ls-files`.split($/)
