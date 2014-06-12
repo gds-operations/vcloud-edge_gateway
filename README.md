@@ -179,6 +179,7 @@ A DNAT rule has the following form, and translates packets going to the
 * `network_id` specifies the UUID of the external network that packets are
   translated from.
 * `original_ip` is an IP address on the external network above.
+* `protocol` defaults to 'tcp'. Can be 'icmp', 'udp', 'tcp+udp' or 'any'
 
 #### load_balancer_service
 
