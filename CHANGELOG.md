@@ -1,3 +1,11 @@
+## 1.0.1 (2014-06-13)
+
+Bugfixes:
+
+  - The NAT schema incorrectly allowed 'tcp+udp' as a valid protocol which would
+  lead to a HTTP 500 response from the API. The schema now accepts the correct value,
+  'tcpudp'. Thanks to @abridgett for discovering and fixing this.
+
 ## 1.0.0 (2014-06-04)
 
 Features:
