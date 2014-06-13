@@ -1,9 +1,15 @@
-require 'support/integration_helper'
-
+# SimpleCov must run _first_ according to its README
 if ENV['COVERAGE']
   require 'simplecov'
 
-  SimpleCov.profiles.define 'gem' do
+  # monkey-patch to prevent SimpleCov from reporting coverage percentage
+  class SimpleCov::Formatter::HTMLFormatter
+    def output_message(_message)
+      nil
+    end
+  end
+
+  SimpleCov.adapters.define 'gem' do
     add_filter '/spec/'
     add_filter '/features/'
     add_filter '/vendor/'
@@ -11,9 +17,11 @@ if ENV['COVERAGE']
     add_group 'Libraries', '/lib/'
   end
 
+  SimpleCov.minimum_coverage(99)
   SimpleCov.start 'gem'
 end
 
+require 'support/integration_helper'
 require 'bundler/setup'
 require 'vcloud/edge_gateway'
 require 'vcloud/tools/tester'
@@ -21,17 +29,5 @@ require 'vcloud/tools/tester'
 RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
-  end
-end
-
-if ENV['COVERAGE']
-  SimpleCov.at_exit do
-    SimpleCov.result.format!
-    # do not change the coverage percentage, instead add more unit tests to fix coverage failures.
-    if SimpleCov.result.covered_percent < 90
-      print "ERROR::BAD_COVERAGE\n"
-      print "Coverage is less than acceptable limit(90%). Please add more tests to improve the coverage\n"
-      exit(1)
-    end
   end
 end
