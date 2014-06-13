@@ -14,7 +14,7 @@ module Vcloud
           original_port: {type: 'string', required: false},
           translated_ip: {type: 'ip_address_range', required: true},
           translated_port: {type: 'string', required: false},
-          protocol: {type: 'enum', required: false, acceptable_values: ['tcp', 'udp', 'icmp', 'tcp+udp', 'any']},
+          protocol: {type: 'enum', required: false, acceptable_values: ['tcp', 'udp', 'icmp', 'tcpudp', 'any']},
         }
       }
 
