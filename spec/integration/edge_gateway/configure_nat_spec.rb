@@ -6,7 +6,7 @@ module Vcloud
 
     before(:all) do
       config_file = File.join(File.dirname(__FILE__), "../vcloud_tools_testing_config.yaml")
-      @test_data = Vcloud::Tools::Tester::TestParameters.new(config_file)
+      @test_params = Vcloud::Tools::Tester::TestParameters.new(config_file)
       @files_to_delete = []
     end
 
@@ -16,7 +16,7 @@ module Vcloud
         reset_edge_gateway
         @vars_config_file = generate_vars_file(edge_gateway_vars_hash)
         @initial_nat_config_file = IntegrationHelper.fixture_file('nat_config.yaml.mustache')
-        @edge_gateway = Vcloud::Core::EdgeGateway.get_by_name(@test_data.edge_gateway)
+        @edge_gateway = Vcloud::Core::EdgeGateway.get_by_name(@test_params.edge_gateway)
       end
 
       context "Check update is functional" do
@@ -80,8 +80,8 @@ module Vcloud
           expect(dnat_rule[:RuleType]).to eq('DNAT')
           expect(dnat_rule[:Id]).to eq('65537')
           expect(dnat_rule[:IsEnabled]).to eq('true')
-          expect(dnat_rule[:GatewayNatRule][:Interface][:href]).to include(@test_data.provider_network_id)
-          expect(dnat_rule[:GatewayNatRule][:OriginalIp]).to eq(@test_data.provider_network_ip)
+          expect(dnat_rule[:GatewayNatRule][:Interface][:href]).to include(@test_params.provider_network_id)
+          expect(dnat_rule[:GatewayNatRule][:OriginalIp]).to eq(@test_params.provider_network_ip)
           expect(dnat_rule[:GatewayNatRule][:OriginalPort]).to eq('3412')
           expect(dnat_rule[:GatewayNatRule][:TranslatedIp]).to eq('10.10.1.2-10.10.1.3')
           expect(dnat_rule[:GatewayNatRule][:TranslatedPort]).to eq('3412')
@@ -94,9 +94,9 @@ module Vcloud
           expect(snat_rule[:RuleType]).to eq('SNAT')
           expect(snat_rule[:Id]).to eq('65538')
           expect(snat_rule[:IsEnabled]).to eq('true')
-          expect(snat_rule[:GatewayNatRule][:Interface][:href]).to include(@test_data.provider_network_id)
+          expect(snat_rule[:GatewayNatRule][:Interface][:href]).to include(@test_params.provider_network_id)
           expect(snat_rule[:GatewayNatRule][:OriginalIp]).to eq('10.10.1.2-10.10.1.3')
-          expect(snat_rule[:GatewayNatRule][:TranslatedIp]).to eq(@test_data.provider_network_ip)
+          expect(snat_rule[:GatewayNatRule][:TranslatedIp]).to eq(@test_params.provider_network_ip)
         end
 
       end
@@ -105,9 +105,9 @@ module Vcloud
 
         it "and then should configure hairpin NATting with orgVdcNetwork" do
           vars_file = generate_vars_file({
-            edge_gateway_name: @test_data.edge_gateway,
-            org_vdc_network_id: @test_data.network_1_id,
-            original_ip: @test_data.network_1_ip,
+            edge_gateway_name: @test_params.edge_gateway,
+            org_vdc_network_id: @test_params.network_1_id,
+            original_ip: @test_params.network_1_ip,
           })
 
           diff = EdgeGateway::Configure.new(
@@ -118,7 +118,7 @@ module Vcloud
           expect(diff.keys).to eq([:NatService])
           expect(diff[:NatService]).to have_at_least(1).items
 
-          edge_gateway = Vcloud::Core::EdgeGateway.get_by_name(@test_data.edge_gateway)
+          edge_gateway = Vcloud::Core::EdgeGateway.get_by_name(@test_params.edge_gateway)
           nat_service = edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration][:NatService]
           expected_rule = nat_service[:NatRule].first
           expect(expected_rule).not_to be_nil
@@ -126,8 +126,8 @@ module Vcloud
           expect(expected_rule[:Id]).to eq('65537')
           expect(expected_rule[:RuleType]).to eq('DNAT')
           expect(expected_rule[:IsEnabled]).to eq('true')
-          expect(expected_rule[:GatewayNatRule][:Interface][:name]).to eq(@test_data.network_1)
-          expect(expected_rule[:GatewayNatRule][:OriginalIp]).to eq(@test_data.network_1_ip)
+          expect(expected_rule[:GatewayNatRule][:Interface][:name]).to eq(@test_params.network_1)
+          expect(expected_rule[:GatewayNatRule][:OriginalIp]).to eq(@test_params.network_1_ip)
           expect(expected_rule[:GatewayNatRule][:OriginalPort]).to eq('3412')
           expect(expected_rule[:GatewayNatRule][:TranslatedIp]).to eq('10.10.1.2')
           expect(expected_rule[:GatewayNatRule][:TranslatedPort]).to eq('3412')
@@ -137,9 +137,9 @@ module Vcloud
         it "should raise error if network provided in rule does not exist" do
           random_network_id = SecureRandom.uuid
           vars_file = generate_vars_file({
-            edge_gateway_name: @test_data.edge_gateway,
+            edge_gateway_name: @test_params.edge_gateway,
             network_id: random_network_id,
-            original_ip: @test_data.network_1_ip,
+            original_ip: @test_params.network_1_ip,
           })
 
           expect {
@@ -156,7 +156,7 @@ module Vcloud
       end
 
       def reset_edge_gateway
-        edge_gateway = Core::EdgeGateway.get_by_name @test_data.edge_gateway
+        edge_gateway = Core::EdgeGateway.get_by_name @test_params.edge_gateway
         edge_gateway.update_configuration({
           NatService: {:IsEnabled => "true", :NatRule => []},
         })
@@ -173,9 +173,9 @@ module Vcloud
 
       def edge_gateway_vars_hash
         {
-          :edge_gateway_name => @test_data.edge_gateway,
-          :network_id => @test_data.provider_network_id,
-          :original_ip => @test_data.provider_network_ip,
+          :edge_gateway_name => @test_params.edge_gateway,
+          :network_id => @test_params.provider_network_id,
+          :original_ip => @test_params.provider_network_ip,
         }
       end
 
@@ -183,7 +183,7 @@ module Vcloud
         vcloud_time = timestamp.strftime('%FT%T.000Z')
         q = Vcloud::Core::QueryRunner.new
         q.run('task',
-          :filter => "name==networkConfigureEdgeGatewayServices;objectName==#{@test_data.edge_gateway};startDate=ge=#{vcloud_time}",
+          :filter => "name==networkConfigureEdgeGatewayServices;objectName==#{@test_params.edge_gateway};startDate=ge=#{vcloud_time}",
           :sortDesc => 'startDate',
         )
       end
