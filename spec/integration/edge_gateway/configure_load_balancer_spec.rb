@@ -6,7 +6,13 @@ module Vcloud
 
     before(:all) do
       config_file = File.join(File.dirname(__FILE__), "../vcloud_tools_testing_config.yaml")
-      @test_params = Vcloud::Tools::Tester::TestSetup.new(config_file, []).test_params
+      required_user_params = [
+        "edge_gateway",
+        "provider_network_id",
+        "provider_network_ip",
+      ]
+
+      @test_params = Vcloud::Tools::Tester::TestSetup.new(config_file, required_user_params).test_params
       @files_to_delete = []
     end
 
