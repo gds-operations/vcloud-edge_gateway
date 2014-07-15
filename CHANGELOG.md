@@ -1,3 +1,7 @@
+## 1.0.2 (2014-07-14)
+
+Update the dependency on vCloud Core to version 0.6.0 to avoid dependency issues._
+
 ## 1.0.1 (2014-06-13)
 
 Bugfixes:
