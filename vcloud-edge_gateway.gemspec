@@ -30,6 +30,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rubocop', '~> 0.23.0'
   s.add_development_dependency 'simplecov', '~> 0.7.1'
   s.add_development_dependency 'gem_publisher', '1.2.0'
-  s.add_development_dependency 'vcloud-tools-tester', '0.1.0'
+  s.add_development_dependency 'vcloud-tools-tester', '~> 0.1.0'
 end
 
