@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 set -eu
 
 function cleanup {
@@ -25,5 +25,8 @@ git clone git@github.gds:gds/vcloud-tools-testing-config.git
 mv vcloud-tools-testing-config/vcloud_tools_testing_config.yaml spec/integration/
 rm -rf vcloud-tools-testing-config
 
+# Never log token to STDOUT.
+set +x
 eval $(printenv API_PASSWORD | bundle exec vcloud-login)
+
 bundle exec rake integration
