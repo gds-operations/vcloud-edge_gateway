@@ -1,7 +1,6 @@
 require 'vcloud/edge_gateway/version'
 
 require 'vcloud/core'
-require 'vcloud/fog'
 
 require 'vcloud/edge_gateway/schema/nat_service'
 require 'vcloud/edge_gateway/schema/firewall_service'
