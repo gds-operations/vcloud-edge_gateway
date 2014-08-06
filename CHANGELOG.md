@@ -1,6 +1,6 @@
-## UNRELEASED (2014-XX-XX)
+## 1.1.0 (2014-08-11)
 
-Update to vCloud Core 0.7.0 for the following:
+Update to vCloud Core 0.10.0 for the following:
 
   - New vcloud-login tool for fetching session tokens without the need to
     store your password in a plaintext FOG_RC file.
