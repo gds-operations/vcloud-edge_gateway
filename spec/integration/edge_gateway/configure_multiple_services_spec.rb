@@ -37,15 +37,14 @@ module Vcloud
         end
 
         it "should only create one edgeGateway update task when updating the configuration" do
-          start_time = Time.now.getutc
-          task_list_before_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
+          last_task = IntegrationHelper.get_last_task(@test_params.edge_gateway)
           diff = EdgeGateway::Configure.new(@initial_config_file, @vars_config_file).update
-          task_list_after_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
+          tasks_elapsed = IntegrationHelper.get_tasks_since(@test_params.edge_gateway, last_task)
 
           expect(diff.keys).to eq([:FirewallService, :NatService])
           expect(diff[:FirewallService]).to have_at_least(1).items
-          expect(diff[:NatService]).to      have_at_least(1).items
-          expect(task_list_after_update.size - task_list_before_update.size).to be(1)
+          expect(diff[:NatService]).to have_at_least(1).items
+          expect(tasks_elapsed).to have(1).items
         end
 
         it "should now have nat and firewall rules configured, no load balancer yet" do
@@ -57,34 +56,31 @@ module Vcloud
         end
 
         it "should not update the EdgeGateway again if the config hasn't changed" do
-          start_time = Time.now.getutc
-          task_list_before_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
+          last_task = IntegrationHelper.get_last_task(@test_params.edge_gateway)
           diff = EdgeGateway::Configure.new(@initial_config_file, @vars_config_file).update
-          task_list_after_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
+          tasks_elapsed = IntegrationHelper.get_tasks_since(@test_params.edge_gateway, last_task)
 
           expect(diff).to eq({})
-          expect(task_list_after_update.size - task_list_before_update.size).to be(0)
+          expect(tasks_elapsed).to have(0).items
         end
 
         it "should only create one additional edgeGateway update task when adding the LoadBalancer config" do
-          start_time = Time.now.getutc
-          task_list_before_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
+          last_task = IntegrationHelper.get_last_task(@test_params.edge_gateway)
           diff = EdgeGateway::Configure.new(@adding_load_balancer_config_file, @vars_config_file).update
-          task_list_after_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
+          tasks_elapsed = IntegrationHelper.get_tasks_since(@test_params.edge_gateway, last_task)
 
           expect(diff.keys).to eq([:LoadBalancerService])
           expect(diff[:LoadBalancerService]).to have_at_least(1).items
-          expect(task_list_after_update.size - task_list_before_update.size).to be(1)
+          expect(tasks_elapsed).to have(1).items
         end
 
         it "should not update the EdgeGateway again if we reapply the 'adding load balancer' config" do
-          start_time = Time.now.getutc
-          task_list_before_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
+          last_task = IntegrationHelper.get_last_task(@test_params.edge_gateway)
           diff = EdgeGateway::Configure.new(@adding_load_balancer_config_file, @vars_config_file).update
-          task_list_after_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
+          tasks_elapsed = IntegrationHelper.get_tasks_since(@test_params.edge_gateway, last_task)
 
           expect(diff).to eq({})
-          expect(task_list_after_update.size - task_list_before_update.size).to be(0)
+          expect(tasks_elapsed).to have(0).items
         end
 
       end
@@ -124,18 +120,6 @@ module Vcloud
           edge_gateway_ext_network_ip: @test_params.provider_network_ip,
         }
       end
-
-      def get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(timestamp)
-        vcloud_time = timestamp.strftime('%FT%T.000Z')
-        q = Vcloud::Core::QueryRunner.new
-
-        q.run('task',
-          :filter =>
-            "name==networkConfigureEdgeGatewayServices;objectName==#{@test_params.edge_gateway};startDate=ge=#{vcloud_time}",
-          :sortDesc => 'startDate',
-        )
-      end
-
     end
 
   end

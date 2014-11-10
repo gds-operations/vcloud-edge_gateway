@@ -48,14 +48,13 @@ module Vcloud
         end
 
         it "should only make one EdgeGateway update task, to minimise EdgeGateway reload events" do
-          start_time = Time.now.getutc
-          task_list_before_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
+          last_task = IntegrationHelper.get_last_task(@test_params.edge_gateway)
           diff = EdgeGateway::Configure.new(@initial_nat_config_file, @vars_config_file).update
-          task_list_after_update = get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(start_time)
+          tasks_elapsed = IntegrationHelper.get_tasks_since(@test_params.edge_gateway, last_task)
 
           expect(diff.keys).to eq([:NatService])
           expect(diff[:NatService]).to have_at_least(1).items
-          expect(task_list_after_update.size - task_list_before_update.size).to be(1)
+          expect(tasks_elapsed).to have(1).items
         end
 
         it "should have configured at least one NAT rule" do
@@ -187,16 +186,6 @@ module Vcloud
           :original_ip => @test_params.provider_network_ip,
         }
       end
-
-      def get_all_edge_gateway_update_tasks_ordered_by_start_date_since_time(timestamp)
-        vcloud_time = timestamp.strftime('%FT%T.000Z')
-        q = Vcloud::Core::QueryRunner.new
-        q.run('task',
-          :filter => "name==networkConfigureEdgeGatewayServices;objectName==#{@test_params.edge_gateway};startDate=ge=#{vcloud_time}",
-          :sortDesc => 'startDate',
-        )
-      end
-
     end
 
   end
