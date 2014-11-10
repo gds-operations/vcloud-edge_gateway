@@ -1,3 +1,7 @@
+## UNRELEASED
+
+Update vCloud Core to 0.14.0 to improve speed of integration tests.
+
 ## 1.3.0 (2014-10-14)
 
 Features:
