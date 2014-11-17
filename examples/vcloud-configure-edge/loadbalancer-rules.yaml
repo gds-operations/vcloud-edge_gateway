@@ -12,7 +12,7 @@ gateway: "My gateway name"
 load_balancer_service:
   pools:
     - name: 'pool-001'
-      description: 'pool for balancing http(s)"
+      description: 'pool for balancing http(s)'
       service:
         http:
           port: 80
@@ -43,7 +43,7 @@ load_balancer_service:
 
   virtual_servers:
     - name: 'vs-website'
-      description: 'virtual server for my website"
+      description: 'virtual server for my website'
       ip_address: 20.20.20.20
       network: '00000000-1111-2222-3333-444444444444'
       pool: 'pool-001'
