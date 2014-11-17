@@ -1,6 +1,8 @@
 ## UNRELEASED
 
-Update vCloud Core to 0.14.0 to improve speed of integration tests.
+Features:
+
+ - Update vCloud Core to 0.14.0 to improve speed of integration tests.
 
 ## 1.3.0 (2014-10-14)
 
@@ -14,13 +16,17 @@ Features:
 
 ## 1.2.0 (2014-09-11)
 
+Features:
+
   - Upgrade dependency on vCloud Core to 0.11.0 which prevents plaintext
     passwords in FOG_RC. Please use tokens via vcloud-login as per
     the documentation: http://gds-operations.github.io/vcloud-tools/usage/
 
 ## 1.1.0 (2014-08-11)
 
-Update to vCloud Core 0.10.0 for the following:
+Features:
+
+  Update to vCloud Core 0.10.0 for the following:
 
   - New vcloud-login tool for fetching session tokens without the need to
     store your password in a plaintext FOG_RC file.
@@ -30,7 +36,9 @@ Update to vCloud Core 0.10.0 for the following:
 
 ## 1.0.2 (2014-07-14)
 
-Update the dependency on vCloud Core to version 0.6.0 to avoid dependency issues._
+Bugfix:
+
+  - Update the dependency on vCloud Core to version 0.6.0 to avoid dependency issues.
 
 ## 1.0.1 (2014-06-13)
 
