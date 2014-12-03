@@ -1,4 +1,4 @@
-## UNRELEASED
+## 1.4.0 (2014-12-03)
 
 Features:
 
