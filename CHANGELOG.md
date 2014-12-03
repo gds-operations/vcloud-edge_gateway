@@ -1,8 +1,9 @@
-## UNRELEASED
+## 1.4.0 (2014-12-03)
 
 Features:
 
  - Update vCloud Core to 0.14.0 to improve speed of integration tests.
+ - Update vCloud Core to 0.16.0 for `vcloud-logout` utility.
 
 ## 1.3.0 (2014-10-14)
 
