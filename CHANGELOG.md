@@ -1,3 +1,8 @@
+## 2.0.0 (2015-01-22)
+
+   - Update vCloud Core to 1.0.0 since the API is now stable.
+   - Update vcloud-tools-tester to 1.0.0 since the API is now stable.
+
 ## 1.4.0 (2014-12-03)
 
 Features:
