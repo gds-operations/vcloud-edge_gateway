@@ -421,12 +421,21 @@ Run the default suite of tests (e.g. lint, unit, features):
 
     bundle exec rake
 
-Run the integration tests (slower and requires a real environment):
+There are also integration tests. These are slower and require a real environment.
+See the [vCloud Tools website](http://gds-operations.github.io/vcloud-tools/testing/) for details of how to set up and run the integration tests.
 
-    bundle exec rake integration
+The parameters required to run the vCloud Edge Gateway integration tests are:
 
-You need access to a suitable vCloud Director organization to run the integration tests. See the [integration tests
-README](/spec/integration/README.md) for further details.
+````
+default:                # This is the fog credential that refers to your testing environment, e.g. `test_credential`
+  network_1:            # Primary network name
+  network_1_id:         # Primary network ID
+  network_1_ip:         # Primary network IP
+  edge_gateway:         # Edge gateway name
+  provider_network:     # Provider (external-facing) network name
+  provider_network_id:  # Provider network ID
+  provider_network_ip:  # Provider network IP
+````
 
 ### References
 
