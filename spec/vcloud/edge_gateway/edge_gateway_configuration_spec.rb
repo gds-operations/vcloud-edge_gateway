@@ -23,11 +23,13 @@ module Vcloud
             :nat_service => test_nat_config,
             :firewall_service => test_firewall_config,
             :load_balancer_service => test_load_balancer_config,
+            :static_routing_service => test_static_routing_config
           }
           @remote_config = {
             :FirewallService => different_firewall_config,
             :NatService => different_nat_config,
             :LoadBalancerService => different_load_balancer_config,
+            :StaticRoutingService => different_static_routing_config
           }
           @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(
             @test_config,
@@ -628,6 +630,18 @@ module Vcloud
         }
       end
 
+
+      def test_static_routing_config
+        {
+          :static_routes  => [{
+            name: 'Test route',
+            network: '192.192.192.0/24',
+            next_hop: '192.192.182.1',
+            apply_on: 'ane012345'
+          }]
+        }
+      end
+
       def test_load_balancer_config
         {
           enabled: 'true',
@@ -701,6 +715,22 @@ module Vcloud
               },
             :OriginalIp => "10.10.1.2-10.10.1.3",
             :TranslatedIp => "192.0.2.40"
+            }
+          }]
+        }
+      end
+
+      def different_static_routing_config
+        {
+          :StaticRoutingService  => [{
+            Name: 'Different rule',
+            IsEnabled: 'false',
+            Network: '192.192.193.0/24',
+            NextHopIp: '192.192.182.1',
+            GatewayInterface: {
+              type: 'application/vnd.vmware.vcloud.orgVdcNetwork+xml',
+              name: 'ane012345',
+              href: 'https://vmware.api.net/api/admin/network/2ad93597-7b54-43dd-9eb1-631dd337e5a7'
             }
           }]
         }
