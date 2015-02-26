@@ -1,0 +1,14 @@
+---
+gateway: {{ edge_gateway_name }}
+static_routing_service:
+  static_routes:
+  - enabled: true
+    name: 'A rule #1'
+    network: '192.168.192.0/24'
+    next_hop: {{ edge_gateway_ext_default_gateway }}
+    apply_on: {{ edge_gateway_ext_network_name }}
+  - enabled: true
+    name: 'A rule #2'
+    network: '192.168.193.0/24'
+    next_hop: {{ edge_gateway_ext_default_gateway }}
+    apply_on: {{ edge_gateway_ext_network_name }}

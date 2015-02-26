@@ -64,6 +64,21 @@ module Vcloud
           end
         end
 
+        static_routing_service_config = EdgeGateway::ConfigurationGenerator::StaticRoutingService.new(
+          local_config[:static_routing_service],
+          edge_gateway_interfaces
+        ).generate_fog_config
+
+        unless static_routing_service_config.nil?
+          differ = EdgeGateway::StaticRoutingConfigurationDiffer.new(
+            remote_config[:StaticRoutingService],
+            static_routing_service_config
+          )
+          unless differ.diff.empty?
+            diff[:StaticRoutingService] = differ.diff
+            new_config[:StaticRoutingService] = static_routing_service_config
+          end
+        end
         return new_config, diff
       end
 
