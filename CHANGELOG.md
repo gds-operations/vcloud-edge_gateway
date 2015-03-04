@@ -1,3 +1,12 @@
+## 1.5.0 (2015-03-04)
+
+Features:
+ - Add support for static routes, thanks @geriBatai!
+
+Documentation:
+ - Correct the Copyright notice
+ - Guide for integration tests moved to GDS Operations web site
+
 ## 1.4.1 (2015-01-26)
 
    - Update vCloud Core to 1.0.0 since the API is now stable.
