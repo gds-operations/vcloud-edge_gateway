@@ -1,14 +1,23 @@
+## 1.5.0 (2015-03-04)
+
+Features:
+  - Add support for static routes, thanks @geriBatai!
+
+Documentation:
+  - Correct the Copyright notice
+  - Guide for integration tests moved to GDS Operations web site
+
 ## 1.4.1 (2015-01-26)
 
-   - Update vCloud Core to 1.0.0 since the API is now stable.
-   - Update vcloud-tools-tester to 1.0.0 since the API is now stable.
+  - Update vCloud Core to 1.0.0 since the API is now stable.
+  - Update vcloud-tools-tester to 1.0.0 since the API is now stable.
 
 ## 1.4.0 (2014-12-03)
 
 Features:
 
- - Update vCloud Core to 0.14.0 to improve speed of integration tests.
- - Update vCloud Core to 0.16.0 for `vcloud-logout` utility.
+  - Update vCloud Core to 0.14.0 to improve speed of integration tests.
+  - Update vCloud Core to 0.16.0 for `vcloud-logout` utility.
 
 ## 1.3.0 (2014-10-14)
 
