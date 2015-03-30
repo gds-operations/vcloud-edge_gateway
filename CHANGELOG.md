@@ -1,3 +1,12 @@
+## 1.5.1 (2015-03-30)
+
+Bugfixes:
+
+  - Upgrade vCloud Core dependency to version 1.0.2 to pull in fix for this
+    error:
+
+        undefined method `redisplay_progressbar' for Fog::Formatador:Class
+
 ## 1.5.0 (2015-03-04)
 
 Features:
