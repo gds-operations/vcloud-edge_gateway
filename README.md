@@ -42,9 +42,7 @@ You can configure the following services on an existing edgegateway using
 - firewall_service
 - nat_service
 - load_balancer_service
-
-NB: DHCP and VPN Services are not yet supported by the Fog platform underneath.
-Support for these is being considered.
+- gateway_ipsec_vpn_service
 
 The `vcloud-edge-configure` tool takes an input YAML file describing one
 or more of these services and updates the edge gateway configuration to match,
