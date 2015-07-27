@@ -1,3 +1,7 @@
+## 1.5.2 (2015-07-20)
+
+- Update vCloud Core to 1.1.0 to pick up a bugfix.
+
 ## 1.5.1 (2015-03-30)
 
 Bugfixes:
