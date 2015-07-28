@@ -9,7 +9,6 @@ require 'vcloud/edge_gateway/schema/load_balancer_service'
 require 'vcloud/edge_gateway/schema/static_routing_service'
 require 'vcloud/edge_gateway/schema/edge_gateway'
 
-
 require 'vcloud/edge_gateway/cli'
 require 'vcloud/edge_gateway/configure'
 require 'vcloud/edge_gateway/configuration_generator/id_ranges'

@@ -3,6 +3,14 @@
 # Note that applying this configuration file will replace the current VPN tunnels
 # on the vShield Edge Gateway.
 #
+# Here be dragons:
+# The vSE isn't the best at validating settings before trying to configure
+# itself with them. Values for the following, that the vSE does not expect,
+# could cause it to get into a bad state.
+#
+# mtu              - Maximum for your network.
+# local_ip_address - IP address that belongs to the external network of the vSE
+# local_subnets    - A local subnet which is directly attached to the vSE
 ---
 gateway: testing_gateway
 gateway_ipsec_vpn_service:

@@ -84,10 +84,10 @@ module Vcloud
           expect(proposed_nat_config).to eq(expected_nat_config)
         end
 
-       it "proposed config contains vpn config in the form expected" do
-          proposed_vpn_config = @proposed_config.config[:GatewayIpsecVpnService]
-          expect(proposed_vpn_config).to eq(expected_vpn_config)
-       end
+        it "proposed config contains vpn config in the form expected" do
+           proposed_vpn_config = @proposed_config.config[:GatewayIpsecVpnService]
+           expect(proposed_vpn_config).to eq(expected_vpn_config)
+        end
 
         it "proposed config contains load balancer config in the form expected" do
           proposed_load_balancer_config = @proposed_config.config[:LoadBalancerService]
@@ -172,6 +172,11 @@ module Vcloud
 
         it "requires update" do
           expect(@proposed_config.update_required?).to be(true)
+        end
+
+        it "proposed config contains VPN config in the form expected" do
+          proposed_vpn_config = @proposed_config.config[:GatewayIpsecVpnService]
+          expect(proposed_vpn_config).to eq(expected_vpn_config)
         end
 
         it "proposed config contains firewall config in the form expected" do

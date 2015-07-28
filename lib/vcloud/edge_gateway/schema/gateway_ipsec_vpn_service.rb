@@ -9,12 +9,12 @@ module Vcloud
           id: {
             type: 'string_or_number',
             required: true,
-            allowed_empty: false
+            allowed_empty: false,
           },
           name: {
             type: 'string_or_number',
             required: true,
-            allowed_empty: false
+            allowed_empty: false,
           }
         }
       }
