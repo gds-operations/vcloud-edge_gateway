@@ -25,7 +25,7 @@ gateway_ipsec_vpn_service:
       :netmask: '255.255.192.0'
     :shared_secret: 'Secretsecretsecretsecretsecretsecret123456789'
     :encryption_protocol: 'AES'
-    :mtu: 20000
+    :mtu: 1500
     :local_subnets:
       - :name: 'test subnet'
         :gateway: '192.168.90.254'
