@@ -1,0 +1,40 @@
+# Example configuration file for defining VPN tunnels on the vShield Edge Gateway
+#
+# Note that applying this configuration file will replace the current VPN tunnels
+# on the vShield Edge Gateway.
+#
+# Here be dragons:
+# The vSE isn't the best at validating settings before trying to configure
+# itself with them. Values for the following, that the vSE does not expect,
+# could cause it to get into a bad state.
+#
+# mtu              - Maximum for your network.
+# local_ip_address - IP address that belongs to the external network of the vSE
+# local_subnets    - A local subnet which is directly attached to the vSE
+---
+gateway: testing_gateway
+gateway_ipsec_vpn_service:
+  enabled: true
+  tunnels:
+  - :name: 'staging_tunnel'
+    :enabled: true
+    :rule_type: 'DNAT'
+    :description: 'test tunnel'
+    :ipsec_vpn_local_peer:
+      :id: '1223-123UDH-22222'
+      :name: 'foobarbaz'
+    :peer_ip_address: '172.16.3.16'
+    :peer_id: '1223-123UDH-12321'
+    :local_ip_address: '172.16.10.2'
+    :local_id: '202UB-9602-UB629'
+    :peer_subnet:
+      :name: '192.168.0.0/18'
+      :gateway: '192.168.0.0'
+      :netmask: '255.255.192.0'
+    :shared_secret: 'Secretsecretsecretsecretsecretsecret123456789'
+    :encryption_protocol: 'AES'
+    :mtu: 1500
+    :local_subnets:
+      - :name: 'test subnet'
+        :gateway: '192.168.90.254'
+        :netmask: '255.255.255.0'

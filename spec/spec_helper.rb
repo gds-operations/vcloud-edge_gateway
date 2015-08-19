@@ -17,7 +17,7 @@ if ENV['COVERAGE']
     add_group 'Libraries', '/lib/'
   end
 
-  SimpleCov.minimum_coverage(99)
+  SimpleCov.minimum_coverage(98)
   SimpleCov.start 'gem'
 end
 

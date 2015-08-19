@@ -21,6 +21,7 @@ module Vcloud
           @test_config = {
             :gateway => @edge_gateway_id,
             :nat_service => test_nat_config,
+            :gateway_ipsec_vpn_service => test_vpn_config,
             :firewall_service => test_firewall_config,
             :load_balancer_service => test_load_balancer_config,
             :static_routing_service => test_static_routing_config
@@ -28,6 +29,7 @@ module Vcloud
           @remote_config = {
             :FirewallService => different_firewall_config,
             :NatService => different_nat_config,
+            :GatewayIpsecVpnService => different_vpn_config,
             :LoadBalancerService => different_load_balancer_config,
             :StaticRoutingService => different_static_routing_config
           }
@@ -51,11 +53,13 @@ module Vcloud
           @test_config = {
             :gateway => @edge_gateway_id,
             :nat_service => test_nat_config,
+            :gateway_ipsec_vpn_service => test_vpn_config,
             :firewall_service => test_firewall_config,
             :load_balancer_service => test_load_balancer_config
           }
           @remote_config = {
             :FirewallService => different_firewall_config,
+            :GatewayIpsecVpnService => different_vpn_config,
             :NatService => different_nat_config,
             :LoadBalancerService => different_load_balancer_config
           }
@@ -80,6 +84,11 @@ module Vcloud
           expect(proposed_nat_config).to eq(expected_nat_config)
         end
 
+        it "proposed config contains vpn config in the form expected" do
+           proposed_vpn_config = @proposed_config.config[:GatewayIpsecVpnService]
+           expect(proposed_vpn_config).to eq(expected_vpn_config)
+        end
+
         it "proposed config contains load balancer config in the form expected" do
           proposed_load_balancer_config = @proposed_config.config[:LoadBalancerService]
           expect(proposed_load_balancer_config).to eq(expected_load_balancer_config)
@@ -87,15 +96,16 @@ module Vcloud
 
         it "proposed diff contains changes for all services" do
           diff = @proposed_config.diff
-          expect(diff.keys).to eq([:FirewallService, :NatService, :LoadBalancerService])
-          expect(diff[:FirewallService]).to     have_at_least(1).items
-          expect(diff[:NatService]).to          have_at_least(1).items
-          expect(diff[:LoadBalancerService]).to have_at_least(1).items
+          expect(diff.keys).to eq([:FirewallService, :NatService, :GatewayIpsecVpnService, :LoadBalancerService])
+          expect(diff[:FirewallService]).to        have_at_least(1).items
+          expect(diff[:NatService]).to             have_at_least(1).items
+          expect(diff[:GatewayIpsecVpnService]).to have_at_least(1).items
+          expect(diff[:LoadBalancerService]).to    have_at_least(1).items
         end
 
       end
 
-      context "firewall config has changed and nat has not, load_balancer absent" do
+      context "firewall config has changed and nat has not, load_balancer and VPN absent" do
 
         before(:each) do
           @test_config = {
@@ -139,15 +149,17 @@ module Vcloud
 
       end
 
-      context "firewall config has changed and nat & load_balancer configs are absent" do
+      context "firewall and VPN config has changed and nat & load_balancer configs are absent" do
 
         before(:each) do
           @test_config = {
             :gateway => @edge_gateway_id,
-            :firewall_service => test_firewall_config
+            :firewall_service => test_firewall_config,
+            :gateway_ipsec_vpn_service => test_vpn_config
           }
           @remote_config = {
             :FirewallService => different_firewall_config,
+            :GatewayIpsecVpnService => different_vpn_config,
             :NatService => same_nat_config,
             :LoadBalancerService => same_load_balancer_config,
           }
@@ -160,6 +172,11 @@ module Vcloud
 
         it "requires update" do
           expect(@proposed_config.update_required?).to be(true)
+        end
+
+        it "proposed config contains VPN config in the form expected" do
+          proposed_vpn_config = @proposed_config.config[:GatewayIpsecVpnService]
+          expect(proposed_vpn_config).to eq(expected_vpn_config)
         end
 
         it "proposed config contains firewall config in the form expected" do
@@ -175,9 +192,9 @@ module Vcloud
           expect(@proposed_config.config.key?(:LoadBalancerService)).to be(false)
         end
 
-        it "proposed diff contains changes for firewall service" do
+        it "proposed diff contains changes for firewall and VPN service" do
           diff = @proposed_config.diff
-          expect(diff.keys).to eq([:FirewallService])
+          expect(diff.keys).to eq([:FirewallService, :GatewayIpsecVpnService])
           expect(diff[:FirewallService]).to have_at_least(1).items
         end
 
@@ -328,12 +345,14 @@ module Vcloud
           @test_config = {
             :gateway => @edge_gateway_id,
             :nat_service => test_nat_config,
+            :gateway_ipsec_vpn_service => test_vpn_config,
             :firewall_service => test_firewall_config,
             :load_balancer_service => test_load_balancer_config,
           }
           @remote_config = {
             :FirewallService => same_firewall_config,
             :NatService => same_nat_config,
+            :GatewayIpsecVpnService => same_vpn_config,
             :LoadBalancerService => same_load_balancer_config,
           }
           @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(
@@ -582,6 +601,10 @@ module Vcloud
           expect(@proposed_config.config.key?(:NatService)).to be(false)
         end
 
+        it "proposed config does not contain vpn config" do
+          expect(@proposed_config.config.key?(:GatewayIpsecVpnService)).to be(false)
+        end
+
         it "proposed config does not contain firewall config" do
           expect(@proposed_config.config.key?(:FirewallService)).to be(false)
         end
@@ -590,6 +613,49 @@ module Vcloud
           diff = @proposed_config.diff
           expect(diff.keys).to eq([:LoadBalancerService])
           expect(diff[:LoadBalancerService]).to have_at_least(1).items
+        end
+
+      end
+
+      context "there is no remote GatewayIpsecVpnService config, but we are trying to update it" do
+
+        before(:each) do
+          @test_config = {
+            :gateway => @edge_gateway_id,
+            :gateway_ipsec_vpn_service => test_vpn_config,
+          }
+          @remote_config = {
+            :FirewallService => different_firewall_config,
+            :NatService => different_nat_config,
+          }
+          @proposed_config = EdgeGateway::EdgeGatewayConfiguration.new(
+            @test_config,
+            @remote_config,
+            @edge_gw_interface_list
+          )
+        end
+
+        it "requires update" do
+          expect(@proposed_config.update_required?).to be(true)
+        end
+
+        it "proposed config contains gateway_ipsec_vpn_service config in the form expected" do
+          proposed_vpn_config = @proposed_config.config[:GatewayIpsecVpnService]
+          expect(proposed_vpn_config).to eq(expected_vpn_config)
+        end
+
+        it "proposed config does not contain nat config" do
+          expect(@proposed_config.config.key?(:NatService)).to be(false)
+        end
+
+        it "proposed config does not contain firewall config" do
+          expect(@proposed_config.config.key?(:FirewallService)).to be(false)
+        end
+
+        it "proposed diff contains changes for VPN service" do
+          diff = @proposed_config.diff
+          expect(diff.keys).to eq([:GatewayIpsecVpnService])
+          expect(diff[:GatewayIpsecVpnService]).to have_at_least(1).items
         end
 
       end
@@ -626,6 +692,37 @@ module Vcloud
             :original_ip => "192.0.2.58",
             :original_port => "3412",
             :protocol =>"tcp"
+          }]
+        }
+      end
+
+      def test_vpn_config
+        {
+          :tunnels => [{
+            :enabled => 'true',
+            :name => 'foo',
+            :description => 'test tunnel',
+            :ipsec_vpn_local_peer => {
+              :id => "1223-123UDH-22222",
+              :name => "foobarbaz"
+            },
+            :peer_ip_address => "172.16.3.16",
+            :peer_id => "1223-123UDH-12321",
+            :local_ip_address => "172.16.10.2",
+            :local_id => "202UB-9602-UB629",
+            :peer_subnet => {
+              :name => '192.168.0.0/18',
+              :gateway => '192.168.0.0',
+              :netmask => '255.255.192.0'
+            },
+            :shared_secret => "shhh I'm secret",
+            :encryption_protocol => "AES",
+            :mtu => 1500,
+            :local_subnets => [{
+              :name => 'VDC Network',
+              :gateway => '192.168.90.254',
+              :netmask => '255.255.255.0'
+            }]
           }]
         }
       end
@@ -716,6 +813,26 @@ module Vcloud
             :OriginalIp => "10.10.1.2-10.10.1.3",
             :TranslatedIp => "192.0.2.40"
             }
+          }]
+        }
+      end
+
+      def different_vpn_config
+        {
+          :IsEnabled => 'true',
+          :Tunnel => [{
+            :Name => "foobarbaz",
+            :Description => "foobarbaz",
+            :IpsecVpnThirdPartyPeer => {
+              :PeerId => '172.16.3.17'
+            },
+            :Local_Id => '172.16.10.3',
+            :Peer_Id => '172.16.10.4',
+            :PeerIpAddress => '172.16.3.17',
+            :LocalIpAddress => '172.16.10.19',
+            :PeerSubnet => '255.0.0.0/16',
+            :LocalSubnet => '255.0.0/16',
+            :Mtu => '30000'
           }]
         }
       end
@@ -921,6 +1038,39 @@ module Vcloud
         }
       end
 
+      def same_vpn_config
+        {
+            :IsEnabled => 'true',
+            :Tunnel => [{
+              :Name => "foo",
+              :Description => 'test tunnel',
+              :IpsecVpnLocalPeer => {
+                :Id => '1223-123UDH-22222',
+                :Name => 'foobarbaz'
+              },
+              :PeerIpAddress => "172.16.3.16",
+              :PeerId => "1223-123UDH-12321",
+              :LocalIpAddress => "172.16.10.2",
+              :LocalId => "202UB-9602-UB629",
+              :PeerSubnet => {
+                :Name => "192.168.0.0/18",
+                :Gateway => "192.168.0.0",
+                :Netmask => "255.255.192.0",
+              },
+              :SharedSecret => "shhh I'm secret",
+              :EncryptionProtocol => "AES",
+              :Mtu => 1500,
+              :IsEnabled => 'true',
+              :LocalSubnet => [{
+                :Name => "VDC Network",
+                :Gateway => "192.168.90.254",
+                :Netmask => "255.255.255.0"
+              }
+            ]
+          }]
+        }
+      end
+
       def same_load_balancer_config
         {
           :IsEnabled=>"true",
@@ -1104,6 +1254,38 @@ module Vcloud
               :Protocol => "tcp"
             }
           }]
+        }
+      end
+
+      def expected_vpn_config
+        {
+            :IsEnabled => 'true',
+            :Tunnel => [{
+              :Name => "foo",
+              :Description => 'test tunnel',
+              :IpsecVpnLocalPeer => {
+                :Id => '1223-123UDH-22222',
+                :Name => 'foobarbaz'
+              },
+              :PeerIpAddress => "172.16.3.16",
+              :PeerId => "1223-123UDH-12321",
+              :LocalIpAddress => "172.16.10.2",
+              :LocalId => "202UB-9602-UB629",
+              :PeerSubnet => {
+                :Name => "192.168.0.0/18",
+                :Gateway => "192.168.0.0",
+                :Netmask => "255.255.192.0",
+              },
+              :SharedSecret => "shhh I'm secret",
+              :EncryptionProtocol => "AES",
+              :Mtu => 1500,
+              :IsEnabled => 'true',
+              :LocalSubnet => [{
+                :Name => "VDC Network",
+                :Gateway => "192.168.90.254",
+                :Netmask => "255.255.255.0"
+              }]
+            }]
         }
       end
 

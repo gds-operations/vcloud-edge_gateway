@@ -48,6 +48,21 @@ module Vcloud
           end
         end
 
+        gateway_ipsec_vpn_service_config = EdgeGateway::ConfigurationGenerator::GatewayIpsecVpnService.new(
+          local_config[:gateway_ipsec_vpn_service]
+        ).generate_fog_config
+
+        unless gateway_ipsec_vpn_service_config.nil?
+          differ = EdgeGateway::GatewayIpsecVpnConfigurationDiffer.new(
+            remote_config[:GatewayIpsecVpnService],
+            gateway_ipsec_vpn_service_config
+          )
+          unless differ.diff.empty?
+            diff[:GatewayIpsecVpnService] = differ.diff
+            new_config[:GatewayIpsecVpnService] = gateway_ipsec_vpn_service_config
+          end
+        end
+
         load_balancer_service_config =
           EdgeGateway::ConfigurationGenerator::LoadBalancerService.new(
             edge_gateway_interfaces
