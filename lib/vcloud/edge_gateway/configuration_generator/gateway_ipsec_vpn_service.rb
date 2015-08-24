@@ -46,12 +46,12 @@ module Vcloud
           vpn_tunnel[:EncryptionProtocol] = tunnel[:encryption_protocol]
           vpn_tunnel[:Mtu] = tunnel[:mtu]
           vpn_tunnel[:IsEnabled] = tunnel[:enabled]
-          tunnel[:local_subnets].each do |subnet|
-            vpn_tunnel[:LocalSubnet] = [{
-             :Name => subnet[:name],
-             :Gateway => subnet[:gateway],
-             :Netmask => subnet[:netmask]
-            }]
+          vpn_tunnel[:LocalSubnet] =
+          tunnel[:local_subnets].map do |subnet|
+            { :Name => subnet[:name],
+              :Gateway => subnet[:gateway],
+              :Netmask => subnet[:netmask]
+            }
           end
           vpn_tunnel
         end
