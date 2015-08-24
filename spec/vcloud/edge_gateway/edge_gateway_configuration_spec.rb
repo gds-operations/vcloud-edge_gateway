@@ -710,11 +710,11 @@ module Vcloud
             :peer_id => "1223-123UDH-12321",
             :local_ip_address => "172.16.10.2",
             :local_id => "202UB-9602-UB629",
-            :peer_subnet => {
+            :peer_subnets => [{
               :name => '192.168.0.0/18',
               :gateway => '192.168.0.0',
               :netmask => '255.255.192.0'
-            },
+            }],
             :shared_secret => "shhh I'm secret",
             :encryption_protocol => "AES",
             :mtu => 1500,
@@ -1052,11 +1052,11 @@ module Vcloud
               :PeerId => "1223-123UDH-12321",
               :LocalIpAddress => "172.16.10.2",
               :LocalId => "202UB-9602-UB629",
-              :PeerSubnet => {
+              :PeerSubnet => [{
                 :Name => "192.168.0.0/18",
                 :Gateway => "192.168.0.0",
                 :Netmask => "255.255.192.0",
-              },
+              }],
               :SharedSecret => "shhh I'm secret",
               :EncryptionProtocol => "AES",
               :Mtu => 1500,
@@ -1271,11 +1271,11 @@ module Vcloud
               :PeerId => "1223-123UDH-12321",
               :LocalIpAddress => "172.16.10.2",
               :LocalId => "202UB-9602-UB629",
-              :PeerSubnet => {
+              :PeerSubnet => [{
                 :Name => "192.168.0.0/18",
                 :Gateway => "192.168.0.0",
                 :Netmask => "255.255.192.0",
-              },
+              }],
               :SharedSecret => "shhh I'm secret",
               :EncryptionProtocol => "AES",
               :Mtu => 1500,

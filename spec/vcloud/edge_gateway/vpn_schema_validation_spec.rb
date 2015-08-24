@@ -15,11 +15,11 @@ module Vcloud
           peer_id: '1223-123UDH-XXXXX',
           peer_ip_address: '172.16.3.73',
           local_ip_address: '10.10.0.1',
-          peer_subnet: {
+          peer_subnets: [{
             name: '192.168.0.0/21',
             gateway: '192.168.0.0',
             netmask: '255.0.0.0'
-          },
+          }],
           encryption_protocol: 'AES',
           mtu: 9800,
           local_subnets: [{
@@ -47,11 +47,11 @@ module Vcloud
             peer_id: '1223-123UDH-XXXXX',
             peer_ip_address: '172.16.3.73',
             local_ip_address: '10.10.0.1',
-            peer_subnet: {
+            peer_subnets: [{
               name: '192.168.0.0/21',
               gateway: '192.168.0.0',
               netmask: '255.0.0.0'
-            },
+            }],
             encryption_protocol: 'AES',
             mtu: 9800,
             local_subnets: [{
@@ -63,7 +63,7 @@ module Vcloud
         end
         mandatory_fields = [:name, :rule_type, :ipsec_vpn_local_peer, :local_id,
                             :peer_id, :peer_ip_address, :local_ip_address,
-                            :peer_subnet, :encryption_protocol, :mtu, :local_subnets]
+                            :peer_subnets, :encryption_protocol, :mtu, :local_subnets]
         mandatory_fields.each do |mandatory_field|
           it "should error since mandatory field #{mandatory_field} is missing" do
             @vpn_tunnel.delete(mandatory_field)
@@ -86,11 +86,11 @@ module Vcloud
            peer_id: '1223-123UDH-XXXXX',
            peer_ip_address: '172.16.3.73',
            local_ip_address: '10.10.0.1',
-           peer_subnet: {
+           peer_subnets: [{
              name: '192.168.0.0/21',
              gateway: '192.168.0.0',
              netmask: '255.0.0.0'
-           },
+           }],
            encryption_protocol: 'AES',
            mtu: 9800,
            local_subnets: [{

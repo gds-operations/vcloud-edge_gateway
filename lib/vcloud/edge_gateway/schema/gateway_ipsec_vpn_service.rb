@@ -57,8 +57,8 @@ module Vcloud
           peer_id: {type: 'string', required: true, allowed_empty: false},
           peer_ip_address: {type: 'ip_address_range', required: true},
           local_ip_address: {type: 'ip_address_range', required: true, allowed_empty: false},
-          peer_subnet: {
-            type: Hash,
+          peer_subnets: {
+            type: Array,
             required: true,
             allowed_empty: false,
             each_element_is: VPN_SUBNETS
