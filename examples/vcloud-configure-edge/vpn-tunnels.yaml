@@ -27,10 +27,10 @@ gateway_ipsec_vpn_service:
     :peer_id: '1223-123UDH-12321'
     :local_ip_address: '172.16.10.2'
     :local_id: '202UB-9602-UB629'
-    :peer_subnet:
-      :name: '192.168.0.0/18'
-      :gateway: '192.168.0.0'
-      :netmask: '255.255.192.0'
+    :peer_subnets:
+      - :name: '192.168.0.0/18'
+        :gateway: '192.168.0.0'
+        :netmask: '255.255.192.0'
     :shared_secret: 'Secretsecretsecretsecretsecretsecret123456789'
     :encryption_protocol: 'AES'
     :mtu: 1500

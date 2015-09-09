@@ -36,22 +36,24 @@ module Vcloud
           vpn_tunnel[:PeerId] = tunnel[:peer_id]
           vpn_tunnel[:LocalIpAddress] = tunnel[:local_ip_address]
           vpn_tunnel[:LocalId] = tunnel[:local_id]
-          vpn_tunnel[:PeerSubnet] = {
-            :Name => tunnel[:peer_subnet][:name],
-            :Gateway => tunnel[:peer_subnet][:gateway],
-            :Netmask => tunnel[:peer_subnet][:netmask]
-          }
+          vpn_tunnel[:PeerSubnet] =
+          tunnel[:peer_subnets].map do |subnet|
+            { :Name => subnet[:name],
+              :Gateway => subnet[:gateway],
+              :Netmask => subnet[:netmask]
+            }
+          end
           vpn_tunnel[:SharedSecret] = tunnel[:shared_secret]
           vpn_tunnel[:SharedSecretEncrypted] = tunnel[:shared_secret_encrypted] if tunnel.key?(:shared_secret_encrypted)
           vpn_tunnel[:EncryptionProtocol] = tunnel[:encryption_protocol]
           vpn_tunnel[:Mtu] = tunnel[:mtu]
           vpn_tunnel[:IsEnabled] = tunnel[:enabled]
-          tunnel[:local_subnets].each do |subnet|
-            vpn_tunnel[:LocalSubnet] = [{
-             :Name => subnet[:name],
-             :Gateway => subnet[:gateway],
-             :Netmask => subnet[:netmask]
-            }]
+          vpn_tunnel[:LocalSubnet] =
+          tunnel[:local_subnets].map do |subnet|
+            { :Name => subnet[:name],
+              :Gateway => subnet[:gateway],
+              :Netmask => subnet[:netmask]
+            }
           end
           vpn_tunnel
         end
