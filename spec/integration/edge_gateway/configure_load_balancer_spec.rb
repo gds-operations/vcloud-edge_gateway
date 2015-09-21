@@ -138,7 +138,7 @@ module Vcloud
           config_file = IntegrationHelper.fixture_file('load_balancer_single_virtual_server_invalid_pool.yaml.mustache')
           expect { EdgeGateway::Configure.new(config_file, @vars_config_file).update }.
             to raise_error(
-              'Load balancer virtual server integration-test-vs-1 does not have a valid backing pool.'
+              /Load balancer virtual server integration-test-vs-1 does not have a valid backing pool/
             )
         end
 
