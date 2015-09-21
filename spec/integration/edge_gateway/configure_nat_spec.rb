@@ -48,6 +48,8 @@ module Vcloud
         end
 
         it "should only make one EdgeGateway update task, to minimise EdgeGateway reload events" do
+          pending("This test will fail until https://github.com/fog/fog/pull/3695 is merged and released by Fog")
+
           last_task = IntegrationHelper.get_last_task(@test_params.edge_gateway)
           diff = EdgeGateway::Configure.new(@initial_nat_config_file, @vars_config_file).update
           tasks_elapsed = IntegrationHelper.get_tasks_since(@test_params.edge_gateway, last_task)
@@ -58,17 +60,23 @@ module Vcloud
         end
 
         it "should have configured at least one NAT rule" do
+          pending("This test will fail until https://github.com/fog/fog/pull/3695 is merged and released by Fog")
+
           remote_vcloud_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration][:NatService]
           expect(remote_vcloud_config[:NatRule].empty?).to be_false
         end
 
         it "should have configured the same number of nat rules as in our configuration" do
+          pending("This test will fail until https://github.com/fog/fog/pull/3695 is merged and released by Fog")
+
           remote_vcloud_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration][:NatService]
           expect(remote_vcloud_config[:NatRule].size).
             to eq(@local_vcloud_config[:NatRule].size)
         end
 
         it "and then should not configure the firewall service if updated again with the same configuration (idempotency)" do
+          pending("This test will fail until https://github.com/fog/fog/pull/3695 is merged and released by Fog")
+
           expect(Vcloud::Core.logger).to receive(:info).with('EdgeGateway::Configure.update: Configuration is already up to date. Skipping.')
           diff = EdgeGateway::Configure.new(@initial_nat_config_file, @vars_config_file).update
 
@@ -83,6 +91,8 @@ module Vcloud
         end
 
         it "should configure DNAT rule" do
+          pending("This test will fail until https://github.com/fog/fog/pull/3695 is merged and released by Fog")
+
           dnat_rule = @nat_service[:NatRule].first
           expect(dnat_rule).not_to be_nil
           expect(dnat_rule[:RuleType]).to eq('DNAT')
@@ -97,6 +107,8 @@ module Vcloud
         end
 
         it "should configure SNAT rule" do
+          pending("This test will fail until https://github.com/fog/fog/pull/3695 is merged and released by Fog")
+
           snat_rule = @nat_service[:NatRule].last
           expect(snat_rule).not_to be_nil
           expect(snat_rule[:RuleType]).to eq('SNAT')

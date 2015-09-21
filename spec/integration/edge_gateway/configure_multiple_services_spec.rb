@@ -37,6 +37,8 @@ module Vcloud
         end
 
         it "should only create one edgeGateway update task when updating the configuration" do
+          pending("This test will fail until https://github.com/fog/fog/pull/3695 is merged and released by Fog")
+
           last_task = IntegrationHelper.get_last_task(@test_params.edge_gateway)
           diff = EdgeGateway::Configure.new(@initial_config_file, @vars_config_file).update
           tasks_elapsed = IntegrationHelper.get_tasks_since(@test_params.edge_gateway, last_task)
@@ -48,6 +50,8 @@ module Vcloud
         end
 
         it "should now have nat and firewall rules configured, no load balancer yet" do
+          pending("This test will fail until https://github.com/fog/fog/pull/3695 is merged and released by Fog")
+
           remote_vcloud_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration]
           expect(remote_vcloud_config[:FirewallService][:FirewallRule].empty?).to be_false
           expect(remote_vcloud_config[:NatService][:NatRule].empty?).to be_false
@@ -56,6 +60,8 @@ module Vcloud
         end
 
         it "should not update the EdgeGateway again if the config hasn't changed" do
+          pending("This test will fail until https://github.com/fog/fog/pull/3695 is merged and released by Fog")
+
           last_task = IntegrationHelper.get_last_task(@test_params.edge_gateway)
           diff = EdgeGateway::Configure.new(@initial_config_file, @vars_config_file).update
           tasks_elapsed = IntegrationHelper.get_tasks_since(@test_params.edge_gateway, last_task)
@@ -65,6 +71,8 @@ module Vcloud
         end
 
         it "should only create one additional edgeGateway update task when adding the LoadBalancer config" do
+          pending("This test will fail until https://github.com/fog/fog/pull/3695 is merged and released by Fog")
+
           last_task = IntegrationHelper.get_last_task(@test_params.edge_gateway)
           diff = EdgeGateway::Configure.new(@adding_load_balancer_config_file, @vars_config_file).update
           tasks_elapsed = IntegrationHelper.get_tasks_since(@test_params.edge_gateway, last_task)
@@ -75,6 +83,8 @@ module Vcloud
         end
 
         it "should not update the EdgeGateway again if we reapply the 'adding load balancer' config" do
+          pending("This test will fail until https://github.com/fog/fog/pull/3695 is merged and released by Fog")
+
           last_task = IntegrationHelper.get_last_task(@test_params.edge_gateway)
           diff = EdgeGateway::Configure.new(@adding_load_balancer_config_file, @vars_config_file).update
           tasks_elapsed = IntegrationHelper.get_tasks_since(@test_params.edge_gateway, last_task)
