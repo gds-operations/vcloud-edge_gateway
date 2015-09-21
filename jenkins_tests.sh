@@ -18,6 +18,8 @@ ${FOG_CREDENTIAL}:
   vcloud_director_password: ''
 EOF
 
+export RBENV_VERSION="2.1.2"
+
 git clean -ffdx
 bundle install --path "${HOME}/bundles/${JOB_NAME}"
 bundle exec rake
