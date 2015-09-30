@@ -1,1 +1,1 @@
-export RBENV_VERSION="2.1.2"
+export RBENV_VERSION="2.0.0"
