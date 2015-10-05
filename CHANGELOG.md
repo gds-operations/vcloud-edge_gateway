@@ -1,3 +1,7 @@
+## Unreleased
+
+- Remove support for Ruby 1.9.3, which is now end-of-life.
+
 ## 1.5.2 (2015-07-20)
 
 - Update vCloud Core to 1.1.0 to pick up a bugfix.
