@@ -25,6 +25,7 @@ module Vcloud
             new_rule[:Id] = rule.key?(:id) ? rule[:id] : i.to_s
             new_rule[:IsEnabled] = rule.key?(:enabled) ? rule[:enabled].to_s : 'true'
             new_rule[:RuleType] = rule[:rule_type]
+            new_rule[:Description] = rule[:description] if rule.key?(:description)
             gateway_nat_rule = populate_gateway_nat_rule(rule)
             new_rule[:GatewayNatRule] = gateway_nat_rule
             i += 1
