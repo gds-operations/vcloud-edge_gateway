@@ -375,6 +375,7 @@ The configuration requires several details:
 Here is an example configuration:
 
 ```
+---
 gateway: GATEWAY_ID
 gateway_ipsec_vpn_service:
   enabled: true
@@ -402,6 +403,24 @@ gateway_ipsec_vpn_service:
         :gateway: '192.168.0.1'
         :netmask: '255.255.255.0'
 ```
+
+### static_routing_service
+
+You can set up specific static routes using the vEdge Gateway. It allows you to route traffic that is destined to a specific destination IP to go via
+a specific gateway.
+
+```
+---
+gateway: GATEWAY_ID
+static_routing_service:
+  static_routes:
+  - enabled: true
+    name: 'Example Static Route'
+    network: '192.168.0.0/24'
+    next_hop: '172.16.0.1'
+    apply_on: EDGE_GATEWAY_EXT_NETWORK
+```
+
 
 ### Finding external network details from vcloud-walk
 
