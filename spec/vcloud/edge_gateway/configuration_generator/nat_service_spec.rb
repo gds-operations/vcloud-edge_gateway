@@ -26,6 +26,7 @@ module Vcloud
 
           before(:each) do
             input = { nat_rules: [{
+              description: 'Default Outbound',
               rule_type: 'SNAT',
               network_id: '2ad93597-7b54-43dd-9eb1-631dd337e5a7',
               original_ip: "192.0.2.2",
@@ -43,6 +44,10 @@ module Vcloud
             expect(@rule[:RuleType]).to eq('SNAT')
           end
 
+          it 'should have a Description of Default Outbound' do
+            expect(@rule[:Description]).to eq('Default Outbound')
+          end
+
           it 'should not include a Protocol' do
             expect(@rule[:GatewayNatRule].key?(:Protocol)).to be_false
           end
@@ -52,6 +57,7 @@ module Vcloud
               :Id=>"#{@base_nat_id}",
               :IsEnabled=>"true",
               :RuleType=>"SNAT",
+              :Description=>"Default Outbound",
               :GatewayNatRule=>{
                 :Interface=>{
                   :type => 'application/vnd.vmware.admin.network+xml',
@@ -70,6 +76,7 @@ module Vcloud
           before(:each) do
             input = { nat_rules: [{
               rule_type: 'DNAT',
+              description: 'Default Inbound',
               network_id: '2ad93597-7b54-43dd-9eb1-631dd337e5a7',
               original_ip: "192.0.2.2",
               original_port: '22',
@@ -89,6 +96,10 @@ module Vcloud
             expect(@rule[:RuleType]).to eq('DNAT')
           end
 
+          it 'should have a Decription of Default Inbound' do
+            expect(@rule[:Description]).to eq('Default Inbound')
+          end
+
           it 'should include a default Protocol of tcp' do
             expect(@rule[:GatewayNatRule][:Protocol]).to eq('tcp')
           end
@@ -98,6 +109,7 @@ module Vcloud
               :Id=>"#{@base_nat_id}",
               :IsEnabled=>"true",
               :RuleType=>"DNAT",
+              :Description=>"Default Inbound",
               :GatewayNatRule=>{
                 :Interface=>{
                   :type => 'application/vnd.vmware.admin.network+xml',
