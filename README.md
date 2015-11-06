@@ -43,6 +43,7 @@ You can configure the following services on an existing edgegateway using
 - nat_service
 - load_balancer_service
 - gateway_ipsec_vpn_service
+- static_routing_service
 
 The `vcloud-edge-configure` tool takes an input YAML file describing one
 or more of these services and updates the edge gateway configuration to match,
@@ -355,6 +356,71 @@ There is no persistence option for 'tcp' service_profiles.
 
 See [the vCloud Director Admin Guide](http://pubs.vmware.com/vcd-51/topic/com.vmware.vcloud.admin.doc_51/GUID-EC5EE5F9-1A2C-4609-9347-4C3143727704.html)
 for more details on configuring VirtualServer entries.
+
+### gateway_ipsec_vpn_service
+
+The edge gateway VPN service allows setting up a basic IPSEC VPN peer. Configuration will depend on how the remote peer device is configured. Multiple tunnels can be
+configured, along with multiple local and remote peer subnets in a single tunnel.
+
+The configuration requires several details:
+
+* Peer IP address: the public address of the remote peer
+* Local IP address: the public address of the local peer
+* Peer subnets: A private network address range which determines what traffic will traverse the tunnel
+* Local subnets: A private network address range which determines what traffic will be routed from the remote peer
+* Shared secret: This is the shared secret key which must be the same on both sides of the tunnel for encryption purposes
+* Encryption protocol: This should match on both sides of the tunnel
+* MTU: This sould match on both sides of the tunnel
+
+Here is an example configuration:
+
+```
+---
+gateway: GATEWAY_ID
+gateway_ipsec_vpn_service:
+  enabled: true
+  tunnels:
+  - :name: 'Example_name_without_spaces'
+    :enabled: true
+    :rule_type: 'DNAT'
+    :description: 'Description name with spaces'
+    :ipsec_vpn_local_peer:
+      :id: 'this-is-an-example-edgegatewayid'
+      :name: 'NameOfEdgeGateway'
+    :peer_ip_address: 1.2.3.4
+    :peer_id: '1.2.3.4'
+    :local_ip_address: 4.3.2.1
+    :local_id: '4.3.2.1'
+    :peer_subnets:
+      - :name: '172.16.0.0/24'
+        :gateway: '172.16.0.1'
+        :netmask: '255.255.255.0'
+    :shared_secret: usesomethinglikea32characterpassword
+    :encryption_protocol: 'AES'
+    :mtu: 1500
+    :local_subnets:
+      - :name: '192.168.0.0/24'
+        :gateway: '192.168.0.1'
+        :netmask: '255.255.255.0'
+```
+
+### static_routing_service
+
+You can set up specific static routes using the vEdge Gateway. It allows you to route traffic that is destined to a specific destination IP to go via
+a specific gateway.
+
+```
+---
+gateway: GATEWAY_ID
+static_routing_service:
+  static_routes:
+  - enabled: true
+    name: 'Example Static Route'
+    network: '192.168.0.0/24'
+    next_hop: '172.16.0.1'
+    apply_on: EDGE_GATEWAY_EXT_NETWORK
+```
+
 
 ### Finding external network details from vcloud-walk
 
