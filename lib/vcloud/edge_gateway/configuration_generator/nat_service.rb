@@ -42,8 +42,19 @@ module Vcloud
           gateway_nat_rule[:Interface] = populate_nat_interface(edge_gw_interface)
           gateway_nat_rule[:OriginalIp] = rule[:original_ip]
           gateway_nat_rule[:TranslatedIp] = rule[:translated_ip]
-          gateway_nat_rule[:OriginalPort] = rule[:original_port] if rule.key?(:original_port)
-          gateway_nat_rule[:TranslatedPort] = rule[:translated_port] if rule.key?(:translated_port)
+
+          unless rule.key?(:translated_port)
+            gateway_nat_rule[:OriginalPort] = rule[:original_port] if rule.key?(:original_port)
+          else
+            raise "original_port requires setting translated_port"
+          end
+
+          unless rule.key?(:original_port)
+            gateway_nat_rule[:TranslatedPort] = rule[:translated_port] if rule.key?(:translated_port)
+          else
+            raise "translated_port requires setting original_port"
+          end
+
           if rule[:rule_type] == 'DNAT'
             gateway_nat_rule[:Protocol] = rule.key?(:protocol) ? rule[:protocol] : "tcp"
           end
