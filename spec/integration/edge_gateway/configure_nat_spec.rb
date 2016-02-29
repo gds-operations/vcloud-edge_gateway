@@ -97,6 +97,7 @@ module Vcloud
           expect(dnat_rule).not_to be_nil
           expect(dnat_rule[:RuleType]).to eq('DNAT')
           expect(dnat_rule[:Id]).to eq('65537')
+          expect(dnat_rule[:Description]).to eq('Example DNAT')
           expect(dnat_rule[:IsEnabled]).to eq('true')
           expect(dnat_rule[:GatewayNatRule][:Interface][:href]).to include(@test_params.provider_network_id)
           expect(dnat_rule[:GatewayNatRule][:OriginalIp]).to eq(@test_params.provider_network_ip)
@@ -113,6 +114,7 @@ module Vcloud
           expect(snat_rule).not_to be_nil
           expect(snat_rule[:RuleType]).to eq('SNAT')
           expect(snat_rule[:Id]).to eq('65538')
+          expect(snat_rule[:Description]).to eq('Example SNAT')
           expect(snat_rule[:IsEnabled]).to eq('true')
           expect(snat_rule[:GatewayNatRule][:Interface][:href]).to include(@test_params.provider_network_id)
           expect(snat_rule[:GatewayNatRule][:OriginalIp]).to eq('10.10.1.2-10.10.1.3')
@@ -144,6 +146,7 @@ module Vcloud
           expect(expected_rule).not_to be_nil
           expect(expected_rule[:RuleType]).to eq('DNAT')
           expect(expected_rule[:Id]).to eq('65537')
+          expect(dnat_rule[:Description]).to eq('Example DNAT')
           expect(expected_rule[:RuleType]).to eq('DNAT')
           expect(expected_rule[:IsEnabled]).to eq('true')
           expect(expected_rule[:GatewayNatRule][:Interface][:name]).to eq(@test_params.network_1)
