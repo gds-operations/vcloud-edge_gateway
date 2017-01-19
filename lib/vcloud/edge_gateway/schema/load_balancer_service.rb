@@ -36,7 +36,7 @@ module Vcloud
           enabled: { type: 'boolean', required: false },
           port:    { type: 'string_or_number', required: false },
           algorithm: { type: 'enum', required: false,
-            acceptable_values: [ 'ROUND_ROBIN', 'IP_HASH', 'URI', 'LEAST_CONNECTED' ]},
+            acceptable_values: [ 'ROUND_ROBIN', 'IP_HASH', 'URI', 'LEAST_CONN' ]},
           health_check: {
             type: 'hash',
             required: false,
