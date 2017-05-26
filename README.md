@@ -507,6 +507,6 @@ default:                # This is the fog credential that refers to your testing
 
 ## Contributing
 
-Please see [CONTRIBUTING.md].
+Please see [CONTRIBUTING.md](/CONTRIBUTING.md).
 
 [fog]: http://fog.io/
