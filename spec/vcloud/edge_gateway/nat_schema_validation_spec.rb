@@ -14,7 +14,7 @@ module Vcloud
 
         }
         validator = Vcloud::Core::ConfigValidator.validate(:base, snat_rule, Vcloud::EdgeGateway::Schema::NAT_RULE)
-        expect(validator.valid?).to be_true
+        expect(validator.valid?).to be true
         expect(validator.errors).to be_empty
 
       end
@@ -34,7 +34,7 @@ module Vcloud
           it "should error since mandatory field #{mandatory_field} is missing" do
             @snat_rule.delete(mandatory_field)
             validator = Vcloud::Core::ConfigValidator.validate(:base, @snat_rule, Vcloud::EdgeGateway::Schema::NAT_RULE)
-            expect(validator.valid?).to be_false
+            expect(validator.valid?).to be false
             expect(validator.errors).to eq(["base: missing '#{mandatory_field}' parameter"])
           end
         end
@@ -53,7 +53,7 @@ module Vcloud
 
         }
         validator = Vcloud::Core::ConfigValidator.validate(:base, snat_rule, Vcloud::EdgeGateway::Schema::NAT_RULE)
-        expect(validator.valid?).to be_true
+        expect(validator.valid?).to be true
         expect(validator.errors).to be_empty
       end
     end
@@ -85,7 +85,7 @@ module Vcloud
           ]
         }
         validator = Vcloud::Core::ConfigValidator.validate(:base, nat_service, Vcloud::EdgeGateway::Schema::NAT_SERVICE)
-        expect(validator.valid?).to be_true
+        expect(validator.valid?).to be true
         expect(validator.errors).to be_empty
       end
     end

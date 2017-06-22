@@ -42,7 +42,7 @@ module Vcloud
 
         it "if `config` is called before `update_required` then config is not empty when it shouldn't be" do
           config = @proposed_config.config
-          expect(config.empty?).to be_false
+          expect(config.empty?).to be false
         end
 
       end
@@ -97,10 +97,10 @@ module Vcloud
         it "proposed diff contains changes for all services" do
           diff = @proposed_config.diff
           expect(diff.keys).to eq([:FirewallService, :NatService, :GatewayIpsecVpnService, :LoadBalancerService])
-          expect(diff[:FirewallService]).to        have_at_least(1).items
-          expect(diff[:NatService]).to             have_at_least(1).items
-          expect(diff[:GatewayIpsecVpnService]).to have_at_least(1).items
-          expect(diff[:LoadBalancerService]).to    have_at_least(1).items
+          expect(diff[:FirewallService].size).to        be >= 1
+          expect(diff[:NatService].size).to             be >= 1
+          expect(diff[:GatewayIpsecVpnService].size).to be >= 1
+          expect(diff[:LoadBalancerService].size).to    be >= 1
         end
 
       end
@@ -144,7 +144,7 @@ module Vcloud
         it "proposed diff contains changes for firewall service" do
           diff = @proposed_config.diff
           expect(diff.keys).to eq([:FirewallService])
-          expect(diff[:FirewallService]).to have_at_least(1).items
+          expect(diff[:FirewallService].size).to be >= 1
         end
 
       end
@@ -195,7 +195,7 @@ module Vcloud
         it "proposed diff contains changes for firewall and VPN service" do
           diff = @proposed_config.diff
           expect(diff.keys).to eq([:FirewallService, :GatewayIpsecVpnService])
-          expect(diff[:FirewallService]).to have_at_least(1).items
+          expect(diff[:FirewallService].size).to be >= 1
         end
 
       end
@@ -241,7 +241,7 @@ module Vcloud
         it "proposed diff contains changes for load balancer service" do
           diff = @proposed_config.diff
           expect(diff.keys).to eq([:LoadBalancerService])
-          expect(diff[:LoadBalancerService]).to have_at_least(1).items
+          expect(diff[:LoadBalancerService].size).to be >= 1
         end
 
       end
@@ -288,8 +288,8 @@ module Vcloud
         it "proposed diff contains changes for firewall and load balancer services" do
           diff = @proposed_config.diff
           expect(diff.keys).to eq([:FirewallService, :LoadBalancerService])
-          expect(diff[:FirewallService]).to     have_at_least(1).items
-          expect(diff[:LoadBalancerService]).to have_at_least(1).items
+          expect(diff[:FirewallService].size).to     be >= 1
+          expect(diff[:LoadBalancerService].size).to be >= 1
         end
 
       end
@@ -334,7 +334,7 @@ module Vcloud
         it "proposed diff contains changes for load balancer service" do
           diff = @proposed_config.diff
           expect(diff.keys).to eq([:LoadBalancerService])
-          expect(diff[:LoadBalancerService]).to have_at_least(1).items
+          expect(diff[:LoadBalancerService].size).to be >= 1
         end
 
       end
@@ -479,7 +479,7 @@ module Vcloud
         it "proposed diff contains changes for nat service" do
           diff = @proposed_config.diff
           expect(diff.keys).to eq([:NatService])
-          expect(diff[:NatService]).to have_at_least(1).items
+          expect(diff[:NatService].size).to be >= 1
         end
 
       end
@@ -522,7 +522,7 @@ module Vcloud
         it "proposed diff contains changes for firewall service" do
           diff = @proposed_config.diff
           expect(diff.keys).to eq([:FirewallService])
-          expect(diff[:FirewallService]).to have_at_least(1).items
+          expect(diff[:FirewallService].size).to be >= 1
         end
 
       end
@@ -565,7 +565,7 @@ module Vcloud
         it "proposed diff contains changes for nat service" do
           diff = @proposed_config.diff
           expect(diff.keys).to eq([:NatService])
-          expect(diff[:NatService]).to have_at_least(1).items
+          expect(diff[:NatService].size).to be >= 1
         end
 
       end
@@ -612,7 +612,7 @@ module Vcloud
         it "proposed diff contains changes for load balancer service" do
           diff = @proposed_config.diff
           expect(diff.keys).to eq([:LoadBalancerService])
-          expect(diff[:LoadBalancerService]).to have_at_least(1).items
+          expect(diff[:LoadBalancerService].size).to be >= 1
         end
 
       end
@@ -655,7 +655,7 @@ module Vcloud
         it "proposed diff contains changes for VPN service" do
           diff = @proposed_config.diff
           expect(diff.keys).to eq([:GatewayIpsecVpnService])
-          expect(diff[:GatewayIpsecVpnService]).to have_at_least(1).items
+          expect(diff[:GatewayIpsecVpnService].size).to be >= 1
         end
 
       end

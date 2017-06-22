@@ -56,7 +56,7 @@ module Vcloud
           validator = Vcloud::Core::ConfigValidator.validate(:base, test[:input],
               Vcloud::EdgeGateway::Schema::LOAD_BALANCER_POOL_ENTRY)
           expect(validator.errors).to eq([])
-          expect(validator.valid?).to be_true
+          expect(validator.valid?).to be true
         end
       end
 
@@ -96,7 +96,7 @@ module Vcloud
           validator = Vcloud::Core::ConfigValidator.validate(:base, test[:input],
               Vcloud::EdgeGateway::Schema::LOAD_BALANCER_VIRTUAL_SERVER_ENTRY)
           expect(validator.errors).to eq([])
-          expect(validator.valid?).to be_true
+          expect(validator.valid?).to be true
         end
       end
 
@@ -122,7 +122,7 @@ module Vcloud
         validator = Vcloud::Core::ConfigValidator.validate(:base, input,
           Vcloud::EdgeGateway::Schema::LOAD_BALANCER_VIRTUAL_SERVER_ENTRY)
         expect(validator.errors).to eq([])
-        expect(validator.valid?).to be_true
+        expect(validator.valid?).to be true
       end
 
       it "does not validate a virtual_server entry with a COOKIE http " +
@@ -149,7 +149,7 @@ module Vcloud
           "persistence: missing 'cookie_name' parameter",
           "persistence: missing 'cookie_mode' parameter",
         ])
-        expect(validator.valid?).to be_false
+        expect(validator.valid?).to be false
       end
 
       it "validates a virtual_server entry with a SSL_SESSION_ID https persistence method" do
@@ -172,7 +172,7 @@ module Vcloud
         validator = Vcloud::Core::ConfigValidator.validate(:base, input,
           Vcloud::EdgeGateway::Schema::LOAD_BALANCER_VIRTUAL_SERVER_ENTRY)
         expect(validator.errors).to eq([])
-        expect(validator.valid?).to be_true
+        expect(validator.valid?).to be true
       end
 
       it "validates a virtual_server entry with a tcp service_profile" do
@@ -192,7 +192,7 @@ module Vcloud
         validator = Vcloud::Core::ConfigValidator.validate(:base, input,
           Vcloud::EdgeGateway::Schema::LOAD_BALANCER_VIRTUAL_SERVER_ENTRY)
         expect(validator.errors).to eq([])
-        expect(validator.valid?).to be_true
+        expect(validator.valid?).to be true
       end
 
       it "does not validate a virtual_server tcp service_profile with a persistence section" do
@@ -213,7 +213,7 @@ module Vcloud
         validator = Vcloud::Core::ConfigValidator.validate(:base, input,
           Vcloud::EdgeGateway::Schema::LOAD_BALANCER_VIRTUAL_SERVER_ENTRY)
         expect(validator.errors).to eq(["tcp: parameter 'persistence' is invalid"])
-        expect(validator.valid?).to be_false
+        expect(validator.valid?).to be false
       end
 
     end
@@ -242,7 +242,7 @@ module Vcloud
         }
         validator = Vcloud::Core::ConfigValidator.validate(:base, input, Vcloud::EdgeGateway::Schema::LOAD_BALANCER_SERVICE)
         expect(validator.errors).to eq([])
-        expect(validator.valid?).to be_true
+        expect(validator.valid?).to be true
       end
 
       it "should validate ok if an empty pool service section is provided" do
@@ -262,7 +262,7 @@ module Vcloud
         }
         validator = Vcloud::Core::ConfigValidator.validate(:base, input, Vcloud::EdgeGateway::Schema::LOAD_BALANCER_SERVICE)
         expect(validator.errors).to eq([])
-        expect(validator.valid?).to be_true
+        expect(validator.valid?).to be true
       end
 
       it "should validate ok if an empty virtual_server service_profile section is provided" do
@@ -284,7 +284,7 @@ module Vcloud
         }
         validator = Vcloud::Core::ConfigValidator.validate(:base, input, Vcloud::EdgeGateway::Schema::LOAD_BALANCER_SERVICE)
         expect(validator.errors).to eq([])
-        expect(validator.valid?).to be_true
+        expect(validator.valid?).to be true
       end
 
       it "should be ok if no pools are specified" do
@@ -292,7 +292,7 @@ module Vcloud
           virtual_servers: []
         }
         validator = Vcloud::Core::ConfigValidator.validate(:base, input, Vcloud::EdgeGateway::Schema::LOAD_BALANCER_SERVICE)
-        expect(validator.valid?).to be_true
+        expect(validator.valid?).to be true
       end
 
       it "should be ok if no virtual_servers are specified" do
@@ -300,7 +300,7 @@ module Vcloud
           pools: []
         }
         validator = Vcloud::Core::ConfigValidator.validate(:base, input, Vcloud::EdgeGateway::Schema::LOAD_BALANCER_SERVICE)
-        expect(validator.valid?).to be_true
+        expect(validator.valid?).to be true
       end
 
     end

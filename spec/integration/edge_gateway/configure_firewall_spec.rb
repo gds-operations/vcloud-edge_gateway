@@ -39,7 +39,7 @@ module Vcloud
 
         it "should be starting our tests from an empty firewall" do
           remote_vcloud_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration][:FirewallService]
-          expect(remote_vcloud_config[:FirewallRule].empty?).to be_true
+          expect(remote_vcloud_config[:FirewallRule].empty?).to be true
         end
 
         it "should only need to make one call to Core::EdgeGateway.update_configuration" do
@@ -52,7 +52,7 @@ module Vcloud
 
         it "should have configured at least one firewall rule" do
           remote_vcloud_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration][:FirewallService]
-          expect(remote_vcloud_config[:FirewallRule].empty?).to be_false
+          expect(remote_vcloud_config[:FirewallRule].empty?).to be false
         end
 
         it "should have configured the same number of firewall rules as in our configuration" do

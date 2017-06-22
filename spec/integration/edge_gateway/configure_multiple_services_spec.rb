@@ -30,10 +30,10 @@ module Vcloud
 
         it "should be starting our tests from an empty EdgeGateway" do
           remote_vcloud_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration]
-          expect(remote_vcloud_config[:FirewallService][:FirewallRule].empty?).to be_true
-          expect(remote_vcloud_config[:NatService][:NatRule].empty?).to be_true
-          expect(remote_vcloud_config[:LoadBalancerService][:Pool].empty?).to be_true
-          expect(remote_vcloud_config[:LoadBalancerService][:VirtualServer].empty?).to be_true
+          expect(remote_vcloud_config[:FirewallService][:FirewallRule].empty?).to be true
+          expect(remote_vcloud_config[:NatService][:NatRule].empty?).to be true
+          expect(remote_vcloud_config[:LoadBalancerService][:Pool].empty?).to be true
+          expect(remote_vcloud_config[:LoadBalancerService][:VirtualServer].empty?).to be true
         end
 
         it "should only create one edgeGateway update task when updating the configuration" do
@@ -53,8 +53,8 @@ module Vcloud
           pending("This test will fail until https://github.com/fog/fog/pull/3695 is merged and released by Fog")
 
           remote_vcloud_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration]
-          expect(remote_vcloud_config[:FirewallService][:FirewallRule].empty?).to be_false
-          expect(remote_vcloud_config[:NatService][:NatRule].empty?).to be_false
+          expect(remote_vcloud_config[:FirewallService][:FirewallRule].empty?).to be false
+          expect(remote_vcloud_config[:NatService][:NatRule].empty?).to be false
           expect(remote_vcloud_config[:LoadBalancerService][:Pool].empty?).to be(true)
           expect(remote_vcloud_config[:LoadBalancerService][:VirtualServer].empty?).to be(true)
         end

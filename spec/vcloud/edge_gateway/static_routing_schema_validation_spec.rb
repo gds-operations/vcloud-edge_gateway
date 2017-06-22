@@ -15,7 +15,7 @@ module Vcloud
           ]
         }
         validator = Vcloud::Core::ConfigValidator.validate(:base, config, Vcloud::EdgeGateway::Schema::STATIC_ROUTING_SERVICE)
-        expect(validator.valid?).to be_false
+        expect(validator.valid?).to be false
         expect(validator.errors).to eq([
                                         "network: 10.10.10.10/256 is not a valid IP address range. Valid values can be IP address, CIDR, IP range, 'Any','internal' and 'external'.",
                                         "next_hop: 192.1 is not a valid ip_address",
@@ -34,7 +34,7 @@ module Vcloud
           ]
         }
         validator = Vcloud::Core::ConfigValidator.validate(:base, config, Vcloud::EdgeGateway::Schema::STATIC_ROUTING_SERVICE)
-        expect(validator.valid?).to be_true
+        expect(validator.valid?).to be true
       end
     end
   end

@@ -43,7 +43,7 @@ module Vcloud
           edge_service_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration]
           remote_vcloud_config = edge_service_config[:StaticRoutingService]
           if remote_vcloud_config
-            expect(remote_vcloud_config[:StaticRoute].nil?).to be_true
+            expect(remote_vcloud_config[:StaticRoute].nil?).to be true
           end
         end
 
@@ -61,7 +61,7 @@ module Vcloud
         it "should have configured at least one static route" do
           edge_service_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration]
           remote_vcloud_config = edge_service_config[:StaticRoutingService]
-          expect(remote_vcloud_config[:StaticRoute].empty?).to be_false
+          expect(remote_vcloud_config[:StaticRoute].empty?).to be false
         end
 
         it "should have configured the same number of static routes as in our configuration" do
@@ -92,7 +92,7 @@ module Vcloud
 
           expect(diff.keys).to eq([:StaticRoutingService])
           expect(diff[:StaticRoutingService]).to have_at_least(1).items
-          expect(remote_vcloud_config[:StaticRoute].nil?).to be_true
+          expect(remote_vcloud_config[:StaticRoute].nil?).to be true
         end
 
       end
