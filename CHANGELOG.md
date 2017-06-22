@@ -1,3 +1,13 @@
+## 2.1.0 (2017-06-22)
+
+  - Upgrade to the latest vCloud Core, and bring the version number into line
+    with the rest of the toolset.
+  - Remove support for Ruby versions older than 2.2.2.
+  - Add support for Ruby 2.3.0 and 2.4.0.
+  - Upgrade Rspec, Rubocop, Simplecov and Rake.
+  - Add documentation regarding deprecation of support
+  - Various bug fixes
+
 ## Unreleased
 
 - Remove support for Ruby 1.9.3, which is now end-of-life.
