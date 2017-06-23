@@ -111,7 +111,7 @@ module Vcloud
           end
 
           it 'should default to description being not set' do
-            expect(@rule.key?(:Description)).to be_false
+            expect(@rule.key?(:Description)).to be false
           end
 
           it 'should match our expected complete entry' do

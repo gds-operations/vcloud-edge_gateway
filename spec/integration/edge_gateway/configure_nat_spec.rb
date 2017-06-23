@@ -44,7 +44,7 @@ module Vcloud
 
         it "should be starting our tests from an empty NatService" do
           remote_vcloud_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration][:NatService]
-          expect(remote_vcloud_config[:NatRule].empty?).to be_true
+          expect(remote_vcloud_config[:NatRule].empty?).to be true
         end
 
         it "should only make one EdgeGateway update task, to minimise EdgeGateway reload events" do
@@ -63,7 +63,7 @@ module Vcloud
           pending("This test will fail until https://github.com/fog/fog/pull/3695 is merged and released by Fog")
 
           remote_vcloud_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration][:NatService]
-          expect(remote_vcloud_config[:NatRule].empty?).to be_false
+          expect(remote_vcloud_config[:NatRule].empty?).to be false
         end
 
         it "should have configured the same number of nat rules as in our configuration" do

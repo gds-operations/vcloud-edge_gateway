@@ -41,8 +41,8 @@ module Vcloud
         it "should be starting our tests from an empty LoadBalancerService" do
           edge_service_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration]
           remote_vcloud_config = edge_service_config[:LoadBalancerService]
-          expect(remote_vcloud_config[:Pool].empty?).to be_true
-          expect(remote_vcloud_config[:VirtualServer].empty?).to be_true
+          expect(remote_vcloud_config[:Pool].empty?).to be true
+          expect(remote_vcloud_config[:VirtualServer].empty?).to be true
         end
 
         it "should only make one EdgeGateway update task, to minimise EdgeGateway reload events" do
@@ -62,7 +62,7 @@ module Vcloud
 
           edge_service_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration]
           remote_vcloud_config = edge_service_config[:LoadBalancerService]
-          expect(remote_vcloud_config[:Pool].empty?).to be_false
+          expect(remote_vcloud_config[:Pool].empty?).to be false
         end
 
         it "should have configured at least one LoadBancer VirtualServer entry" do
@@ -70,7 +70,7 @@ module Vcloud
 
           edge_service_config = @edge_gateway.vcloud_attributes[:Configuration][:EdgeGatewayServiceConfiguration]
           remote_vcloud_config = edge_service_config[:LoadBalancerService]
-          expect(remote_vcloud_config[:VirtualServer].empty?).to be_false
+          expect(remote_vcloud_config[:VirtualServer].empty?).to be false
         end
 
         it "should have configured the same number of Pools as in our configuration" do

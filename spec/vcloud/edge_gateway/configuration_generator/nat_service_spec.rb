@@ -49,7 +49,7 @@ module Vcloud
           end
 
           it 'should not include a Protocol' do
-            expect(@rule[:GatewayNatRule].key?(:Protocol)).to be_false
+            expect(@rule[:GatewayNatRule].key?(:Protocol)).to be false
           end
 
           it 'should completely match our expected default rule' do
