@@ -1,3 +1,7 @@
+## 2.1.1 (2017-08-01)
+
+  - Upgrade to latest vCloud Core
+
 ## 2.1.0 (2017-06-22)
 
   - Upgrade to the latest vCloud Core, and bring the version number into line
